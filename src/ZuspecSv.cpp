@@ -25,6 +25,7 @@
 #include "vsc/dm/FactoryExt.h"
 #include "vsc/solvers/FactoryExt.h"
 #include "zsp/arl/dm/FactoryExt.h"
+#include "zsp/arl/eval/FactoryExt.h"
 #include "zsp/parser/FactoryExt.h"
 #include "zsp/fe/parser/FactoryExt.h"
 #include "zsp/ast/IFactory.h"
@@ -62,12 +63,20 @@ ZuspecSv *ZuspecSv::inst() {
 
 bool ZuspecSv::init(
     const std::string       &pss_files,
-    bool                    load) {
+    bool                    load,
+    bool                    debug) {
     if (m_initialized) {
         return true;
     }
 
     m_dmgr = dmgr_getFactory()->getDebugMgr();
+
+    // Since debug-manager is common infrastructure,
+    // only enable if requested. If not requested, 
+    // debug may have been enabled by some other library
+    if (debug) {
+        m_dmgr->enable(debug);
+    }
     m_pssfiles = pss_files;
 
     vsc::dm::IFactory *vsc_dm_f = vsc_dm_getFactory();
@@ -76,6 +85,7 @@ bool ZuspecSv::init(
     arl::dm::IFactory *arl_dm_f = zsp_arl_dm_getFactory();
     arl_dm_f->init(m_dmgr);
 
+    zsp_arl_eval_getFactory()->init(m_dmgr);
 
 
     m_ctxt = arl::dm::IContextUP(arl_dm_f->mkContext(
@@ -139,11 +149,9 @@ bool ZuspecSv::ensureLoaded() {
         return false;
     }
 
-    zuspec_message("--> Calling build");
     builder->build(
         global.get(),
         &s);
-    zuspec_message("<-- Calling build");
     
     if (listener.hasSeverity(parser::MarkerSeverityE::Error)) {
         zuspec_fatal("Parse errors");
@@ -193,16 +201,17 @@ ZuspecSvUP ZuspecSv::m_inst;
 /****************************************************************************
  * DPI Interface
  ****************************************************************************/
+static char dpiStrBuf[1024];
 
 extern "C" uint32_t zuspec_init(
     const char      *pss_files,
-    int             load) {
-    zuspec_message("Hello World!");
-    return zsp::sv::ZuspecSv::inst()->init(pss_files, load);
+    int             load,
+    int             debug) {
+    return zsp::sv::ZuspecSv::inst()->init(pss_files, load, debug);
 }
 
 extern "C" chandle zuspec_Actor_new(
-    const char          *randstate,
+    const char          *seed,
     const char          *comp_t_s,
     const char          *action_t_s,
     uint64_t             backend_h) {
@@ -232,11 +241,52 @@ extern "C" chandle zuspec_Actor_new(
     }
 
     zsp::sv::Actor *actor = new zsp::sv::Actor(
+        ctxt,
+        seed,
         comp_t,
         action_t,
         backend);
 
-    backend->emitMessage("Hello World");
-
     return reinterpret_cast<chandle>(actor);
+}
+
+extern "C" int32_t zuspec_Actor_eval(
+    chandle     actor_h) {
+    return reinterpret_cast<zsp::sv::Actor *>(actor_h)->eval();
+}
+
+extern "C" uint32_t zuspec_Actor_registerFunctionId(
+    chandle     actor_h,
+    const char  *name,
+    int32_t     id) {
+    return reinterpret_cast<zsp::sv::Actor *>(actor_h)->registerFunctionId(name, id);
+}
+
+extern "C" int32_t zuspec_Actor_getFunctionId(
+    chandle     actor_h,
+    chandle     func_h) {
+    return reinterpret_cast<zsp::sv::Actor *>(actor_h)->getFunctionId(
+        reinterpret_cast<zsp::arl::dm::IDataTypeFunction *>(func_h));
+}
+
+extern "C" const char *zuspec_DataTypeFunction_name(
+    chandle     func_h) {
+    strcpy(dpiStrBuf, 
+        reinterpret_cast<zsp::arl::dm::IDataTypeFunction *>(func_h)->name().c_str());
+    return dpiStrBuf;
+}
+
+extern "C" void zuspec_EvalThread_setVoidResult(
+    chandle     thread_h) {
+    reinterpret_cast<zsp::arl::eval::IEvalThread *>(thread_h)->setVoidResult();
+}
+
+extern "C" void zuspec_EvalThread_setIntResult(
+    chandle      thread_h,
+    int64_t      value,
+    int          is_signed,
+    int          width) {
+    zsp::arl::eval::IEvalThread *thread = 
+        reinterpret_cast<zsp::arl::eval::IEvalThread *>(thread_h);
+    thread->setResult(thread->mkValRefInt(value, is_signed, width));
 }

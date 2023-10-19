@@ -19,6 +19,8 @@
  *     Author: 
  */
 #pragma once
+#include <map>
+#include "vsc/solvers/IRandState.h"
 #include "zsp/arl/dm/IDataTypeAction.h"
 #include "zsp/arl/dm/IDataTypeComponent.h"
 #include "zsp/arl/eval/IEvalBackend.h"
@@ -32,6 +34,8 @@ namespace sv {
 class Actor {
 public:
     Actor(
+        arl::dm::IContext               *ctxt,
+        const std::string               &seed,
         arl::dm::IDataTypeComponent     *comp_t,
         arl::dm::IDataTypeAction        *action_t,
         arl::eval::IEvalBackend         *backend
@@ -39,8 +43,17 @@ public:
 
     virtual ~Actor();
 
+    int32_t eval();
+
+    bool registerFunctionId(const std::string &name, int32_t id);
+
+    int32_t getFunctionId(arl::dm::IDataTypeFunction *f);
+
 private:
-    arl::eval::IEvalContextUP           m_ctxt;
+    arl::eval::IEvalContextUP                               m_evalCtxt;
+    vsc::solvers::IRandStateUP                              m_randstate;
+    std::map<std::string,arl::dm::IDataTypeFunction *>      m_func_m;
+    std::map<arl::dm::IDataTypeFunction *, int32_t>         m_func_id_m;
 
 };
 

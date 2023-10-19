@@ -31,7 +31,8 @@ extern "C" void zuspec_EvalBackendProxy_emitMessage(
 extern "C" void zuspec_EvalBackendProxy_callFuncReq(
     chandle             proxy_h,
     chandle             thread_h,
-    int32_t             func_id,
+    chandle             func_t,
+    uint32_t            is_target,
     const chandle       params_h
 );
 

@@ -41,7 +41,8 @@ public:
 
     bool init(
         const std::string   &pss_files,
-        bool                load);
+        bool                load,
+        bool                debug);
 
     bool ensureLoaded();
 
