@@ -269,7 +269,7 @@ ext = Extension("zsp_sv.core",
 ext.cython_directives={'language_level' : '3'}
 
 setup(
-  name = "zuspec-arl-eval",
+  name = "zuspec-sv",
   version=version,
   packages=['zsp_sv'],
   package_dir = {'' : 'python'},

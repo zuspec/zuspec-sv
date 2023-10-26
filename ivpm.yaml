@@ -1,6 +1,6 @@
 
 package:
-  name: zuspec
+  name: zuspec-sv
 
   setup-deps:
   - ninja
@@ -39,6 +39,8 @@ package:
       url: https://github.com/fvutils/fltools.git
     - name: fusesoc
       url: https://github.com/olofk/fusesoc.git
+    - name: ciostream
+      url: https://github.com/mballance-utils/ciostream.git
     - name: ivpm
       src: pypi
     - name: ninja

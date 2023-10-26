@@ -299,4 +299,5 @@ package zuspec;
 
 endpackage
 
-`undef DEBUG
+`undef ZUSPEC_DEBUG
+`undef ZUSPEC_FATAL
