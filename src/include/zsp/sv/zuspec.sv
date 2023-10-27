@@ -68,7 +68,7 @@ package zuspec;
     static Actor proxy2actor_m[longint unsigned];
     chandle              m_hndl;
     string               m_name;
-    MethodBridge             m_method_if;
+    MethodBridge         m_method_if;
     int unsigned         m_pending_tasks = 0;
     semaphore            m_task_sem = new();
 
@@ -119,6 +119,10 @@ package zuspec;
         end while (ret == 1);
     endtask
 
+    function int registerFunctionId(string name, int id);
+        return zuspec_Actor_registerFunctionId(m_hndl, name, id);
+    endfunction
+
     virtual function void callFuncReq(
         EvalThread      thread,
         chandle         func_t,
@@ -157,6 +161,31 @@ package zuspec;
 
     function new(chandle hndl);
         m_hndl = hndl;
+    endfunction
+
+    function longint unsigned get_uint64();
+        return zuspec_ValRef_get_uint64(m_hndl);
+    endfunction
+    function longint get_int64();
+        return zuspec_ValRef_get_int64(m_hndl);
+    endfunction
+    function int unsigned get_uint32();
+        return zuspec_ValRef_get_uint32(m_hndl);
+    endfunction
+    function int get_int32();
+        return zuspec_ValRef_get_int32(m_hndl);
+    endfunction
+    function shortint unsigned get_uint16();
+        return zuspec_ValRef_get_uint16(m_hndl);
+    endfunction
+    function shortint get_int16();
+        return zuspec_ValRef_get_int16(m_hndl);
+    endfunction
+    function byte unsigned get_uint8();
+        return zuspec_ValRef_get_uint8(m_hndl);
+    endfunction
+    function byte get_int8();
+        return zuspec_ValRef_get_int8(m_hndl);
     endfunction
   endclass
 
