@@ -35,16 +35,16 @@ package zuspec;
 
   typedef class EvalThread;
   typedef class ValRef;
-  typedef class Actor;
+  typedef class ActorCore;
 
   class NullBase;
     // empty class to use as base type
   endclass
 
   class MethodBridge;
-    Actor           m_actor;
+    ActorCore           m_actor;
 
-    virtual function void init(Actor actor);
+    virtual function void init(ActorCore actor);
         m_actor = actor;
     endfunction
 
@@ -64,8 +64,8 @@ package zuspec;
 
   endclass
 
-  class Actor;
-    static Actor proxy2actor_m[longint unsigned];
+  class ActorCore;
+    static ActorCore proxy2actor_m[longint unsigned];
     chandle              m_hndl;
     string               m_name;
     MethodBridge         m_method_if;
@@ -196,6 +196,10 @@ package zuspec;
         m_hndl = hndl;
     endfunction
 
+    function int getExecutorIndex();
+        return 0;
+    endfunction
+
     function void setVoidResult();
         zuspec_EvalThread_setVoidResult(m_hndl);
     endfunction
@@ -294,7 +298,7 @@ package zuspec;
     chandle             func_t,
     int unsigned        is_target,
     chandle             params_h);
-    automatic Actor       actor = Actor::proxy2actor_m[proxy_h];
+    automatic ActorCore   actor = ActorCore::proxy2actor_m[proxy_h];
     automatic EvalThread  thread = new(thread_h);
     automatic ValRef params[];
     
@@ -311,7 +315,7 @@ package zuspec;
   function void zuspec_EvalBackendProxy_emitMessage(
     longint unsigned    proxy_h,
     string              msg);
-    automatic Actor     actor = Actor::proxy2actor_m[proxy_h];
+    automatic ActorCore     actor = ActorCore::proxy2actor_m[proxy_h];
     actor.emitMessage(msg);
   endfunction
   export "DPI-C" function zuspec_EvalBackendProxy_emitMessage;
@@ -325,6 +329,22 @@ package zuspec;
     longint             value,
     int                 is_signed,
     int                 width);
+  import "DPI-C" function longint unsigned zuspec_ValRef_get_uint64(
+    chandle             valref_h);
+  import "DPI-C" function longint zuspec_ValRef_get_int64(
+    chandle             valref_h);
+  import "DPI-C" function int unsigned zuspec_ValRef_get_uint32(
+    chandle             valref_h);
+  import "DPI-C" function int zuspec_ValRef_get_int32(
+    chandle             valref_h);
+  import "DPI-C" function shortint unsigned zuspec_ValRef_get_uint16(
+    chandle             valref_h);
+  import "DPI-C" function shortint zuspec_ValRef_get_int16(
+    chandle             valref_h);
+  import "DPI-C" function byte unsigned zuspec_ValRef_get_uint8(
+    chandle             valref_h);
+  import "DPI-C" function byte zuspec_ValRef_get_int8(
+    chandle             valref_h);
 
 endpackage
 

@@ -136,7 +136,12 @@ bool ZuspecSv::ensureLoaded() {
         m_dmgr,
         ast_getFactory());
     parser::IAstBuilderUP builder(parser_f->mkAstBuilder(&listener));
-    ast::IGlobalScopeUP global(parser_f->getAstFactory()->mkGlobalScope(0));
+    std::vector<ast::IGlobalScopeUP> scopes;
+
+    scopes.push_back(parser_f->getAstFactory()->mkGlobalScope(0));
+    parser_f->loadStandardLibrary(builder.get(), scopes.back().get());
+
+    scopes.push_back(parser_f->getAstFactory()->mkGlobalScope(1));
 
 
     std::fstream s;
@@ -150,18 +155,25 @@ bool ZuspecSv::ensureLoaded() {
     }
 
     builder->build(
-        global.get(),
+        scopes.back().get(),
         &s);
     
     if (listener.hasSeverity(parser::MarkerSeverityE::Error)) {
         zuspec_fatal("Parse errors");
         return false;
     }
+    
+    std::vector<ast::IGlobalScope *> scopes_p;
+    for (std::vector<ast::IGlobalScopeUP>::const_iterator
+        it=scopes.begin();
+        it!=scopes.end(); it++) {
+        scopes_p.push_back(it->get());
+    }
 
     parser::ILinkerUP linker(parser_f->mkAstLinker());
     ast::ISymbolScopeUP scope(linker->link(
         &listener,
-        {global.get()}
+        scopes_p
     ));
 
     if (listener.hasSeverity(parser::MarkerSeverityE::Error)) {
@@ -289,4 +301,52 @@ extern "C" void zuspec_EvalThread_setIntResult(
     zsp::arl::eval::IEvalThread *thread = 
         reinterpret_cast<zsp::arl::eval::IEvalThread *>(thread_h);
     thread->setResult(thread->mkValRefInt(value, is_signed, width));
+}
+
+extern "C" uint8_t zuspec_ValRef_get_uint8(chandle valref_h) {
+    vsc::dm::ValRef *valref = reinterpret_cast<vsc::dm::ValRef *>(valref_h);
+    vsc::dm::ValRefInt valref_i(*valref);
+    return valref_i.get_val_u();
+}
+
+extern "C" int8_t zuspec_ValRef_get_int8(chandle valref_h) {
+    vsc::dm::ValRef *valref = reinterpret_cast<vsc::dm::ValRef *>(valref_h);
+    vsc::dm::ValRefInt valref_i(*valref);
+    return valref_i.get_val_s();
+}
+
+extern "C" uint16_t zuspec_ValRef_get_uint16(chandle valref_h) {
+    vsc::dm::ValRef *valref = reinterpret_cast<vsc::dm::ValRef *>(valref_h);
+    vsc::dm::ValRefInt valref_i(*valref);
+    return valref_i.get_val_u();
+}
+
+extern "C" int16_t zuspec_ValRef_get_int16(chandle valref_h) {
+    vsc::dm::ValRef *valref = reinterpret_cast<vsc::dm::ValRef *>(valref_h);
+    vsc::dm::ValRefInt valref_i(*valref);
+    return valref_i.get_val_s();
+}
+
+extern "C" uint32_t zuspec_ValRef_get_uint32(chandle valref_h) {
+    vsc::dm::ValRef *valref = reinterpret_cast<vsc::dm::ValRef *>(valref_h);
+    vsc::dm::ValRefInt valref_i(*valref);
+    return valref_i.get_val_u();
+}
+
+extern "C" int32_t zuspec_ValRef_get_int32(chandle valref_h) {
+    vsc::dm::ValRef *valref = reinterpret_cast<vsc::dm::ValRef *>(valref_h);
+    vsc::dm::ValRefInt valref_i(*valref);
+    return valref_i.get_val_s();
+}
+
+extern "C" uint64_t zuspec_ValRef_get_uint64(chandle valref_h) {
+    vsc::dm::ValRef *valref = reinterpret_cast<vsc::dm::ValRef *>(valref_h);
+    vsc::dm::ValRefInt valref_i(*valref);
+    return valref_i.get_val_u();
+}
+
+extern "C" int64_t zuspec_ValRef_get_int64(chandle valref_h) {
+    vsc::dm::ValRef *valref = reinterpret_cast<vsc::dm::ValRef *>(valref_h);
+    vsc::dm::ValRefInt valref_i(*valref);
+    return valref_i.get_val_s();
 }

@@ -49,15 +49,14 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         pass
 
     def __call__(self, args):
-        print("__call__")
         ctxt = self.parseFilesToCtxt(args.files)
-        pss_top = ctxt.findDataTypeComponent("pss_top")
-        print("pss_top: %s" % str(pss_top))
 
         self.method_id_name_m = {}
         self.method_name_id_m = {}
 
-        self.out = Output()
+        fp = open(args.output, "w")
+
+        self.out = Output(fp)
         self.out.println("package pss_api_pkg;")
         self.out.inc_ind()
         self.out.println("import zuspec::*;")
@@ -89,7 +88,6 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
                 self.out.println("endfunction")
 
             for f in ctxt.getDataTypeFunctions():
-                print("Function: %s" % f.name())
                 self.visit(f)
 
             self.out.dec_ind()
@@ -100,7 +98,7 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.phase = Phase.Actor
         self.out.println("class Actor #(type TARGET_T=PssIF) extends MethodBridge;")
         self.out.inc_ind()
-        self.out.println("zuspec::Actor         m_core;")
+        self.out.println("ActorCore             m_core;")
         self.out.println("TARGET_T              m_targets[];")
         self.out.println("")
         self.out.println("function new(")
@@ -116,7 +114,7 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.out.dec_ind()
         self.out.println("endfunction")
         self.out.println("")
-        self.out.println("virtual function init(zuspec::Actor actor);")
+        self.out.println("virtual function void init(ActorCore actor);")
         self.out.inc_ind()
         self.out.println("super.init(actor);")
         for i in range(len(self.method_id_name_m)):
@@ -131,6 +129,12 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.out.println("endfunction")
         self.out.println()
 
+        self.out.println("task run();")
+        self.out.inc_ind()
+        self.out.println("m_core.run();")
+        self.out.dec_ind()
+        self.out.println("endtask")
+
         self.out.println("virtual task invokeFuncTarget(")
         self.out.inc_ind()
         self.out.println("zuspec::EvalThread     thread,")
@@ -141,29 +145,7 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         for f in ctxt.getDataTypeFunctions():
             if f.name() not in self.method_name_id_m.keys():
                 continue
-            # TODO: task vs function
-            self.out.println("%d: begin // %s" % (
-                self.method_name_id_m[f.name()],
-                f.name()))
-            self.out.inc_ind()
-            self.visit(f)
-            self.out.dec_ind()
-            self.out.println("end")
-        self.out.dec_ind()
-        self.out.println("endcase")
-
-        self.out.dec_ind()
-        self.out.println("endtask")
-
-        self.out.println("virtual function invokeFuncSolve(")
-        self.out.inc_ind()
-        self.out.println("zuspec::EvalThread     thread,")
-        self.out.println("int                    func_id,")
-        self.out.println("zuspec::ValRef         params[]);")
-        self.out.println("case (func_id)")
-        self.out.inc_ind()
-        for f in ctxt.getDataTypeFunctions():
-            if f.name() not in self.method_name_id_m.keys():
+            if f.hasFlags(arl_dm.DataTypeFunctionFlags.Solve):
                 continue
             # TODO: task vs function
             self.out.println("%d: begin // %s" % (
@@ -173,6 +155,47 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
             self.visit(f)
             self.out.dec_ind()
             self.out.println("end")
+        self.out.println("default: begin")
+        self.out.inc_ind()
+        self.out.println("$display(\"FATAL: unsupported function id %d\", func_id);")
+        self.out.println("$finish;")
+        self.out.dec_ind()
+        self.out.println("end")
+
+        self.out.dec_ind()
+        self.out.println("endcase")
+
+        self.out.dec_ind()
+        self.out.println("endtask")
+
+        self.out.println("virtual function void invokeFuncSolve(")
+        self.out.inc_ind()
+        self.out.println("zuspec::EvalThread     thread,")
+        self.out.println("int                    func_id,")
+        self.out.println("zuspec::ValRef         params[]);")
+        self.out.println("case (func_id)")
+        self.out.inc_ind()
+        for f in ctxt.getDataTypeFunctions():
+            if f.name() not in self.method_name_id_m.keys():
+                continue
+            if not f.hasFlags(arl_dm.DataTypeFunctionFlags.Solve):
+                continue
+
+            # TODO: task vs function
+            self.out.println("%d: begin // %s" % (
+                self.method_name_id_m[f.name()],
+                f.name()))
+            self.out.inc_ind()
+            self.visit(f)
+            self.out.dec_ind()
+            self.out.println("end")
+
+        self.out.println("default: begin")
+        self.out.inc_ind()
+        self.out.println("$display(\"FATAL: unsupported function id %d\", func_id);")
+        self.out.println("$finish;")
+        self.out.dec_ind()
+        self.out.println("end")
         self.out.dec_ind()
         self.out.println("endcase")
 
@@ -186,8 +209,7 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.out.dec_ind()
         self.out.println("endpackage")
 
-        print("Result:\n%s" % self.out.getvalue())
-        pass
+        fp.close()
 
     def visitDataTypeFunction(self, t):
         if self.phase in (Phase.BaseIF, Phase.PureIF):
@@ -239,7 +261,7 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
             self.out.println("endtask")
 
     def emitFuncCall(self, t):
-        is_target = False # TODO:
+        is_target = not t.hasFlags(arl_dm.DataTypeFunctionFlags.Solve) # TODO:
 
         # Declare temp variables for parameters
         parameters = t.getParameters()
@@ -291,7 +313,7 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         gen_cmd.set_defaults(func=CmdGenerateSv())
 
         gen_cmd.add_argument("-o", "--output",
-            help="Specifies output file", default="pss_sv_if.svh")
+            help="Specifies output file", default="pss_api_pkg.sv")
 
         CmdParseBase.addFileArgs(gen_cmd)
 
