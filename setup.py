@@ -184,6 +184,7 @@ class build_ext(_build_ext):
         """ Like the base class method, but copy libs into proper directory in develop. """
         print("copy_extensions_to_source")
         super().copy_extensions_to_source()
+        return
 
         build_py = self.get_finalized_command("build_py")
         
