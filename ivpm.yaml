@@ -9,7 +9,41 @@ package:
   dep-sets:
 
   - name: default
-    deps: []
+    deps: 
+    - name: pytypeworks
+      url: https://github.com/fvutils/pytypeworks.git
+    - name: pyvsc-dataclasses
+      url: https://github.com/vsc-tools/pyvsc-dataclasses.git
+    - name: zuspec-dataclasses
+      url: https://github.com/zuspec/zuspec-dataclasses.git
+    - name: vsc-dm
+      url: https://github.com/vsc-tools/vsc-dm.git
+    - name: vsc-solvers
+      url: https://github.com/vsc-tools/vsc-solvers.git
+    - name: zuspec-arl-dm
+      url: https://github.com/zuspec/zuspec-arl-dm.git
+    - name: zuspec-arl-eval
+      url: https://github.com/zuspec/zuspec-arl-eval.git
+    - name: zuspec-parser
+      url: https://github.com/zuspec/zuspec-parser.git
+    - name: zuspec-fe-parser
+      url: https://github.com/zuspec/zuspec-fe-parser.git
+    - name: zuspec-be-sw
+      url: https://github.com/zuspec/zuspec-be-sw.git
+    - name: zuspec
+      url: https://github.com/zuspec/zuspec.git
+    - name: fltools
+      url: https://github.com/fvutils/fltools.git
+    - name: fusesoc
+      url: https://github.com/olofk/fusesoc.git
+    - name: ciostream
+      url: https://github.com/mballance-utils/ciostream.git
+    - name: ivpm
+      src: pypi
+    - name: ninja
+      src: pypi
+    - name: cython
+      src: pypi
 
   - name: default-dev
     deps:
