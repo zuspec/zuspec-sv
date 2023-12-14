@@ -44,6 +44,7 @@ Actor::Actor(
             vsc_solvers_getFactory(),
             ctxt,
             m_randstate.get(),
+            0, // TODO: pyeval
             comp_t,
             action_t,
             backend));

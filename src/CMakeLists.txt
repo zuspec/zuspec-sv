@@ -10,6 +10,7 @@ target_include_directories(zsp-sv PUBLIC
     ${CMAKE_BINARY_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${debug_mgr_INCDIR}
+    ${pyapi_compat_if_INCDIR}
     ${zsp_arl_dm_INCDIR}
     ${zsp_arl_eval_INCDIR}
     ${zsp_fe_parser_INCDIR}
@@ -21,6 +22,7 @@ target_include_directories(zsp-sv PUBLIC
 target_link_directories(zsp-sv PRIVATE
     ${CMAKE_BINARY_DIR}/lib
     ${CMAKE_BINARY_DIR}/lib64
+    ${pyapi_compat_if_LIBDIR}
     ${zsp_arl_eval_LIBDIR}
     ${zsp_fe_parser_LIBDIR}
     ${zsp_arl_dm_LIBDIR}
@@ -37,6 +39,7 @@ target_link_libraries(zsp-sv
     zsp-arl-dm
     ast
     vsc-dm
+    pyapi-compat-if
     debug-mgr)
 
 #add_dependencies(zsp-sv 

@@ -290,7 +290,9 @@ extern "C" const char *zuspec_DataTypeFunction_name(
 
 extern "C" void zuspec_EvalThread_setVoidResult(
     chandle     thread_h) {
-    reinterpret_cast<zsp::arl::eval::IEvalThread *>(thread_h)->setVoidResult();
+//    reinterpret_cast<zsp::arl::eval::IEvalThread *>(thread_h)->setVoidResult();
+    fprintf(stdout, "ERROR: implement setVoidResult");
+    fflush(stdout);
 }
 
 extern "C" void zuspec_EvalThread_setIntResult(

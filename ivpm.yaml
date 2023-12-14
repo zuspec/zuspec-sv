@@ -65,16 +65,8 @@ package:
       url: https://github.com/zuspec/zuspec-parser.git
     - name: zuspec-fe-parser
       url: https://github.com/zuspec/zuspec-fe-parser.git
-    - name: zuspec-be-sw
-      url: https://github.com/zuspec/zuspec-be-sw.git
-    - name: zuspec
-      url: https://github.com/zuspec/zuspec.git
-    - name: fltools
-      url: https://github.com/fvutils/fltools.git
-    - name: fusesoc
-      url: https://github.com/olofk/fusesoc.git
-    - name: ciostream
-      url: https://github.com/mballance-utils/ciostream.git
+    - name: zuspec-cli
+      url: https://github.com/zuspec/zuspec-cli.git
     - name: ivpm
       src: pypi
     - name: ninja
