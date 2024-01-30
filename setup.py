@@ -42,8 +42,8 @@ if os.path.isdir(os.path.join(zuspec_sv_dir, "packages")):
 else:
     parent = os.path.dirname(zuspec_sv_dir)
     
-    if os.path.isdir(os.path.join(parent, "zuspec-arl-eval")):
-        print("zuspec-arl-eval is a peer")
+    if os.path.isdir(os.path.join(parent, "zuspec-sv")):
+        print("zuspec-sv is a peer")
         packages_dir = parent
     else:
         raise Exception("Unexpected source layout")
@@ -184,7 +184,6 @@ class build_ext(_build_ext):
         """ Like the base class method, but copy libs into proper directory in develop. """
         print("copy_extensions_to_source")
         super().copy_extensions_to_source()
-        return
 
         build_py = self.get_finalized_command("build_py")
         
@@ -196,8 +195,8 @@ class build_ext(_build_ext):
         package_dir = build_py.get_package_dir(package)
 
         copy_file(
-            os.path.join(cwd, "build", "src", "libzsp-arl-eval.so"),
-            os.path.join(package_dir, "libzsp-arl-eval.so"))
+            os.path.join(cwd, "build", "src", "libzsp-sv.so"),
+            os.path.join(package_dir, "libzsp-sv.so"))
                 
         dest_filename = os.path.join(package_dir, filename)
         

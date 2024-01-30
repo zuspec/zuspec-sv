@@ -222,6 +222,11 @@ extern "C" uint32_t zuspec_init(
     return zsp::sv::ZuspecSv::inst()->init(pss_files, load, debug);
 }
 
+extern "C" void zuspec_enableDebug(int en) {
+    zsp::sv::ZuspecSv *zsp_sv = zsp::sv::ZuspecSv::inst();
+    zsp_sv->getDebugMgr()->enable(en);
+}
+
 extern "C" chandle zuspec_Actor_new(
     const char          *seed,
     const char          *comp_t_s,
@@ -237,17 +242,28 @@ extern "C" chandle zuspec_Actor_new(
         return 0;
     }
 
-    zsp::arl::dm::IDataTypeComponent *comp_t = ctxt->findDataTypeComponent(comp_t_s);
-    if (!comp_t) {
+    vsc::dm::IDataTypeStruct *comp_s = ctxt->findDataTypeStruct(comp_t_s);
+    if (!comp_s) {
         snprintf(tmp, sizeof(tmp), "Failed to find component %s", comp_t_s);
         zuspec_fatal(tmp);
         return 0;
     }
+    zsp::arl::dm::IDataTypeComponent *comp_t = dynamic_cast<zsp::arl::dm::IDataTypeComponent *>(comp_s);
+    if (!comp_t) {
+        snprintf(tmp, sizeof(tmp), "Type %s is not a component", comp_t_s);
+        zuspec_fatal(tmp);
+        return 0;
+    }
 
-    zsp::arl::dm::IDataTypeAction *action_t = ctxt->findDataTypeAction(action_t_s);
-
-    if (!action_t) {
+    vsc::dm::IDataTypeStruct *action_s = ctxt->findDataTypeStruct(action_t_s);
+    if (!action_s) {
         snprintf(tmp, sizeof(tmp), "Failed to find action %s", action_t_s);
+        zuspec_fatal(tmp);
+        return 0;
+    }
+    zsp::arl::dm::IDataTypeAction *action_t = dynamic_cast<zsp::arl::dm::IDataTypeAction *>(action_s);
+    if (!action_t) {
+        snprintf(tmp, sizeof(tmp), "Type %s is not an action", action_t_s);
         zuspec_fatal(tmp);
         return 0;
     }

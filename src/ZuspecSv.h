@@ -46,6 +46,10 @@ public:
 
     bool ensureLoaded();
 
+    dmgr::IDebugMgr *getDebugMgr() const {
+        return m_dmgr;
+    }
+
     arl::dm::IContext *ctxt() const {
         return m_ctxt.get();
     }

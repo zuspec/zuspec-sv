@@ -19,7 +19,7 @@
  *     Author:
  */
 
-// `define ZUSPEC_DEBUG_EN
+`define ZUSPEC_DEBUG_EN
 
 `ifdef ZUSPEC_DEBUG_EN
 `define ZUSPEC_DEBUG(msg) $display msg
@@ -257,37 +257,39 @@ package zuspec;
    * DPI functions
    ******************************************************************/
 
-  import "DPI-C" function chandle zuspec_Actor_new(
+  import "DPI-C" context function void zuspec_enableDebug(int en);
+
+  import "DPI-C" context function chandle zuspec_Actor_new(
     string              randstate,
     string              comp_t,
     string              action_t,
     longint unsigned    backend_h);
-  import "DPI-C" function int zuspec_Actor_eval(
+  import "DPI-C" context function int zuspec_Actor_eval(
     chandle             actor_h);
-  import "DPI-C" function int unsigned zuspec_Actor_registerFunctionId(
+  import "DPI-C" context function int unsigned zuspec_Actor_registerFunctionId(
     chandle             actor_h,
     string              name,
     int                 id);
-  import "DPI-C" function int zuspec_Actor_getFunctionId(
+  import "DPI-C" context function int zuspec_Actor_getFunctionId(
     chandle             actor_h,
     chandle             func_h);
 
-  import "DPI-C" function string zuspec_DataTypeFunction_name(
+  import "DPI-C" context function string zuspec_DataTypeFunction_name(
     chandle             func_h);
 
-  import "DPI-C" function longint unsigned zuspec_EvalBackendProxy_new();
+  import "DPI-C" context function longint unsigned zuspec_EvalBackendProxy_new();
 
 
-  import "DPI-C" function int unsigned zuspec_init(
+  import "DPI-C" context function int unsigned zuspec_init(
     string pss_files,
     int    load,
     int    debug_en
   );
 
-  import "DPI-C" function int unsigned zuspec_ValRefList_size(
+  import "DPI-C" context function int unsigned zuspec_ValRefList_size(
     chandle list_h
   );
-  import "DPI-C" function chandle zuspec_ValRefList_at(
+  import "DPI-C" context function chandle zuspec_ValRefList_at(
     chandle list_h,
     int     idx
   );
@@ -320,30 +322,30 @@ package zuspec;
   endfunction
   export "DPI-C" function zuspec_EvalBackendProxy_emitMessage;
 
-  import "DPI-C" function void zuspec_EvalThread_setVoidResult(
+  import "DPI-C" context function void zuspec_EvalThread_setVoidResult(
     chandle             thread_h
   );
 
-  import "DPI-C" function void zuspec_EvalThread_setIntResult(
+  import "DPI-C" context function void zuspec_EvalThread_setIntResult(
     chandle             thread_h,
     longint             value,
     int                 is_signed,
     int                 width);
-  import "DPI-C" function longint unsigned zuspec_ValRef_get_uint64(
+  import "DPI-C" context function longint unsigned zuspec_ValRef_get_uint64(
     chandle             valref_h);
-  import "DPI-C" function longint zuspec_ValRef_get_int64(
+  import "DPI-C" context function longint zuspec_ValRef_get_int64(
     chandle             valref_h);
-  import "DPI-C" function int unsigned zuspec_ValRef_get_uint32(
+  import "DPI-C" context function int unsigned zuspec_ValRef_get_uint32(
     chandle             valref_h);
-  import "DPI-C" function int zuspec_ValRef_get_int32(
+  import "DPI-C" context function int zuspec_ValRef_get_int32(
     chandle             valref_h);
-  import "DPI-C" function shortint unsigned zuspec_ValRef_get_uint16(
+  import "DPI-C" context function shortint unsigned zuspec_ValRef_get_uint16(
     chandle             valref_h);
-  import "DPI-C" function shortint zuspec_ValRef_get_int16(
+  import "DPI-C" context function shortint zuspec_ValRef_get_int16(
     chandle             valref_h);
-  import "DPI-C" function byte unsigned zuspec_ValRef_get_uint8(
+  import "DPI-C" context function byte unsigned zuspec_ValRef_get_uint8(
     chandle             valref_h);
-  import "DPI-C" function byte zuspec_ValRef_get_int8(
+  import "DPI-C" context function byte zuspec_ValRef_get_int8(
     chandle             valref_h);
 
 endpackage
