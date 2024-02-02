@@ -40,6 +40,7 @@ public:
     virtual void emitMessage(const std::string &msg) override;
 
 private:
+    std::vector<vsc::dm::ValRef>                m_params;
 
 };
 

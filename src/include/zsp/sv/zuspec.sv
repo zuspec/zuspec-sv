@@ -19,7 +19,7 @@
  *     Author:
  */
 
-`define ZUSPEC_DEBUG_EN
+`undef ZUSPEC_DEBUG_EN
 
 `ifdef ZUSPEC_DEBUG_EN
 `define ZUSPEC_DEBUG(msg) $display msg
@@ -211,6 +211,10 @@ package zuspec;
         zuspec_EvalThread_setIntResult(m_hndl, value, int'(is_signed), width);
     endfunction
 
+    function longint unsigned getAddrHandleValue(ValRef val);
+        return zuspec_EvalThread_getAddrHandleValue(m_hndl, val.m_hndl);
+    endfunction
+
   endclass
 
   bit _init = pkg_init();
@@ -325,6 +329,10 @@ package zuspec;
   import "DPI-C" context function void zuspec_EvalThread_setVoidResult(
     chandle             thread_h
   );
+
+  import "DPI-C" context function longint unsigned zuspec_EvalThread_getAddrHandleValue(
+    chandle             thread_h,
+    chandle             valref_h);
 
   import "DPI-C" context function void zuspec_EvalThread_setIntResult(
     chandle             thread_h,

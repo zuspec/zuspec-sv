@@ -38,13 +38,19 @@ void EvalBackendProxy::callFuncReq(
             arl::eval::IEvalThread              *thread,
             arl::dm::IDataTypeFunction          *func_t,
             const std::vector<vsc::dm::ValRef>  &params) {
+    // TODO: handle multiple outstanding per-thread calls
+    m_params.clear();
+    for (std::vector<vsc::dm::ValRef>::const_iterator
+        it=params.begin();
+        it!=params.end(); it++) {
+        m_params.push_back(*it);
+    }
     zuspec_EvalBackendProxy_callFuncReq(
         reinterpret_cast<chandle>(this),
         reinterpret_cast<chandle>(thread),
         reinterpret_cast<chandle>(func_t),
         !func_t->hasFlags(arl::dm::DataTypeFunctionFlags::Solve),
-        reinterpret_cast<const chandle>(
-            const_cast<std::vector<vsc::dm::ValRef> *>(&params))
+        reinterpret_cast<chandle>(&m_params)
     );
 }
 

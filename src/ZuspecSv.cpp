@@ -306,9 +306,8 @@ extern "C" const char *zuspec_DataTypeFunction_name(
 
 extern "C" void zuspec_EvalThread_setVoidResult(
     chandle     thread_h) {
-//    reinterpret_cast<zsp::arl::eval::IEvalThread *>(thread_h)->setVoidResult();
-    fprintf(stdout, "ERROR: implement setVoidResult");
-    fflush(stdout);
+    reinterpret_cast<zsp::arl::eval::IEvalThread *>(thread_h)->setFlags(
+        zsp::arl::eval::EvalFlags::Complete);
 }
 
 extern "C" void zuspec_EvalThread_setIntResult(
@@ -319,6 +318,16 @@ extern "C" void zuspec_EvalThread_setIntResult(
     zsp::arl::eval::IEvalThread *thread = 
         reinterpret_cast<zsp::arl::eval::IEvalThread *>(thread_h);
     thread->setResult(thread->mkValRefInt(value, is_signed, width));
+}
+
+extern "C" uint64_t zuspec_EvalThread_getAddrHandleValue(
+    chandle     thread_h,
+    chandle     valref_h) {
+    zsp::arl::eval::IEvalThread *thread = 
+        reinterpret_cast<zsp::arl::eval::IEvalThread *>(thread_h);
+    vsc::dm::ValRef *valref = reinterpret_cast<vsc::dm::ValRef *>(valref_h);
+    vsc::dm::ValRefInt value = thread->getAddrHandleValue(*valref);
+    return value.get_val_u();
 }
 
 extern "C" uint8_t zuspec_ValRef_get_uint8(chandle valref_h) {
