@@ -32,9 +32,12 @@ class GenGetRefVal(arl_dm.VisitorBase):
         self.param = param
         self.visit(dt)
 
+    def visitDataTypeAddrHandle(self, i):
+        self.write("%s.get_uint64()" % self.param)
+
     def visitDataTypeInt(self, i):
-        width = 32
-        is_signed = False
+        width = i.width()
+        is_signed = i.is_signed()
 
         if width > 32:
             self.write("%s.get_%sint64()" % (self.param,"u" if not is_signed else ""))

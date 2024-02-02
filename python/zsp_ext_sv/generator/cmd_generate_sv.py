@@ -23,6 +23,7 @@ import argparse
 from enum import Enum, auto
 from .gen_data_type import GenDataType
 from .gen_get_ref_val import GenGetRefVal
+from .gen_set_ret_val import GenSetRetVal
 from zuspec.gen import Output
 from zuspec.cmd import CmdParseBase
 import zsp_arl_dm.core as arl_dm
@@ -39,8 +40,12 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.ignore_funcs = {
             "addr_reg_pkg::make_handle_from_claim",
             "addr_reg_pkg::make_handle_from_handle",
+            "addr_reg_pkg::reg_group_c::get_offset_of_instance",
+            "addr_reg_pkg::reg_group_c::get_offset_of_instance_array",
+            "addr_reg_pkg::reg_group_c::get_offset_of_path",
             "addr_reg_pkg::addr_value",
             "executor_pkg::executor",
+            "std_pkg::print",
         }
         self.out = None
         self.phase = None
@@ -59,7 +64,6 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.out = Output(fp)
         self.out.println("package pss_api_pkg;")
         self.out.inc_ind()
-        self.out.println("import zuspec::*;")
         self.out.println("")
 
         self.out.println("class EmptyBase;")
@@ -94,6 +98,16 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
 
             self.out.println("endclass")
             self.out.println("")
+        self.out.dec_ind()
+        self.out.println("endpackage")
+        self.out.println("")
+        self.out.println("")
+
+        self.out.println("package zuspec_actor_pkg;")
+        self.out.inc_ind()
+        self.out.println("import zuspec::*;")
+        self.out.println("import pss_api_pkg::*;")
+        self.out.println("")
         
         self.phase = Phase.Actor
         self.out.println("class Actor #(type TARGET_T=PssIF) extends MethodBridge;")
@@ -134,6 +148,8 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.out.println("m_core.run();")
         self.out.dec_ind()
         self.out.println("endtask")
+        self.out.println("")
+        self.out.println("")
 
         self.out.println("virtual task invokeFuncTarget(")
         self.out.inc_ind()
@@ -222,6 +238,8 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
             return
         name = t.name()
 
+#        print("Function: %s" % name, flush=True)
+
         if name not in self.method_name_id_m.keys():
             sz = len(self.method_id_name_m)
             self.method_name_id_m[name] = sz
@@ -299,17 +317,14 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.out.dec_ind()
         self.out.println(");")
         if t.getReturnType() is not None:
-            pass
+            GenSetRetVal(self.out).gen(t.getReturnType())
         else:
             self.out.println("thread.setVoidResult();")
 
-        pass
-
-
     @staticmethod
     def addGenerateSvCmd(name, subparsers):
-        gen_cmd = subparsers.add_parser("generate-sv",
-                    help="Generate SystemVerilog interface files")
+        gen_cmd = subparsers.add_parser("gen-sv-import-api",
+                    help="Generate SystemVerilog class API for PSS import functions")
         gen_cmd.set_defaults(func=CmdGenerateSv())
 
         gen_cmd.add_argument("-o", "--output",

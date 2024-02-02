@@ -31,9 +31,12 @@ class GenDataType(arl_dm.VisitorBase):
     def gen(self, dt):
         self.visit(dt)
 
+    def visitDataTypeAddrHandle(self, i):
+        self.write("longint unsigned")
+
     def visitDataTypeInt(self, i):
-        width = 32
-        is_signed = False
+        width = i.width()
+        is_signed = i.is_signed()
 
         if width > 32:
             self.write("longint%s" % (" unsigned" if not is_signed else "",))
