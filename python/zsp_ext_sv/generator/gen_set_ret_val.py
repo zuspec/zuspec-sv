@@ -31,7 +31,10 @@ class GenSetRetVal(arl_dm.VisitorBase):
         self.visit(dt)
 
     def visitDataTypeInt(self, i):
-        self._out.println("thread.setIntResult(__retval);")
+        self._out.println("thread.setIntResult(__retval, %s, %d);" % (
+            "1" if i.is_signed() else "0",
+            i.width()
+        ))
 
     def visitDataTypeStruct(self, i):
         raise Exception("Returning a struct type is not supported")
