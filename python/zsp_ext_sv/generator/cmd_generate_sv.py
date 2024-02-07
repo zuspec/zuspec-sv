@@ -54,7 +54,7 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         pass
 
     def __call__(self, args):
-        ctxt = self.parseFilesToCtxt(args.files)
+        self.ctxt = self.parseFilesToCtxt(args.files)
 
         self.method_id_name_m = {}
         self.method_name_id_m = {}
@@ -74,6 +74,14 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.out.println("endclass")
         self.out.println()
 
+        en_functions = []
+
+        for f in self.ctxt.getDataTypeFunctions():
+            print("Function: %s" % f.name(), flush=True)
+            if not self.ignore_func(f):
+                print("  Add to list", flush=True)
+                en_functions.append(f)
+
         for phase in (Phase.PureIF, Phase.BaseIF):
             self.phase = phase
 
@@ -91,7 +99,7 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
                 self.out.dec_ind()
                 self.out.println("endfunction")
 
-            for f in ctxt.getDataTypeFunctions():
+            for f in en_functions:
                 self.visit(f)
 
             self.out.dec_ind()
@@ -158,7 +166,7 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.out.println("zuspec::ValRef         params[]);")
         self.out.println("case (func_id)")
         self.out.inc_ind()
-        for f in ctxt.getDataTypeFunctions():
+        for f in self.ctxt.getDataTypeFunctions():
             if f.name() not in self.method_name_id_m.keys():
                 continue
             if f.hasFlags(arl_dm.DataTypeFunctionFlags.Solve):
@@ -191,7 +199,7 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
         self.out.println("zuspec::ValRef         params[]);")
         self.out.println("case (func_id)")
         self.out.inc_ind()
-        for f in ctxt.getDataTypeFunctions():
+        for f in self.ctxt.getDataTypeFunctions():
             if f.name() not in self.method_name_id_m.keys():
                 continue
             if not f.hasFlags(arl_dm.DataTypeFunctionFlags.Solve):
@@ -227,14 +235,50 @@ class CmdGenerateSv(arl_dm.VisitorBase,CmdParseBase):
 
         fp.close()
 
+    def visitDataTypeAction(self, t):
+        pass
+
+    def visitDataTypeStruct(self, t):
+        pass
+
+    def visitDataTypeComponent(self, t):
+        pass
+
     def visitDataTypeFunction(self, t):
+        print("Name: %s" % t.name(), flush=True)
         if self.phase in (Phase.BaseIF, Phase.PureIF):
             self.emitFuncDecl(t)
         elif self.phase == Phase.Actor:
             self.emitFuncCall(t)
+
+    def ignore_func(self, t : arl_dm.DataTypeFunction):
+        ignore_elems = { "reg_group_c", "transparent_addr_space_c" }
+        ignore_prefs = { 'contiguous_addr_space_c<', 'transparent_addr_space_c<', 'reg_c<' }
+
+        if t.name() in self.ignore_funcs:
+            return True
+        
+        elems = t.name().split("::")
+        
+        for elem in elems:
+            print("Check elem \"%s\"" % elem, flush=True)
+            if elem in ignore_elems:
+                return True
+            
+            for pref in ignore_prefs:
+                if elem.startswith(pref):
+                    return True
+
+
+            dt = self.ctxt.findDataTypeStruct(elem)
+
+            if dt is not None:
+                return True
+
+        return False
     
     def emitFuncDecl(self, t):
-        if t.name() in self.ignore_funcs:
+        if self.ignore_func(t):
             return
         name = t.name()
 
