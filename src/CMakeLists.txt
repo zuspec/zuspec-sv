@@ -19,28 +19,28 @@ target_include_directories(zsp-sv PUBLIC
     ${vsc_solvers_INCDIR}
     )
 
-target_link_directories(zsp-sv PRIVATE
-    ${CMAKE_BINARY_DIR}/lib
-    ${CMAKE_BINARY_DIR}/lib64
-    ${pyapi_compat_if_LIBDIR}
-    ${zsp_arl_eval_LIBDIR}
-    ${zsp_fe_parser_LIBDIR}
-    ${zsp_arl_dm_LIBDIR}
-    ${vsc_dm_LIBDIR}
-    ${vsc_solvers_LIBDIR}
-    ${zsp_parser_LIBDIR}
-    ${debug_mgr_LIBDIR}
-    )
-target_link_libraries(zsp-sv
-    zsp-arl-eval
-    zsp-parser
-    zsp-fe-parser
-    vsc-solvers
-    zsp-arl-dm
-    ast
-    vsc-dm
-    pyapi-compat-if
-    debug-mgr)
+# target_link_directories(zsp-sv PRIVATE
+#     ${CMAKE_BINARY_DIR}/lib
+#     ${CMAKE_BINARY_DIR}/lib64
+#     ${pyapi_compat_if_LIBDIR}
+#     ${zsp_arl_eval_LIBDIR}
+#     ${zsp_fe_parser_LIBDIR}
+#     ${zsp_arl_dm_LIBDIR}
+#     ${vsc_dm_LIBDIR}
+#     ${vsc_solvers_LIBDIR}
+#     ${zsp_parser_LIBDIR}
+#     ${debug_mgr_LIBDIR}
+#     )
+# target_link_libraries(zsp-sv
+#     zsp-arl-eval
+#     zsp-parser
+#     zsp-fe-parser
+#     vsc-solvers
+#     zsp-arl-dm
+#     ast
+#     vsc-dm
+#     pyapi-compat-if
+#     debug-mgr)
 
 #add_dependencies(zsp-sv 
 #    LibVSC-DM 
