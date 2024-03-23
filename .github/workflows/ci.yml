@@ -52,30 +52,30 @@ jobs:
           run: |
             ${IVPM_PYTHON} -m twine upload wheelhouse/*.whl
 
-    macos:
-        runs-on: macos-latest
-        steps:
-        - uses: actions/checkout@v2
-        - name: Fetch dependencies
-          run: |
-            python3 --version
-            python3 -m pip install ivpm
-            python3 -m ivpm update -a
-            ./packages/python/bin/python3 -m pip install cython setuptools wheel build twine
-        - name: Build wheel
-          env:
-            BUILD_NUM: ${{ github.run_id }}
-          run: |
-            echo "BUILD_NUM=${BUILD_NUM}" >> python/zsp_sv/__build_num__.py
-            ls python/zsp_sv
-            ./packages/python/bin/python3 setup.py bdist_wheel
-        - name: Publish to PyPi
-          if: startsWith(github.ref, 'refs/heads/main')
-          env:
-            TWINE_USERNAME: __token__
-            TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-          run: |
-            ./packages/python/bin/python3 -m twine  upload dist/*.whl
+    # macos:
+    #     runs-on: macos-latest
+    #     steps:
+    #     - uses: actions/checkout@v2
+    #     - name: Fetch dependencies
+    #       run: |
+    #         python3 --version
+    #         python3 -m pip install ivpm
+    #         python3 -m ivpm update -a
+    #         ./packages/python/bin/python3 -m pip install cython setuptools wheel build twine
+    #     - name: Build wheel
+    #       env:
+    #         BUILD_NUM: ${{ github.run_id }}
+    #       run: |
+    #         echo "BUILD_NUM=${BUILD_NUM}" >> python/zsp_sv/__build_num__.py
+    #         ls python/zsp_sv
+    #         ./packages/python/bin/python3 setup.py bdist_wheel
+    #     - name: Publish to PyPi
+    #       if: startsWith(github.ref, 'refs/heads/main')
+    #       env:
+    #         TWINE_USERNAME: __token__
+    #         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+    #       run: |
+    #         ./packages/python/bin/python3 -m twine  upload dist/*.whl
 
     # windows:
     #     runs-on: ${{ matrix.platform }}
