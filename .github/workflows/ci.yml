@@ -24,6 +24,8 @@ jobs:
             IVPM_PYTHON: /opt/python/${{ matrix.spec }}/bin/python
             BUILD_NUM: ${{ github.run_id }}
           run: |
+            yum install -y glibc-static 
+            yum install -y java-11-openjdk-devel uuid-devel libuuid-devel
             echo "BUILD_NUM=${BUILD_NUM}" >> python/zsp_sv/__build_num__.py
             ls python/zsp_sv
             ${IVPM_PYTHON} -m pip install ivpm cython
