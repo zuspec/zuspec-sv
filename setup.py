@@ -66,7 +66,8 @@ setup_args = dict(
     'zuspec-parser',
     'zuspec-fe-parser',
     'zuspec-arl-dm',
-    'zuspec-arl-eval'
+    'zuspec-arl-eval',
+    'zuspec-cli'
   ],
   entry_points={
       'ivpm.pkginfo': [
@@ -75,8 +76,6 @@ setup_args = dict(
   },
   setup_requires=[
     'setuptools_scm',
-    'vsc-dm',
-    'debug-mgr',
     'cython',
   ],
   ext_modules=[ ext ]
