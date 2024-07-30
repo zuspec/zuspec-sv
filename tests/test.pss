@@ -1,0 +1,15 @@
+
+function void doit();
+import target function doit;
+
+component pss_top {
+  action Entry {
+    exec body {
+      doit();
+      doit();
+      doit();
+    }
+  }
+}
+
+

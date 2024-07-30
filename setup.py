@@ -82,7 +82,12 @@ setup_args = dict(
 )
 
 if isSrcBuild:
-    setup_args["ivpm_extdep_pkgs"] = ["zuspec-parser", "zuspec-fe-parser", "zuspec-arl-eval"]
+    setup_args["ivpm_extdep_pkgs"] = [
+        "zuspec-parser", 
+        "zuspec-fe-parser", 
+        "zuspec-arl-dm",
+        "zuspec-arl-eval",
+        "vsc-dm"]
     setup_args["ivpm_extra_data"] = {
         "zsp_sv": [
             ("src/include", "share"),

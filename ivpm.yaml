@@ -7,7 +7,6 @@ package:
   - cython
 
   dep-sets:
-
   - name: default
     deps: 
     - name: pytypeworks
@@ -38,8 +37,6 @@ package:
       url: https://github.com/olofk/fusesoc.git
     - name: ciostream
       url: https://github.com/mballance-utils/ciostream.git
-    - name: ivpm
-      src: pypi
     - name: ninja
       src: pypi
     - name: cython
@@ -67,8 +64,8 @@ package:
       url: https://github.com/zuspec/zuspec-fe-parser.git
     - name: zuspec-cli
       url: https://github.com/zuspec/zuspec-cli.git
-    - name: ivpm
-      src: pypi
+    - name: pytest-fv
+      url: https://github.com/fvutils/pytest-fv.git
     - name: ninja
       src: pypi
     - name: cython
@@ -87,5 +84,11 @@ package:
       src: pypi
     - name: sphinx-jsonschema
       src: pypi
+  
+  envs:
+  - name: default
+    env: 
+    - var: PYTEST_FV_OUTDIR
+      val: ${PROJECT_ROOT}/out
 
 

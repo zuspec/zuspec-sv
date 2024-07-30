@@ -1,0 +1,66 @@
+
+import os
+import ctypes
+import typing
+from zsp_sv cimport decl
+from libcpp.vector cimport vector as cpp_vector
+from libc.stdint cimport intptr_t
+cimport ciostream.core as ciostream
+cimport debug_mgr.core as dm_core
+cimport vsc_dm.decl as vsc_dm_decl
+cimport vsc_dm.core as vsc_dm
+cimport zsp_arl_dm.core as arl_dm
+cimport zsp_arl_dm.decl as arl_dm_decl
+
+cdef _FactoryInst = None
+
+cdef class Factory(object):
+
+    cpdef void init(self, dm_core.Factory dmgr):
+        self._hndl.init(dmgr._hndl.getDebugMgr())
+
+    @staticmethod
+    def inst():
+        cdef Factory factory
+        global _FactoryInst
+
+        if _FactoryInst is None:
+            ext_dir = os.path.dirname(os.path.abspath(__file__))
+            build_dir = os.path.join(
+                os.path.dirname(os.path.dirname(ext_dir)), "build")
+
+            core_lib = None
+            if os.path.isdir(build_dir):
+                for libdir in ("lib", "lib64"):
+                    core_lib = os.path.join(build_dir, libdir, "libzsp-sv.so")
+                    if os.path.isfile(core_lib):
+                        break
+                    else:
+                        core_lib = None
+            if core_lib is None:
+                core_lib = os.path.join(ext_dir, "libzsp-sv.so")
+            if not os.path.isfile(core_lib):
+                raise Exception("Extension library core \"%s\" doesn't exist" % core_lib)
+            so = ctypes.cdll.LoadLibrary(core_lib)
+
+            func = so.zsp_sv_getFactory
+            func.restype = ctypes.c_void_p
+
+            hndl = <decl.IFactoryP>(<intptr_t>(func()))
+            factory = Factory()
+            factory._hndl = hndl
+            factory.init(dm_core.Factory.inst())
+            _inst = factory
+
+cdef class TaskGenerate(object):
+
+    cpdef bool generate(self):
+        return self._hndl.generate()
+
+    @staticmethod
+    cdef TaskGenerate mk(decl.ITaskGenerate *hndl, bool owned=True):
+        ret = TaskGenerate()
+        ret._hndl = hndl
+        ret._owned = owned
+        return ret
+

@@ -4,6 +4,8 @@
             "name": "Default",
             "includePath": [
                 "${default}",
+                "src",
+                "src/include",
                 "packages/debug-mgr/src/include",
                 "packages/vsc-dm/src/include",
                 "packages/vsc-solvers/src/include",
