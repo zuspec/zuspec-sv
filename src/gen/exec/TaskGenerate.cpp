@@ -19,6 +19,9 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "gen/OutputStr.h"
+#include "gen/TaskBuildTypeCollection.h"
+#include "TaskDefineType.h"
 #include "TaskGenerate.h"
 
 
@@ -34,7 +37,7 @@ TaskGenerate::TaskGenerate(
     arl::dm::IDataTypeComponent     *comp_t,
     arl::dm::IDataTypeAction        *action_t,
     std::ostream                    *out) : m_dmgr(dmgr), m_ctxt(ctxt),
-    m_comp_t(comp_t), m_action_t(action_t) {
+    m_comp_t(comp_t), m_action_t(action_t), m_out(out) {
     DEBUG_INIT("zsp::sv::gen::exec::TaskGenerate", dmgr);
 }
 
@@ -43,7 +46,43 @@ TaskGenerate::~TaskGenerate() {
 }
 
 bool TaskGenerate::generate() {
-    return false;
+    std::string actor = "actor";
+    m_out_pub = IOutputUP(new OutputStr());
+    m_out_prv = IOutputUP(new OutputStr());
+
+    m_out_prv->println("package %s_prv;", actor.c_str());
+    m_out_prv->inc_ind();
+
+    m_out_pub->println("package %s_pkg;", actor.c_str());
+    m_out_pub->inc_ind();
+    m_out_pub->println("import %s_prv::*;", actor.c_str());
+
+    // TODO: generate content
+    TypeCollectionUP types(TaskBuildTypeCollection(m_dmgr).build(
+        m_comp_t,
+        m_action_t));
+    std::vector<int32_t> sorted = types->sort();
+
+    for (std::vector<int32_t>::const_iterator
+        it=sorted.begin();
+        it!=sorted.end(); it++) {
+        TaskDefineType(this, m_out_prv.get()).generate(
+            types->getType(*it));
+    }
+
+    m_out_prv->dec_ind();
+    m_out_prv->println("endpackage");
+
+    m_out_pub->dec_ind();
+    m_out_pub->println("endpackage");
+
+    const std::string &s = dynamic_cast<OutputStr *>(m_out_prv.get())->getValue();
+    m_out->write(s.c_str(), s.size());
+
+    const std::string &prv = dynamic_cast<OutputStr *>(m_out_pub.get())->getValue();
+    m_out->write(prv.c_str(), prv.size());
+
+    return true;
 }
 
 dmgr::IDebug *TaskGenerate::m_dbg = 0;

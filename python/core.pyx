@@ -5,7 +5,7 @@ import typing
 from zsp_sv cimport decl
 from libcpp.vector cimport vector as cpp_vector
 from libc.stdint cimport intptr_t
-cimport ciostream.core as ciostream
+from ciostream.core import costream
 cimport debug_mgr.core as dm_core
 cimport vsc_dm.decl as vsc_dm_decl
 cimport vsc_dm.core as vsc_dm
@@ -18,6 +18,21 @@ cdef class Factory(object):
 
     cpdef void init(self, dm_core.Factory dmgr):
         self._hndl.init(dmgr._hndl.getDebugMgr())
+
+    cpdef TaskGenerate mkGenerateExecActor(
+        self,
+        arl_dm.Context             ctxt,
+        arl_dm.DataTypeComponent   comp_t,
+        arl_dm.DataTypeAction      action_t,
+        object                     out):
+        cdef costream out_s = costream(out)
+        cdef decl.ITaskGenerate *gen = self._hndl.mkGenerateExecActor(
+            ctxt.asContext(),
+            comp_t.asComponent(),
+            action_t.asAction(),
+            out_s.stream())
+
+        return TaskGenerate.mk(gen, out_s, True)
 
     @staticmethod
     def inst():
@@ -50,7 +65,8 @@ cdef class Factory(object):
             factory = Factory()
             factory._hndl = hndl
             factory.init(dm_core.Factory.inst())
-            _inst = factory
+            _FactoryInst = factory
+        return _FactoryInst
 
 cdef class TaskGenerate(object):
 
@@ -58,9 +74,10 @@ cdef class TaskGenerate(object):
         return self._hndl.generate()
 
     @staticmethod
-    cdef TaskGenerate mk(decl.ITaskGenerate *hndl, bool owned=True):
+    cdef TaskGenerate mk(decl.ITaskGenerate *hndl, costream out, bool owned=True):
         ret = TaskGenerate()
         ret._hndl = hndl
+        ret._out = out
         ret._owned = owned
         return ret
 

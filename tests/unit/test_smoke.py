@@ -19,10 +19,35 @@
 #*     Author: 
 #*
 #****************************************************************************
+import io
 from .test_base import TestBase
 
 class TestSmoke(TestBase):
 
     def test_smoke(self):
-        pass
+        content = """
+        component pss_top {
+            action Entry {
+                exec post_solve {
+//                    print("Hello World!");
+                }
+            }
+        }
+        """
+
+        ctxt, comp_t, action_t = self.buildModelGetRoots(
+            content,
+            "pss_top",
+            "pss_top::Entry")
+
+        out = io.StringIO() 
+        generator = self.zsp_sv_f.mkGenerateExecActor(
+            ctxt,
+            comp_t,
+            action_t,
+            out)
+        generator.generate()
+
+        print("Output:\n%s" % out.getvalue())
+
 

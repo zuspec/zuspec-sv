@@ -22,7 +22,9 @@
 #include <iostream>
 #include "zsp/arl/dm/IContext.h"
 #include "zsp/sv/gen/ITaskGenerate.h"
+#include "gen/INameMap.h"
 #include "gen/IOutput.h"
+#include "gen/TypeCollection.h"
 
 namespace zsp {
 namespace sv {
@@ -44,6 +46,10 @@ public:
 
     virtual bool generate();
 
+    dmgr::IDebugMgr *getDebugMgr() { return m_dmgr; }
+
+    INameMap *getNameMap() { return m_namemap.get(); }
+
 protected:
     static dmgr::IDebug             *m_dbg;
     dmgr::IDebugMgr                 *m_dmgr;
@@ -51,8 +57,10 @@ protected:
     arl::dm::IDataTypeComponent     *m_comp_t;
     arl::dm::IDataTypeAction        *m_action_t;
     std::ostream                    *m_out;
-    IOutputUP                       *m_out_pub;
-    IOutputUP                       *m_out_prv;
+    IOutputUP                       m_out_pub;
+    IOutputUP                       m_out_prv;
+    INameMapUP                      m_namemap;
+
 
 
 };
