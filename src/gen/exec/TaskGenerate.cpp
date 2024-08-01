@@ -19,6 +19,7 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "gen/NameMap.h"
 #include "gen/OutputStr.h"
 #include "gen/TaskBuildTypeCollection.h"
 #include "TaskDefineType.h"
@@ -37,7 +38,8 @@ TaskGenerate::TaskGenerate(
     arl::dm::IDataTypeComponent     *comp_t,
     arl::dm::IDataTypeAction        *action_t,
     std::ostream                    *out) : m_dmgr(dmgr), m_ctxt(ctxt),
-    m_comp_t(comp_t), m_action_t(action_t), m_out(out) {
+    m_comp_t(comp_t), m_action_t(action_t), m_out(out),
+    m_namemap(new NameMap()) {
     DEBUG_INIT("zsp::sv::gen::exec::TaskGenerate", dmgr);
 }
 

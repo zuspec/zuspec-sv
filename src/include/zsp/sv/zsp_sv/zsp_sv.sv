@@ -39,6 +39,13 @@ class action extends object;
 endclass
 
 class component;
+    string      m_name;
+    component   m_parent;
+
+    function new(string name, parent=null);
+        m_name = name;
+        m_parent = parent;
+    endfunction
 
     virtual function void init_down();
     endfunction

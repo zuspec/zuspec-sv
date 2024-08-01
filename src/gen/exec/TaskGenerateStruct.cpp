@@ -21,6 +21,8 @@
 #include "dmgr/impl/DebugMacros.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateStruct.h"
+#include "TaskGenerateStructCtor.h"
+#include "TaskGenerateStructFields.h"
 
 
 namespace zsp {
@@ -50,7 +52,12 @@ void TaskGenerateStruct::generate(vsc::dm::IDataTypeStruct *t) {
     generate_head(t);
     generate_fields(t);
     generate_constraints(t);
+    generate_ctor(t);
     generate_tail(t);
+}
+
+void TaskGenerateStruct::generate_ctor(vsc::dm::IDataTypeStruct *t) {
+    TaskGenerateStructCtor(m_gen, m_out).generate(t);
 }
 
 void TaskGenerateStruct::generate_tail(vsc::dm::IDataTypeStruct *t) {
@@ -59,7 +66,7 @@ void TaskGenerateStruct::generate_tail(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateStruct::generate_fields(vsc::dm::IDataTypeStruct *t) {
-
+    TaskGenerateStructFields(m_gen, m_out).generate(t);
 }
 
 void TaskGenerateStruct::generate_constraints(vsc::dm::IDataTypeStruct *t) {

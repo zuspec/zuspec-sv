@@ -50,4 +50,32 @@ class TestSmoke(TestBase):
 
         print("Output:\n%s" % out.getvalue())
 
+    def test_smoke_nested(self):
+        content = """
+        component Sub {
+        }
 
+        component pss_top {
+            Sub c1, c2;
+            action Entry {
+                exec post_solve {
+//                    print("Hello World!");
+                }
+            }
+        }
+        """
+
+        ctxt, comp_t, action_t = self.buildModelGetRoots(
+            content,
+            "pss_top",
+            "pss_top::Entry")
+
+        out = io.StringIO() 
+        generator = self.zsp_sv_f.mkGenerateExecActor(
+            ctxt,
+            comp_t,
+            action_t,
+            out)
+        generator.generate()
+
+        print("Output:\n%s" % out.getvalue())

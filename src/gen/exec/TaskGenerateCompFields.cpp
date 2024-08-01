@@ -1,5 +1,5 @@
-/**
- * TaskGenerateComp.h
+/*
+ * TaskGenerateCompFields.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -16,10 +16,12 @@
  * limitations under the License.
  *
  * Created on:
- *     Author: 
+ *     Author:
  */
-#pragma once
-#include "TaskGenerateStruct.h"
+#include "dmgr/impl/DebugMacros.h"
+#include "TaskGenerate.h"
+#include "TaskGenerateCompFields.h"
+
 
 namespace zsp {
 namespace sv {
@@ -27,29 +29,19 @@ namespace gen {
 namespace exec {
 
 
+TaskGenerateCompFields::TaskGenerateCompFields(
+    TaskGenerate            *gen,
+    IOutput                 *out) : TaskGenerateStructFields(gen, out) {
+    m_dbg = 0;
+    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateCompFields", gen->getDebugMgr());
 
-class TaskGenerateComp :
-    public virtual TaskGenerateStruct {
-public:
-    TaskGenerateComp(
-        TaskGenerate        *gen,
-        IOutput             *out);
+}
 
-    virtual ~TaskGenerateComp();
+TaskGenerateCompFields::~TaskGenerateCompFields() {
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
-
-};
+}
 
 }
 }
 }
 }
-
-

@@ -1,5 +1,5 @@
 /**
- * TaskGenerateComp.h
+ * TaskGenerateCompFields.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,7 +19,7 @@
  *     Author: 
  */
 #pragma once
-#include "TaskGenerateStruct.h"
+#include "gen/exec/TaskGenerateStructFields.h"
 
 namespace zsp {
 namespace sv {
@@ -28,22 +28,14 @@ namespace exec {
 
 
 
-class TaskGenerateComp :
-    public virtual TaskGenerateStruct {
+class TaskGenerateCompFields :
+    public virtual TaskGenerateStructFields {
 public:
-    TaskGenerateComp(
+    TaskGenerateCompFields(
         TaskGenerate        *gen,
         IOutput             *out);
 
-    virtual ~TaskGenerateComp();
-
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
+    virtual ~TaskGenerateCompFields();
 
 };
 

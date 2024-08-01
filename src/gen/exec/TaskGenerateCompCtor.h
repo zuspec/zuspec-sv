@@ -1,5 +1,5 @@
 /**
- * TaskGenerateStruct.h
+ * TaskGenerateCompCtor.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,8 +19,7 @@
  *     Author: 
  */
 #pragma once
-#include "dmgr/IDebugMgr.h"
-#include "zsp/arl/dm/impl/VisitorBase.h"
+#include "gen/exec/TaskGenerateStructCtor.h"
 #include "gen/IOutput.h"
 
 namespace zsp {
@@ -30,32 +29,18 @@ namespace exec {
 
 class TaskGenerate;
 
-class TaskGenerateStruct : 
-    public virtual arl::dm::VisitorBase {
+class TaskGenerateCompCtor :
+    public virtual TaskGenerateStructCtor {
 public:
-    TaskGenerateStruct(
+    TaskGenerateCompCtor(
         TaskGenerate        *gen,
-        IOutput             *out
-    );
+        IOutput             *out);
 
-    virtual ~TaskGenerateStruct();
+    virtual ~TaskGenerateCompCtor();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t);
+    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
 
-    virtual void generate(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_constraints(vsc::dm::IDataTypeStruct *t);
-
-protected:
-    dmgr::IDebug                *m_dbg;
-    TaskGenerate                *m_gen;
-    IOutput                     *m_out;
+    virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent *t) override;
 
 };
 
