@@ -48,12 +48,13 @@ TaskGenerate::~TaskGenerate() {
 }
 
 bool TaskGenerate::generate() {
-    std::string actor = "actor";
+    std::string actor = "pss_top__Entry";
     m_out_pub = IOutputUP(new OutputStr());
     m_out_prv = IOutputUP(new OutputStr());
 
     m_out_prv->println("package %s_prv;", actor.c_str());
     m_out_prv->inc_ind();
+    m_out_prv->println("import zsp_sv::*;");
 
     m_out_pub->println("package %s_pkg;", actor.c_str());
     m_out_pub->inc_ind();
@@ -72,8 +73,17 @@ bool TaskGenerate::generate() {
             types->getType(*it));
     }
 
+
     m_out_prv->dec_ind();
     m_out_prv->println("endpackage");
+
+    // Define the actor
+    m_out_pub->println("class %s extends actor #(comp_t=%s, action_t=%s);", 
+        actor.c_str(),
+        getNameMap()->getName(m_comp_t).c_str(),
+        getNameMap()->getName(m_action_t).c_str());
+
+    m_out_pub->println("endclass");
 
     m_out_pub->dec_ind();
     m_out_pub->println("endpackage");

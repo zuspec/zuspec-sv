@@ -1,5 +1,5 @@
 /**
- * TaskGenerateComp.h
+ * TaskGenerateAction.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -28,24 +28,20 @@ namespace exec {
 
 
 
-class TaskGenerateComp :
+class TaskGenerateAction :
     public virtual TaskGenerateStruct {
 public:
-    TaskGenerateComp(
+    TaskGenerateAction(
         TaskGenerate        *gen,
         IOutput             *out);
 
-    virtual ~TaskGenerateComp();
+    virtual ~TaskGenerateAction();
 
     virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
 
-    virtual void generate(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t) override;
-
     virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
 
-    virtual void generate_execs(vsc::dm::IDataTypeStruct *t) override;
+    virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
 
 };
 

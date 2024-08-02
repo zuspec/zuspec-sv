@@ -4,7 +4,7 @@ package zsp_sv;
 
 typedef class object_pool_base;
 typedef class actor;
-typedef class component
+typedef class component;
 
 class object;
     object_pool_base    obj_pool;
@@ -24,8 +24,8 @@ class object;
 endclass
 
 class object_pool_base;
-    virtual function void release(object obj);
-    endfunction
+//    virtual function void release(object obj);
+//    endfunction
 endclass
 
 class action extends object;
@@ -42,7 +42,7 @@ class component;
     string      m_name;
     component   m_parent;
 
-    function new(string name, parent=null);
+    function new(string name, component parent=null);
         m_name = name;
         m_parent = parent;
     endfunction
@@ -66,15 +66,17 @@ class actor #(type comp_t=component, type action_t=action);
     component   comp_l;
     // TODO: address-space
 
-    function new();
-        comp_tree = new();
+    function new(string name="");
+        comp_tree = new(name);
     endfunction
 
     task run();
-        action_t    root_action;
+        comp_tree.init();
+        /*
+        action_t    root_action = new();
 
-        comp_tree = new();
-
+        root_action.run(this);
+         */
     endtask
 
 endclass

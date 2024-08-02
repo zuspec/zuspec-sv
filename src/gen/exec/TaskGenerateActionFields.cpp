@@ -1,5 +1,5 @@
-/**
- * TaskGenerateComp.h
+/*
+ * TaskGenerateActionFields.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -16,10 +16,12 @@
  * limitations under the License.
  *
  * Created on:
- *     Author: 
+ *     Author:
  */
-#pragma once
-#include "TaskGenerateStruct.h"
+#include "dmgr/impl/DebugMacros.h"
+#include "TaskGenerate.h"
+#include "TaskGenerateActionFields.h"
+
 
 namespace zsp {
 namespace sv {
@@ -27,31 +29,24 @@ namespace gen {
 namespace exec {
 
 
-
-class TaskGenerateComp :
-    public virtual TaskGenerateStruct {
-public:
-    TaskGenerateComp(
+TaskGenerateActionFields::TaskGenerateActionFields(
         TaskGenerate        *gen,
-        IOutput             *out);
+        IOutput             *out) : TaskGenerateStructFields(gen, out) {
+    m_dbg = 0;
+    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateActionFields", gen->getDebugMgr());
+}
 
-    virtual ~TaskGenerateComp();
+TaskGenerateActionFields::~TaskGenerateActionFields() {
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
+}
 
-    virtual void generate(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_execs(vsc::dm::IDataTypeStruct *t) override;
-
-};
+void TaskGenerateActionFields::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
+    if (f->name() != "comp") {
+        TaskGenerateStructFields::visitTypeFieldRef(f);
+    }
+}
 
 }
 }
 }
 }
-
-

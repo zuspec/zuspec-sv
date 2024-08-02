@@ -1,5 +1,5 @@
 /**
- * TaskGenerateStruct.h
+ * TaskGenerateExecBlock.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,8 +19,11 @@
  *     Author: 
  */
 #pragma once
+#include <string>
+#include <vector>
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
+#include "zsp/arl/dm/ITypeExecProc.h"
 #include "gen/IOutput.h"
 
 namespace zsp {
@@ -30,29 +33,23 @@ namespace exec {
 
 class TaskGenerate;
 
-class TaskGenerateStruct : 
-    public virtual arl::dm::VisitorBase {
+class TaskGenerateExecBlock {
 public:
-    TaskGenerateStruct(
+    TaskGenerateExecBlock(
         TaskGenerate        *gen,
-        IOutput             *out
-    );
+        IOutput             *out);
 
-    virtual ~TaskGenerateStruct();
+    virtual ~TaskGenerateExecBlock();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t);
+    virtual void generate(
+        arl::dm::ITypeExecProc *t,
+        bool                    istask,
+        const std::string       &fname);
 
-    virtual void generate(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_constraints(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_execs(vsc::dm::IDataTypeStruct *t);
+    virtual void generate(
+        const std::vector<arl::dm::ITypeExecUP> &t,
+        bool                                    istask,
+        const std::string                       &fname);
 
 protected:
     dmgr::IDebug                *m_dbg;

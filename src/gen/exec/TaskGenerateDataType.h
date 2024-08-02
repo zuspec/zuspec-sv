@@ -1,5 +1,5 @@
 /**
- * TaskGenerateStruct.h
+ * TaskGenerateDataType.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -28,37 +28,36 @@ namespace sv {
 namespace gen {
 namespace exec {
 
-class TaskGenerate;
+class TaskGenerator;
 
-class TaskGenerateStruct : 
+class TaskGenerateDataType :
     public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateStruct(
+    TaskGenerateDataType(
         TaskGenerate        *gen,
         IOutput             *out
     );
 
-    virtual ~TaskGenerateStruct();
+    virtual ~TaskGenerateDataType();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t);
+    virtual void generate(vsc::dm::IDataType *t);
 
-    virtual void generate(vsc::dm::IDataTypeStruct *t);
+	virtual void visitDataTypeBool(vsc::dm::IDataTypeBool *t) override;
 
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t);
+	virtual void visitDataTypeEnum(vsc::dm::IDataTypeEnum *t) override;
 
-    virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
+	virtual void visitDataTypeInt(vsc::dm::IDataTypeInt *t) override;
 
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t);
+	virtual void visitDataTypePtr(vsc::dm::IDataTypePtr *t) override;
 
-    virtual void generate_constraints(vsc::dm::IDataTypeStruct *t);
+	virtual void visitDataTypeString(vsc::dm::IDataTypeString *t) override;
 
-    virtual void generate_execs(vsc::dm::IDataTypeStruct *t);
+    virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
 
 protected:
     dmgr::IDebug                *m_dbg;
     TaskGenerate                *m_gen;
     IOutput                     *m_out;
-
 };
 
 }

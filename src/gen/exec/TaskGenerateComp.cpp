@@ -24,6 +24,7 @@
 #include "TaskGenerateCompCtor.h"
 #include "TaskGenerateCompFields.h"
 #include "TaskGenerateCompInit.h"
+#include "TaskGenerateExecBlock.h"
 
 
 namespace zsp {
@@ -65,6 +66,23 @@ void TaskGenerateComp::generate_ctor(vsc::dm::IDataTypeStruct *t) {
 
 void TaskGenerateComp::generate_fields(vsc::dm::IDataTypeStruct *t) {
     TaskGenerateCompFields(m_gen, m_out).generate(t);
+}
+
+void TaskGenerateComp::generate_execs(vsc::dm::IDataTypeStruct *t) {
+    std::vector<std::pair<arl::dm::ExecKindT,std::pair<bool,std::string>>> exec_t = {
+        {arl::dm::ExecKindT::InitDown, {false, "init_down"}},
+        {arl::dm::ExecKindT::InitUp, {false, "init_up"}},
+    };
+
+    for (auto it=exec_t.begin(); it!=exec_t.end(); it++) {
+        const std::vector<arl::dm::ITypeExecUP> &execs = 
+            dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(it->first);
+        
+        if (execs.size()) {
+            TaskGenerateExecBlock(m_gen, m_out).generate(
+                execs, it->second.first, it->second.second);
+        }
+    }
 }
 
 }

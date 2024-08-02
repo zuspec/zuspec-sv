@@ -1,5 +1,5 @@
 /**
- * TaskGenerateStruct.h
+ * TaskGenerateExecScope.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -22,6 +22,7 @@
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
 #include "gen/IOutput.h"
+#include "gen/OutputExecScope.h"
 
 namespace zsp {
 namespace sv {
@@ -30,34 +31,28 @@ namespace exec {
 
 class TaskGenerate;
 
-class TaskGenerateStruct : 
+class TaskGenerateExecScope :
     public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateStruct(
+    TaskGenerateExecScope(
         TaskGenerate        *gen,
         IOutput             *out
     );
 
-    virtual ~TaskGenerateStruct();
+    virtual ~TaskGenerateExecScope();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t);
+    virtual void generate(
+        arl::dm::ITypeProcStmtScope *scope,
+        bool                        newscope);
 
-    virtual void generate(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_constraints(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_execs(vsc::dm::IDataTypeStruct *t);
+    virtual void visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDecl *t) override;
 
 protected:
-    dmgr::IDebug                *m_dbg;
-    TaskGenerate                *m_gen;
-    IOutput                     *m_out;
+    dmgr::IDebug                    *m_dbg;
+    TaskGenerate                    *m_gen;
+    IOutput                         *m_out_top;
+    IOutput                         *m_out;
+    OutputExecScope                 *m_exec;
 
 };
 

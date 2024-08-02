@@ -20,6 +20,7 @@
  */
 #include "dmgr/impl/DebugMacros.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateExecBlock.h"
 #include "TaskGenerateStruct.h"
 #include "TaskGenerateStructCtor.h"
 #include "TaskGenerateStructFields.h"
@@ -53,6 +54,7 @@ void TaskGenerateStruct::generate(vsc::dm::IDataTypeStruct *t) {
     generate_fields(t);
     generate_constraints(t);
     generate_ctor(t);
+    generate_execs(t);
     generate_tail(t);
 }
 
@@ -71,6 +73,23 @@ void TaskGenerateStruct::generate_fields(vsc::dm::IDataTypeStruct *t) {
 
 void TaskGenerateStruct::generate_constraints(vsc::dm::IDataTypeStruct *t) {
 
+}
+
+void TaskGenerateStruct::generate_execs(vsc::dm::IDataTypeStruct *t) {
+    std::vector<std::pair<arl::dm::ExecKindT,std::pair<bool,std::string>>> exec_t = {
+        {arl::dm::ExecKindT::PreSolve, {false, "pre_solve"}},
+        {arl::dm::ExecKindT::PostSolve, {false, "post_solve"}},
+    };
+
+    for (auto it=exec_t.begin(); it!=exec_t.end(); it++) {
+        const std::vector<arl::dm::ITypeExecUP> &execs = 
+            dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(it->first);
+        
+        if (execs.size()) {
+            TaskGenerateExecBlock(m_gen, m_out).generate(
+                execs, it->second.first, it->second.second);
+        }
+    }
 }
 
 

@@ -21,8 +21,8 @@
 #include "dmgr/impl/DebugMacros.h"
 #include "IModelCustomGen.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateAction.h"
 #ifdef UNDEFINED
-#include "TaskAction.h"
 #include "TaskActivity.h"
 #include "TaskAddrClaim.h"
 #include "TaskAddrSpace.h"
@@ -68,7 +68,7 @@ void TaskDefineType::generate_dflt(vsc::dm::IDataType *item) {
 
 void TaskDefineType::visitDataTypeAction(arl::dm::IDataTypeAction *i) { 
     DEBUG_ENTER("visitDataTypeAction %s", i->name().c_str());
-//    TaskAction(m_gen).generate(i);
+    TaskGenerateAction(m_gen, m_out).generate(i);
     DEBUG_LEAVE("visitDataTypeAction");
 }
 

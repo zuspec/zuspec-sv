@@ -53,11 +53,16 @@ class TestSmoke(TestBase):
     def test_smoke_nested(self):
         content = """
         component Sub {
+            exec init_down {
+                int a;
+                int b;
+            }
         }
 
         component pss_top {
             Sub c1, c2;
             action Entry {
+                rand bit[4] a, b, c;
                 exec post_solve {
 //                    print("Hello World!");
                 }
