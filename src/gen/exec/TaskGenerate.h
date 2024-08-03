@@ -51,6 +51,10 @@ public:
     INameMap *getNameMap() { return m_namemap.get(); }
 
 protected:
+
+    void attach_custom_gen();
+
+protected:
     static dmgr::IDebug             *m_dbg;
     dmgr::IDebugMgr                 *m_dmgr;
     arl::dm::IContext               *m_ctxt;

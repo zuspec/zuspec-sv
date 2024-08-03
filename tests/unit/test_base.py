@@ -45,7 +45,8 @@ class TestBase(TestCase):
             self,
             content,
             comp_t,
-            action_t):
+            action_t,
+            load_stdlib=True):
         import zsp_fe_parser.core as zsp_fe
         import zsp_arl_dm.core as zsp_arl
         import zsp_parser.core as zspp
@@ -62,20 +63,22 @@ class TestBase(TestCase):
         ast_linker = zsp_f.mkAstLinker()
         zsp_fe_f = zsp_fe.Factory.inst()
 
-        core_lib = zsp_f.getAstFactory().mkGlobalScope(0)
-        zsp_f.loadStandardLibrary(ast_builder, core_lib)
+        ast_l = []
+        if load_stdlib:
+            core_lib = zsp_f.getAstFactory().mkGlobalScope(0)
+            zsp_f.loadStandardLibrary(ast_builder, core_lib)
+            ast_l.append(core_lib)
 
         ast_root = zsp_f.getAstFactory().mkGlobalScope(1)
         ast_builder.build(ast_root, io.StringIO(content))
+        ast_l.append(ast_root)
 
         for m in marker_c.markers():
             print("Parse Marker: %s" % m.msg())
         self.assertFalse(marker_c.hasSeverity(zspp.MarkerSeverityE.Error))
 
-        linked_root = ast_linker.link(marker_c, [
-            core_lib,
-            ast_root
-            ])
+        
+        linked_root = ast_linker.link(marker_c, ast_l)
         for m in marker_c.markers():
             print("Linker Marker: %s" % m.msg())
         self.assertFalse(marker_c.hasSeverity(zspp.MarkerSeverityE.Error))

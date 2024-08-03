@@ -1,5 +1,5 @@
 /**
- * TaskGenerateExecScope.h
+ * TaskGenerateExprVal.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -22,8 +22,6 @@
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
 #include "gen/IOutput.h"
-#include "gen/OutputExecScope.h"
-#include "IGenRefExpr.h"
 
 namespace zsp {
 namespace sv {
@@ -32,36 +30,37 @@ namespace exec {
 
 class TaskGenerate;
 
-class TaskGenerateExecScope :
+class TaskGenerateExprVal :
     public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateExecScope(
+    TaskGenerateExprVal(
         TaskGenerate        *gen,
-        IGenRefExpr         *genref,
         IOutput             *out
     );
 
-    virtual ~TaskGenerateExecScope();
+    virtual ~TaskGenerateExprVal();
 
-    virtual void generate(
-        arl::dm::ITypeProcStmtScope *scope,
-        bool                        newscope);
+    virtual void generate(vsc::dm::ITypeExprVal *e);
 
-	virtual void visitTypeProcStmtExpr(arl::dm::ITypeProcStmtExpr *s) override;
+	virtual void visitDataTypeArray(vsc::dm::IDataTypeArray *t) override;
 
-    virtual void visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDecl *t) override;
+	virtual void visitDataTypeBool(vsc::dm::IDataTypeBool *t) override;
 
-	virtual void visitTypeProcStmtWhile(arl::dm::ITypeProcStmtWhile *s) override { }
+	virtual void visitDataTypeEnum(vsc::dm::IDataTypeEnum *t) override;
 
-	virtual void visitTypeProcStmtYield(arl::dm::ITypeProcStmtYield *s) override { }
+	virtual void visitDataTypeInt(vsc::dm::IDataTypeInt *t) override;
+
+	virtual void visitDataTypePtr(vsc::dm::IDataTypePtr *t) override;
+
+	virtual void visitDataTypeString(vsc::dm::IDataTypeString *t) override;
+
+	virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
 
 protected:
-    dmgr::IDebug                    *m_dbg;
-    TaskGenerate                    *m_gen;
-    IGenRefExpr                     *m_genref;
-    IOutput                         *m_out_top;
-    IOutput                         *m_out;
-    OutputExecScope                 *m_exec;
+    dmgr::IDebug                *m_dbg;
+    TaskGenerate                *m_gen;
+    IOutput                     *m_out;
+    vsc::dm::ValRef             m_val;
 
 };
 

@@ -1,5 +1,5 @@
 /**
- * TaskGenerateExpr.h
+ * TaskGenerateStructConstraints.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -31,37 +31,31 @@ namespace exec {
 
 class TaskGenerate;
 
-class TaskGenerateExpr :
+class TaskGenerateStructConstraints :
     public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateExpr(
-        TaskGenerate       *gen,
-        IGenRefExpr        *genref,
-        IOutput            *out);
+    TaskGenerateStructConstraints(
+        TaskGenerate        *gen,
+        IGenRefExpr         *genref,
+        IOutput             *out);
 
-    virtual ~TaskGenerateExpr();
+    virtual ~TaskGenerateStructConstraints();
 
-    virtual void generate(vsc::dm::ITypeExpr *e);
+    virtual void generate(vsc::dm::IDataTypeStruct *t);
 
-	virtual void visitTypeExprBin(vsc::dm::ITypeExprBin *e) override;
+	virtual void visitTypeConstraintBlock(vsc::dm::ITypeConstraintBlock *c) override;
 
-    virtual void visitTypeExprMethodCallContext(arl::dm::ITypeExprMethodCallContext *e) override;
+	virtual void visitTypeConstraintExpr(vsc::dm::ITypeConstraintExpr *c) override;
 
-    virtual void visitTypeExprMethodCallStatic(arl::dm::ITypeExprMethodCallStatic *e) override;
+	virtual void visitTypeConstraintForeach(vsc::dm::ITypeConstraintForeach *c) override;
 
-	virtual void visitTypeExprRange(vsc::dm::ITypeExprRange *e) override;
+	virtual void visitTypeConstraintIfElse(vsc::dm::ITypeConstraintIfElse *c) override;
 
-	virtual void visitTypeExprRangelist(vsc::dm::ITypeExprRangelist *e) override;
+	virtual void visitTypeConstraintImplies(vsc::dm::ITypeConstraintImplies *c) override;
 
-	virtual void visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp *e) override;
+	virtual void visitTypeConstraintSoft(vsc::dm::ITypeConstraintSoft *c) override;
 
-	virtual void visitTypeExprRefTopDown(vsc::dm::ITypeExprRefTopDown *e) override;
-
-	virtual void visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) override;
-
-	virtual void visitTypeExprUnary(vsc::dm::ITypeExprUnary *e) override;
-
-	virtual void visitTypeExprVal(vsc::dm::ITypeExprVal *e) override;
+	virtual void visitTypeConstraintUnique(vsc::dm::ITypeConstraintUnique *c) override;
 
 protected:
     dmgr::IDebug                *m_dbg;

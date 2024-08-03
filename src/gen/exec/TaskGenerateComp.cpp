@@ -19,6 +19,7 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateComp.h"
 #include "TaskGenerateCompCtor.h"
@@ -69,6 +70,12 @@ void TaskGenerateComp::generate_fields(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateComp::generate_execs(vsc::dm::IDataTypeStruct *t) {
+    GenRefExprExecModel genref(
+        m_gen,
+        t,
+        "this",
+        false);
+
     std::vector<std::pair<arl::dm::ExecKindT,std::pair<bool,std::string>>> exec_t = {
         {arl::dm::ExecKindT::InitDown, {false, "init_down"}},
         {arl::dm::ExecKindT::InitUp, {false, "init_up"}},
@@ -79,7 +86,7 @@ void TaskGenerateComp::generate_execs(vsc::dm::IDataTypeStruct *t) {
             dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(it->first);
         
         if (execs.size()) {
-            TaskGenerateExecBlock(m_gen, m_out).generate(
+            TaskGenerateExecBlock(m_gen, &genref, m_out).generate(
                 execs, it->second.first, it->second.second);
         }
     }

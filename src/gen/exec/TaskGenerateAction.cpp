@@ -19,8 +19,10 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateAction.h"
+#include "TaskGenerateActionConstraints.h"
 #include "TaskGenerateActionFields.h"
 
 
@@ -49,6 +51,15 @@ void TaskGenerateAction::generate_head(vsc::dm::IDataTypeStruct *t) {
 
 void TaskGenerateAction::generate_fields(vsc::dm::IDataTypeStruct *t) {
     TaskGenerateActionFields(m_gen, m_out).generate(t);
+}
+
+void TaskGenerateAction::generate_constraints(vsc::dm::IDataTypeStruct *t) {
+    GenRefExprExecModel genref(
+        m_gen,
+        t,
+        "this",
+        false);
+    TaskGenerateActionConstraints(m_gen, &genref, m_out).generate(t);
 }
 
 void TaskGenerateAction::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {

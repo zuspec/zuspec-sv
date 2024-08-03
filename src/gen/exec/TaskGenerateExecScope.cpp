@@ -22,6 +22,7 @@
 #include "TaskGenerate.h"
 #include "TaskGenerateDataType.h"
 #include "TaskGenerateExecScope.h"
+#include "TaskGenerateExpr.h"
 
 
 namespace zsp {
@@ -32,7 +33,9 @@ namespace exec {
 
 TaskGenerateExecScope::TaskGenerateExecScope(
     TaskGenerate            *gen,
-    IOutput                 *out) : m_dbg(0), m_gen(gen), m_out_top(out), m_exec(0) {
+    IGenRefExpr             *genref,
+    IOutput                 *out) : m_dbg(0), m_gen(gen), 
+        m_genref(genref), m_out_top(out), m_exec(0) {
     DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateExecScope", gen->getDebugMgr());
 }
 
@@ -63,6 +66,12 @@ void TaskGenerateExecScope::generate(
         m_out_top->dec_ind();
         m_out_top->println("end");
     }
+}
+
+void TaskGenerateExecScope::visitTypeProcStmtExpr(arl::dm::ITypeProcStmtExpr *s) {
+    m_out_top->indent();
+    TaskGenerateExpr(m_gen, m_genref, m_out_top).generate(s->getExpr());
+    m_out_top->write(";\n");
 }
 
 void TaskGenerateExecScope::visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDecl *t) {

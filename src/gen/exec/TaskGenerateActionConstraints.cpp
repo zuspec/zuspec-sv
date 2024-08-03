@@ -1,5 +1,5 @@
-/**
- * TaskGenerateAction.h
+/*
+ * TaskGenerateActionConstraints.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -16,10 +16,12 @@
  * limitations under the License.
  *
  * Created on:
- *     Author: 
+ *     Author:
  */
-#pragma once
-#include "TaskGenerateStruct.h"
+#include "dmgr/impl/DebugMacros.h"
+#include "TaskGenerate.h"
+#include "TaskGenerateActionConstraints.h"
+
 
 namespace zsp {
 namespace sv {
@@ -27,29 +29,19 @@ namespace gen {
 namespace exec {
 
 
+TaskGenerateActionConstraints::TaskGenerateActionConstraints(
+    TaskGenerate        *gen,
+    IGenRefExpr         *genref,
+    IOutput             *out) : TaskGenerateStructConstraints(gen, genref, out) {
+    m_dbg = 0;
+    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateActionConstraints", gen->getDebugMgr());
+}
 
-class TaskGenerateAction :
-    public virtual TaskGenerateStruct {
-public:
-    TaskGenerateAction(
-        TaskGenerate        *gen,
-        IOutput             *out);
+TaskGenerateActionConstraints::~TaskGenerateActionConstraints() {
 
-    virtual ~TaskGenerateAction();
-
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_constraints(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
-
-};
+}
 
 }
 }
 }
 }
-
-

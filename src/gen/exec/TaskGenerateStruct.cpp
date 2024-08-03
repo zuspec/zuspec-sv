@@ -19,9 +19,11 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateExecBlock.h"
 #include "TaskGenerateStruct.h"
+#include "TaskGenerateStructConstraints.h"
 #include "TaskGenerateStructCtor.h"
 #include "TaskGenerateStructFields.h"
 
@@ -52,8 +54,10 @@ void TaskGenerateStruct::generate_head(vsc::dm::IDataTypeStruct *t) {
 void TaskGenerateStruct::generate(vsc::dm::IDataTypeStruct *t) {
     generate_head(t);
     generate_fields(t);
-    generate_constraints(t);
+
     generate_ctor(t);
+
+    generate_constraints(t);
     generate_execs(t);
     generate_tail(t);
 }
@@ -72,10 +76,21 @@ void TaskGenerateStruct::generate_fields(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateStruct::generate_constraints(vsc::dm::IDataTypeStruct *t) {
-
+    GenRefExprExecModel genref(
+        m_gen,
+        t,
+        "this",
+        false);
+    TaskGenerateStructConstraints(m_gen, &genref, m_out).generate(t);
 }
 
 void TaskGenerateStruct::generate_execs(vsc::dm::IDataTypeStruct *t) {
+    GenRefExprExecModel genref(
+        m_gen,
+        t,
+        "this",
+        false);
+
     std::vector<std::pair<arl::dm::ExecKindT,std::pair<bool,std::string>>> exec_t = {
         {arl::dm::ExecKindT::PreSolve, {false, "pre_solve"}},
         {arl::dm::ExecKindT::PostSolve, {false, "post_solve"}},
@@ -86,7 +101,7 @@ void TaskGenerateStruct::generate_execs(vsc::dm::IDataTypeStruct *t) {
             dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(it->first);
         
         if (execs.size()) {
-            TaskGenerateExecBlock(m_gen, m_out).generate(
+            TaskGenerateExecBlock(m_gen, &genref, m_out).generate(
                 execs, it->second.first, it->second.second);
         }
     }

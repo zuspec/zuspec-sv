@@ -22,6 +22,7 @@
 #include "gen/NameMap.h"
 #include "gen/OutputStr.h"
 #include "gen/TaskBuildTypeCollection.h"
+#include "CustomGenPrintCall.h"
 #include "TaskDefineType.h"
 #include "TaskGenerate.h"
 
@@ -51,6 +52,8 @@ bool TaskGenerate::generate() {
     std::string actor = "pss_top__Entry";
     m_out_pub = IOutputUP(new OutputStr());
     m_out_prv = IOutputUP(new OutputStr());
+
+    attach_custom_gen();
 
     m_out_prv->println("package %s_prv;", actor.c_str());
     m_out_prv->inc_ind();
@@ -96,6 +99,145 @@ bool TaskGenerate::generate() {
 
     return true;
 }
+
+void TaskGenerate::attach_custom_gen() {
+    DEBUG_ENTER("attach_custom_gen");
+
+    vsc::dm::IDataTypeStruct *addr_handle_t = m_ctxt->findDataTypeStruct(
+        "addr_reg_pkg::addr_handle_t");
+#ifdef UNDEFINED
+    m_name_m->setName(addr_handle_t, "zsp_rt_addr_handle");
+    addr_handle_t->setAssociatedData(new TaskGenerateExecModelAddrHandle(getDebugMgr()));
+    m_addr_handle_t = addr_handle_t;
+#endif
+
+    arl::dm::IDataTypeFunction *f_t;
+    f_t = m_ctxt->findDataTypeFunction("addr_reg_pkg::make_handle_from_handle");
+#ifdef UNDEFINED
+    m_name_m->setName(f_t, "zsp_rt_make_handle_from_handle");
+    // f_t->setAssociatedData(
+    //     new TaskGenerateExecModelCoreMethodCall(
+    //         m_dmgr,
+    //         "zsp_rt_make_handle_from_handle",
+    //         0,
+    //         {"zsp_rt_addr_claim_t *"}));
+#endif
+
+    f_t = m_ctxt->findDataTypeFunction("addr_reg_pkg::make_handle_from_claim");
+#ifdef UNDEFINED
+    m_name_m->setName(f_t, "zsp_rt_make_handle_from_claim");
+    f_t->setAssociatedData(
+        new TaskGenerateExecModelCoreMethodCall(
+            m_dmgr,
+            "zsp_rt_make_handle_from_claim",
+            0,
+            {"zsp_rt_addr_claimspec_t *"}));
+#endif
+
+    std::vector<std::string> rw_funcs = {
+        "addr_reg_pkg::write64",
+        "addr_reg_pkg::write32",
+        "addr_reg_pkg::write16",
+        "addr_reg_pkg::write8",
+        "addr_reg_pkg::read64",
+        "addr_reg_pkg::read32",
+        "addr_reg_pkg::read16",
+        "addr_reg_pkg::read8"
+    };
+    for (std::vector<std::string>::const_iterator
+        it=rw_funcs.begin();
+        it!=rw_funcs.end(); it++) {
+        f_t = m_ctxt->findDataTypeFunction(*it);
+#ifdef UNDEFINED
+        f_t->setAssociatedData(new TaskGenerateExecModelMemRwCall(m_dmgr));
+#endif
+    }
+
+    for (std::vector<vsc::dm::IDataTypeStructUP>::const_iterator
+        it=m_ctxt->getDataTypeStructs().begin();
+        it!=m_ctxt->getDataTypeStructs().end(); it++) {
+        const std::string &name = (*it)->name();
+
+#ifdef UNDEFINED
+        if (name.find("::contiguous_addr_space_c") != -1 
+            || name.find("::transparent_addr_space_c") != -1) {
+//            m_name_m->setName(it->get(), "zsp_rt_addr_space");
+        }
+#endif
+    }
+
+    for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
+        it=m_ctxt->getDataTypeFunctions().begin();
+        it!=m_ctxt->getDataTypeFunctions().end(); it++) {
+        std::string name = (*it)->name();
+        DEBUG("name: %s", name.c_str());
+        if (name.find("addr_reg_pkg::") == 0) {
+            if (name.find("::addr_handle_t") != -1) {
+
+            } else if (name.find("::contiguous_addr_space_c") != -1 
+                || name.find("::transparent_addr_space_c") != -1) {
+                std::string rt_name = (name.find("add_region") != -1)?
+                    "zsp_rt_addr_space_add_region":
+                    "zsp_rt_addr_space_add_nonallocatable_region";
+
+#ifdef UNDEFINED
+                (*it)->setAssociatedData(
+                    new TaskGenerateExecModelCoreMethodCall(
+                        m_dmgr,
+                        rt_name,
+                        0,
+                        {"zsp_rt_addr_space_t *", "zsp_rt_addr_region_t *"}));
+#endif
+            } else if (name.find("::reg_group_c") != -1) {
+                if (name.find("set_handle") != -1) {
+#ifdef UNDEFINED
+                    (*it)->setAssociatedData(
+                        new TaskGenerateExecModelCoreMethodCall(
+                            m_dmgr,
+                            "zsp_rt_reg_group_set_handle",
+                            0,
+                            {"void **"}));
+#endif
+                }
+                std::string rt_name = (name.find("add_region") != -1)?
+                    "zsp_rt_addr_space_add_region":
+                    "zsp_rt_addr_space_add_nonallocatable_region";
+            } else if (name.find("::reg_c") != -1) {
+                DEBUG("Attach reg-access generator");
+#ifdef UNDEFINED
+                (*it)->setAssociatedData(
+                    new TaskGenerateExecModelRegRwCall(m_dmgr));
+#endif
+            }
+        } else if (name.find("std_pkg::") == 0) {
+            if (name.find("urandom_range") != -1) {
+#ifdef UNDEFINED
+                (*it)->setAssociatedData(
+                    new TaskGenerateExecModelCoreMethodCall(
+                        m_dmgr,
+                        "zsp_rt_urandom_range",
+                        -1, {}));
+#endif
+            } else if (name.find("urandom") != -1) {
+#ifdef UNDEFINED
+                (*it)->setAssociatedData(
+                    new TaskGenerateExecModelCoreMethodCall(
+                        m_dmgr,
+                        "zsp_rt_urandom",
+                        -1, {}));
+#endif
+            } else if (name.find("print") != -1) {
+                DEBUG("Attach custom generator to 'print'");
+                (*it)->setAssociatedData(
+                    new CustomGenPrintCall(m_dmgr)
+                );
+            }
+        }
+    }
+
+    DEBUG_LEAVE("attach_custom_gen");
+}
+
 
 dmgr::IDebug *TaskGenerate::m_dbg = 0;
 

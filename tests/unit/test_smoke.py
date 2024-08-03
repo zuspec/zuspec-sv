@@ -63,6 +63,13 @@ class TestSmoke(TestBase):
             Sub c1, c2;
             action Entry {
                 rand bit[4] a, b, c;
+
+                constraint ab_c {
+                    a < b;
+                }
+
+                constraint c > b;
+
                 exec post_solve {
 //                    print("Hello World!");
                 }
@@ -74,6 +81,69 @@ class TestSmoke(TestBase):
             content,
             "pss_top",
             "pss_top::Entry")
+
+        out = io.StringIO() 
+        generator = self.zsp_sv_f.mkGenerateExecActor(
+            ctxt,
+            comp_t,
+            action_t,
+            out)
+        generator.generate()
+
+        print("Output:\n%s" % out.getvalue())
+
+    def test_smoke_constraint(self):
+        content = """
+        component pss_top {
+            action Entry {
+                rand bit[4] a;
+
+                constraint ab_c {
+                    a != 0;
+                }
+            }
+        }
+        """
+
+        ctxt, comp_t, action_t = self.buildModelGetRoots(
+            content,
+            "pss_top",
+            "pss_top::Entry",
+            load_stdlib=False)
+
+        out = io.StringIO() 
+        generator = self.zsp_sv_f.mkGenerateExecActor(
+            ctxt,
+            comp_t,
+            action_t,
+            out)
+        generator.generate()
+
+        print("Output:\n%s" % out.getvalue())
+
+    def test_smoke_print(self):
+        content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                rand bit[4] a;
+
+                exec post_solve {
+                    print("Hello World! %d", a);
+                }
+
+                constraint ab_c {
+                    a != 0;
+                }
+            }
+        }
+        """
+
+        ctxt, comp_t, action_t = self.buildModelGetRoots(
+            content,
+            "pss_top",
+            "pss_top::Entry",
+            load_stdlib=True)
 
         out = io.StringIO() 
         generator = self.zsp_sv_f.mkGenerateExecActor(

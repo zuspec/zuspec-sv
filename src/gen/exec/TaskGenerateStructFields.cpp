@@ -48,7 +48,13 @@ void TaskGenerateStructFields::generate(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateStructFields::visitDataTypeComponent(arl::dm::IDataTypeComponent*t) {
-    m_out->println("%s %s;", 
+    std::string qual;
+
+    if ((m_field->getAttr() & vsc::dm::TypeFieldAttr::Rand) != vsc::dm::TypeFieldAttr::NoAttr) {
+        qual = "rand ";
+    }
+
+    m_out->println("%s%s %s;", qual.c_str(),
         m_gen->getNameMap()->getName(t).c_str(),
         m_field->name().c_str());
 }

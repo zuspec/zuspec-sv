@@ -32,7 +32,8 @@ namespace exec {
 
 TaskGenerateExecBlock::TaskGenerateExecBlock(
     TaskGenerate        *gen,
-    IOutput             *out) : m_dbg(0), m_gen(gen), m_out(out) {
+    IGenRefExpr         *genref,
+    IOutput             *out) : m_dbg(0), m_gen(gen), m_genref(genref), m_out(out) {
     DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateExecBlock", gen->getDebugMgr());
 }
 
@@ -57,7 +58,7 @@ void TaskGenerateExecBlock::generate(
         it=t.begin();
         it!=t.end(); it++) {
         arl::dm::ITypeExecProc *tp = dynamic_cast<arl::dm::ITypeExecProc *>(it->get());
-        TaskGenerateExecScope(m_gen, m_out).generate(tp->getBody(), it!=t.begin());
+        TaskGenerateExecScope(m_gen, m_genref, m_out).generate(tp->getBody(), it!=t.begin());
     }
 
     m_out->dec_ind();
