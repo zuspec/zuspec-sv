@@ -50,6 +50,8 @@ public:
 
     INameMap *getNameMap() { return m_namemap.get(); }
 
+    const std::string &getActorName() { return m_actor_name; }
+
 protected:
 
     void attach_custom_gen();
@@ -64,6 +66,7 @@ protected:
     IOutputUP                       m_out_pub;
     IOutputUP                       m_out_prv;
     INameMapUP                      m_namemap;
+    std::string                     m_actor_name;
 
 
 

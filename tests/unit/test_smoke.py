@@ -132,6 +132,10 @@ class TestSmoke(TestBase):
                     print("Hello World! %d", a);
                 }
 
+                exec body {
+                    print("Hello World! %d", a);
+                }
+
                 constraint ab_c {
                     a != 0;
                 }

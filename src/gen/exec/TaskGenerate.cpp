@@ -25,6 +25,7 @@
 #include "CustomGenPrintCall.h"
 #include "TaskDefineType.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateActivity.h"
 
 
 namespace zsp {
@@ -55,6 +56,13 @@ bool TaskGenerate::generate() {
 
     attach_custom_gen();
 
+    arl::dm::IDataTypeActivitySequenceUP root_activity(
+        m_ctxt->mkDataTypeActivitySequence());
+
+    root_activity->addActivity(
+        m_ctxt->mkTypeFieldActivity("", 
+            m_ctxt->mkDataTypeActivityTraverseType(m_action_t, 0), true), true);
+
     m_out_prv->println("package %s_prv;", actor.c_str());
     m_out_prv->inc_ind();
     m_out_prv->println("import zsp_sv::*;");
@@ -76,15 +84,20 @@ bool TaskGenerate::generate() {
             types->getType(*it));
     }
 
+    TaskGenerateActivity(
+        this, 
+        0, 
+        m_out_prv.get()).generate(root_activity.get(), 0);
 
     m_out_prv->dec_ind();
     m_out_prv->println("endpackage");
 
     // Define the actor
-    m_out_pub->println("class %s extends actor #(comp_t=%s, action_t=%s);", 
+    m_out_pub->println("class %s extends actor #(comp_t=%s, activity_t=activity_%p);", 
         actor.c_str(),
         getNameMap()->getName(m_comp_t).c_str(),
-        getNameMap()->getName(m_action_t).c_str());
+        root_activity.get());
+
 
     m_out_pub->println("endclass");
 

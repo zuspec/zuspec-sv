@@ -63,6 +63,7 @@ void TaskGenerateExecBlock::generate(
 
     m_out->dec_ind();
     m_out->println("end%s", (istask)?"task":"function");
+    m_out->println("");
 }
 
 }

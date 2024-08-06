@@ -1,5 +1,5 @@
 /**
- * TaskGenerateAction.h
+ * OutputActivityScope.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,37 +19,35 @@
  *     Author: 
  */
 #pragma once
-#include "TaskGenerateStruct.h"
+#include "IOutput.h"
+#include "OutputBase.h"
+#include "OutputStr.h"
 
 namespace zsp {
 namespace sv {
 namespace gen {
-namespace exec {
 
 
 
-class TaskGenerateAction :
-    public virtual TaskGenerateStruct {
+class OutputActivityScope {
 public:
-    TaskGenerateAction(
-        TaskGenerate        *gen,
-        IOutput             *out);
 
-    virtual ~TaskGenerateAction();
+    OutputActivityScope(IOutput *upper);
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
+    virtual ~OutputActivityScope();
 
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
+    void apply(IOutput *out);
 
-    virtual void generate_constraints(vsc::dm::IDataTypeStruct *t) override;
+    IOutput *decl() { return &m_decl; }
 
-    virtual void generate_execs(vsc::dm::IDataTypeStruct *t) override;
+    IOutput *run() { return &m_run; }
 
-    virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
+private:
+    OutputStr       m_decl;
+    OutputStr       m_run;
 
 };
 
-}
 }
 }
 }

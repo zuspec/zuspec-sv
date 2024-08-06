@@ -1,5 +1,5 @@
-/**
- * TaskGenerateAction.h
+/*
+ * TaskGeneratePackedStruct.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -16,10 +16,10 @@
  * limitations under the License.
  *
  * Created on:
- *     Author: 
+ *     Author:
  */
-#pragma once
-#include "TaskGenerateStruct.h"
+#include "TaskGeneratePackedStruct.h"
+
 
 namespace zsp {
 namespace sv {
@@ -27,31 +27,15 @@ namespace gen {
 namespace exec {
 
 
+TaskGeneratePackedStruct::TaskGeneratePackedStruct() {
 
-class TaskGenerateAction :
-    public virtual TaskGenerateStruct {
-public:
-    TaskGenerateAction(
-        TaskGenerate        *gen,
-        IOutput             *out);
+}
 
-    virtual ~TaskGenerateAction();
+TaskGeneratePackedStruct::~TaskGeneratePackedStruct() {
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_constraints(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_execs(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
-
-};
+}
 
 }
 }
 }
 }
-
-

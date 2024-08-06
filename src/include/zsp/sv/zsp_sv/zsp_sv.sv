@@ -28,12 +28,14 @@ class object_pool_base;
 //    endfunction
 endclass
 
+class activity extends object;
+    virtual task run();
+    endtask
+endclass
+
 class action extends object;
 
     virtual task body();
-    endtask
-
-    virtual task activity();
     endtask
 
 endclass
@@ -61,9 +63,9 @@ endclass
 class backend;
 endclass
 
-class actor #(type comp_t=component, type action_t=action);
+class actor #(type comp_t=component, type activity_t=activity);
     comp_t      comp_tree;
-    component   comp_l;
+    component   comp_l[$];
     // TODO: address-space
 
     function new(string name="");
@@ -71,12 +73,11 @@ class actor #(type comp_t=component, type action_t=action);
     endfunction
 
     task run();
-        comp_tree.init();
-        /*
-        action_t    root_action = new();
+        activity_t root_activity = new(this);
 
-        root_action.run(this);
-         */
+        comp_tree.init();
+
+        root_activity.run();
     endtask
 
 endclass

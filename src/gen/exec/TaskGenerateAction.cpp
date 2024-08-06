@@ -24,6 +24,7 @@
 #include "TaskGenerateAction.h"
 #include "TaskGenerateActionConstraints.h"
 #include "TaskGenerateActionFields.h"
+#include "TaskGenerateExecBlock.h"
 
 
 namespace zsp {
@@ -60,6 +61,30 @@ void TaskGenerateAction::generate_constraints(vsc::dm::IDataTypeStruct *t) {
         "this",
         false);
     TaskGenerateActionConstraints(m_gen, &genref, m_out).generate(t);
+}
+
+void TaskGenerateAction::generate_execs(vsc::dm::IDataTypeStruct *t) {
+    TaskGenerateStruct::generate_execs(t);
+
+    GenRefExprExecModel genref(
+        m_gen,
+        t,
+        "this",
+        false);
+
+    std::vector<std::pair<arl::dm::ExecKindT,std::pair<bool,std::string>>> exec_t = {
+        {arl::dm::ExecKindT::Body, {true, "body"}}
+    };
+
+    for (auto it=exec_t.begin(); it!=exec_t.end(); it++) {
+        const std::vector<arl::dm::ITypeExecUP> &execs = 
+            dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(it->first);
+        
+        if (execs.size()) {
+            TaskGenerateExecBlock(m_gen, &genref, m_out).generate(
+                execs, it->second.first, it->second.second);
+        }
+    }
 }
 
 void TaskGenerateAction::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
