@@ -19,9 +19,11 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "zsp/arl/dm/IDataTypeActivitySequence.h"
 #include "gen/NameMap.h"
 #include "gen/OutputStr.h"
 #include "gen/TaskBuildTypeCollection.h"
+#include "gen/exec/TaskBuildActivityInfo.h"
 #include "CustomGenPrintCall.h"
 #include "TaskDefineType.h"
 #include "TaskGenerate.h"
@@ -84,10 +86,30 @@ bool TaskGenerate::generate() {
             types->getType(*it));
     }
 
-    TaskGenerateActivity(
-        this, 
-        0, 
-        m_out_prv.get()).generate(root_activity.get(), 0);
+    std::vector<ActivityInfoUP> activity_info = TaskBuildActivityInfo(
+        m_dmgr,
+        m_namemap.get()).build(
+            0,
+            root_activity.get());
+    
+    DEBUG("activity_info: %d", activity_info.size());
+
+    for (std::vector<ActivityInfoUP>::const_iterator
+        it=activity_info.begin();
+        it!=activity_info.end(); it++) {
+
+        DEBUG("variants: %d", (*it)->variants().size());
+
+        for (std::vector<ActivityVariantUP>::const_iterator
+            v_it=(*it)->variants().begin(); 
+            v_it!=(*it)->variants().end(); v_it++) {
+            TaskGenerateActivity(
+                this, 
+                0, 
+                m_out_prv.get()
+            ).generate(v_it->get());
+        }
+    }
 
     m_out_prv->dec_ind();
     m_out_prv->println("endpackage");

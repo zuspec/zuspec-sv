@@ -18,8 +18,10 @@
  * Created on:
  *     Author:
  */
+#include "dmgr/impl/DebugMacros.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateActivity.h"
+#include "ActivityInfo.h"
 
 
 namespace zsp {
@@ -31,17 +33,17 @@ namespace exec {
 TaskGenerateActivity::TaskGenerateActivity(
     TaskGenerate            *gen,
     IGenRefExpr             *genref,
-    IOutput                 *out) : m_gen(gen), m_genref(genref), m_out(out) {
-
+    IOutput                 *out) : m_dbg(0), m_gen(gen), m_genref(genref), m_out(out) {
+    DEBUG_INIT("Zsp::sv::gen::exec::TaskGenerateActivity", gen->getDebugMgr());
 }
 
 TaskGenerateActivity::~TaskGenerateActivity() {
 
 }
 
-void TaskGenerateActivity::generate(
-        arl::dm::IDataTypeActivity      *activity,
-        arl::dm::IDataTypeAction        *action) {
+void TaskGenerateActivity::generate(ActivityVariant *variant) {
+    arl::dm::IDataTypeActivity *activity = variant->info()->activity();
+    DEBUG_ENTER("generate");
 
     m_out->println("class activity_%p extends activity;", activity);
     m_out->inc_ind();
@@ -59,7 +61,10 @@ void TaskGenerateActivity::generate(
     m_out->dec_ind();
     m_out->println("endtask");
     m_out->println("");
+    m_out->dec_ind();
     m_out->println("endclass");
+
+    DEBUG_LEAVE("generate");
 }
 
 void TaskGenerateActivity::visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) {

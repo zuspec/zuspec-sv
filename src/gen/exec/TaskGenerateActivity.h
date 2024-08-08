@@ -24,6 +24,7 @@
 #include "IGenRefExpr.h"
 #include "gen/IOutput.h"
 #include "gen/OutputActivityScope.h"
+#include "gen/exec/ActivityVariant.h"
 
 namespace zsp {
 namespace sv {
@@ -43,9 +44,7 @@ public:
 
     virtual ~TaskGenerateActivity();
 
-    virtual void generate(
-        arl::dm::IDataTypeActivity      *activity,
-        arl::dm::IDataTypeAction        *action);
+    virtual void generate(ActivityVariant *variant);
 
     virtual void visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) override;
 
