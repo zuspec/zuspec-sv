@@ -220,7 +220,7 @@ void TaskBuildTypeCollection::visitDataTypePackedStruct(arl::dm::IDataTypePacked
 }
 
 void TaskBuildTypeCollection::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) { 
-    DEBUG_ENTER("visitDataTypeStruct");
+    DEBUG_ENTER("visitDataTypeStruct %s", t->name().c_str());
     m_type_c->addType(t);
 
     for (int32_t i=m_type_s.size()-1; i>=0; i--) {

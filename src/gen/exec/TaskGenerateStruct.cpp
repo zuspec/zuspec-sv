@@ -85,24 +85,26 @@ void TaskGenerateStruct::generate_constraints(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateStruct::generate_execs(vsc::dm::IDataTypeStruct *t) {
-    GenRefExprExecModel genref(
-        m_gen,
-        t,
-        "this",
-        false);
+    if (dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)) {
+        GenRefExprExecModel genref(
+            m_gen,
+            t,
+            "this",
+            false);
 
-    std::vector<std::pair<arl::dm::ExecKindT,std::pair<bool,std::string>>> exec_t = {
-        {arl::dm::ExecKindT::PreSolve, {false, "pre_solve"}},
-        {arl::dm::ExecKindT::PostSolve, {false, "post_solve"}},
-    };
+        std::vector<std::pair<arl::dm::ExecKindT,std::pair<bool,std::string>>> exec_t = {
+            {arl::dm::ExecKindT::PreSolve, {false, "pre_solve"}},
+            {arl::dm::ExecKindT::PostSolve, {false, "post_solve"}},
+        };
 
-    for (auto it=exec_t.begin(); it!=exec_t.end(); it++) {
-        const std::vector<arl::dm::ITypeExecUP> &execs = 
-            dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(it->first);
+        for (auto it=exec_t.begin(); it!=exec_t.end(); it++) {
+            const std::vector<arl::dm::ITypeExecUP> &execs = 
+                dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(it->first);
         
-        if (execs.size()) {
-            TaskGenerateExecBlock(m_gen, &genref, m_out).generate(
-                execs, it->second.first, it->second.second);
+            if (execs.size()) {
+                TaskGenerateExecBlock(m_gen, &genref, m_out).generate(
+                    execs, it->second.first, it->second.second);
+            }
         }
     }
 }

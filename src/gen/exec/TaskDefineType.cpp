@@ -32,8 +32,8 @@
 #ifdef UNDEFINED
 #include "TaskPackedStruct.h"
 #include "TaskRegGroup.h"
-#include "TaskStruct.h"
 #endif
+#include "TaskGenerateStruct.h"
 
 
 namespace zsp {
@@ -118,7 +118,7 @@ void TaskDefineType::visitDataTypeRegGroup(arl::dm::IDataTypeRegGroup *t) {
 
 void TaskDefineType::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
     DEBUG_ENTER("visitDataTypeStruct %s", t->name().c_str());
-//    TaskStruct(m_gen, m_out_h, m_out_c).generate(t);
+    TaskGenerateStruct(m_gen, m_out).generate(t);
     DEBUG_LEAVE("visitDataTypeStruct");
 } 
 

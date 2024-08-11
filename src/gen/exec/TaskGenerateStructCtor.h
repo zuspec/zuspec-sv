@@ -45,6 +45,8 @@ public:
 
     virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
 
+   virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
+
     virtual void visitTypeField(vsc::dm::ITypeField *f) override;
 
 protected:

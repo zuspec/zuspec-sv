@@ -23,6 +23,7 @@
 #include "TaskGenerate.h"
 #include "TaskGenerateAction.h"
 #include "TaskGenerateActionConstraints.h"
+#include "TaskGenerateActionCtor.h"
 #include "TaskGenerateActionFields.h"
 #include "TaskGenerateExecBlock.h"
 
@@ -61,6 +62,10 @@ void TaskGenerateAction::generate_constraints(vsc::dm::IDataTypeStruct *t) {
         "this",
         false);
     TaskGenerateActionConstraints(m_gen, &genref, m_out).generate(t);
+}
+
+void TaskGenerateAction::generate_ctor(vsc::dm::IDataTypeStruct *t) {
+    TaskGenerateActionCtor(m_gen, m_out).generate(t);
 }
 
 void TaskGenerateAction::generate_execs(vsc::dm::IDataTypeStruct *t) {

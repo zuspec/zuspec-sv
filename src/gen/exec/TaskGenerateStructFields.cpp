@@ -48,7 +48,9 @@ void TaskGenerateStructFields::generate(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateStructFields::visitDataTypeBool(vsc::dm::IDataTypeBool *t) {
-
+    m_out->println("%sbit %s;", 
+        qualifiers(m_field->getAttr()).c_str(),
+        m_field->name().c_str());
 }
 
 void TaskGenerateStructFields::visitDataTypeInt(vsc::dm::IDataTypeInt *t) {
@@ -71,6 +73,13 @@ void TaskGenerateStructFields::visitDataTypeComponent(arl::dm::IDataTypeComponen
     }
 
     m_out->println("%s%s %s;", qual.c_str(),
+        m_gen->getNameMap()->getName(t).c_str(),
+        m_field->name().c_str());
+}
+
+void TaskGenerateStructFields::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
+    m_out->println("%s%s %s;", 
+        qualifiers(m_field->getAttr()).c_str(),
         m_gen->getNameMap()->getName(t).c_str(),
         m_field->name().c_str());
 }

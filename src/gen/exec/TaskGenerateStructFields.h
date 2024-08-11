@@ -50,6 +50,8 @@ public:
 
     virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent*t) override;
 
+    virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
+
     virtual void visitTypeField(vsc::dm::ITypeField *f) override;
 
 protected:

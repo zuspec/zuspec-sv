@@ -57,6 +57,10 @@ void TaskGenerateStructCtor::generate(vsc::dm::IDataTypeStruct *t) {
 void TaskGenerateStructCtor::generate_tail(vsc::dm::IDataTypeStruct *t) {
     m_out->dec_ind();
     m_out->println("endfunction");
+} 
+
+void TaskGenerateStructCtor::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
+    m_out->println("%s = new();", m_field->name().c_str());
 }
 
 void TaskGenerateStructCtor::visitTypeField(vsc::dm::ITypeField *f) {

@@ -2,55 +2,130 @@ import os
 import pytest
 import pytest_fv as pfv
 from pytest_fv.fixtures import *
-from zsp_sv.pytest_fv import TaskGenSvActor
+import sys
+from .simple_test_flow import run_unit_test
 
-class runnable(object):
-
-    async def run(self):
-        print("run")
 
 def test_bool_field(dirconfig):
     content = """
         import std_pkg::*;
         component pss_top {
             action Entry {
+                rand bool f1, f2;
+                constraint f1 == 0;
+                constraint f2 == 1;
                 exec post_solve {
-                    print("Hello World!");
+                    print("RES: f1=%d", f1);
+                    print("RES: f2=%d", f2);
                 }
             }
         }
     """
-    top_pss = dirconfig.mkBuildDirFile("top.pss", content)
-    actor_sv = os.path.join(dirconfig.builddir(), "actor.sv")
-    zsp_sv = os.path.abspath(os.path.join(
-        dirconfig.test_srcdir(),
-        "../../src/include/zsp/sv/zsp_sv"
-    ))
-    flow = pfv.FlowSim(dirconfig, sim_id="mti")
+    expect = """
+    RES: f1=0
+    RES: f2=1
+    """
+    run_unit_test(dirconfig, content, expect)
 
-    print("test_srcdir: %s" % dirconfig.test_srcdir(), flush=True)
-    flow.addTaskToPhase("generate.main", TaskGenSvActor(
-        "pss_top", 
-        "pss_top::Entry", 
-        actor_sv,
-        [pfv.FSPaths([top_pss], "pssSource")]))
-    flow.addFileset("sim",
-        pfv.FSPaths(
-            [actor_sv],
-            "systemVerilogSource"
-        )
-    )
-    flow.addFileset("sim",
-        pfv.FSPaths(
-            [os.path.join(dirconfig.test_srcdir(), "data", "top.sv")],
-            "systemVerilogSource"
-        )
-    )
+def test_bit_field(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                rand bit[4] f1;
+                constraint f1 == 15;
+                exec post_solve {
+                    print("RES: f1=%d", f1);
+                }
+            }
+        }
+    """
+    expect = """
+    RES: f1=15
+    """
+    run_unit_test(dirconfig, content, expect)
 
-    flow.sim.top.add("top")
+def test_int_field(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                rand int[4] f1;
+                constraint f1 == 15;
+                exec post_solve {
+                    print("RES: f1=%d", f1);
+                }
+            }
+        }
+    """
+    expect = """
+    RES: f1=-1
+    """
+    run_unit_test(dirconfig, content, expect)
 
-    run_args = flow.sim.mkRunArgs(dirconfig.rundir())
-    flow.addTaskToPhase("run.main", flow.sim.mkRunTask(run_args))
-    flow.run_all()
+def test_struct_field(dirconfig):
+    content = """
+        import std_pkg::*;
+        struct S {
+            rand bit[4] a;
+        }
+        component pss_top {
+            action Entry {
+                rand S f1;
+                constraint f1.a == 4;
+                exec post_solve {
+                    print("RES: f1.a=%d", f1.a);
+                }
+            }
+        }
+    """
+    expect = """
+    RES: f1.a=4
+    """
+    run_unit_test(dirconfig, content, expect)
 
-    pass
+def test_struct_nested_field(dirconfig):
+    content = """
+        import std_pkg::*;
+        struct S1 {
+            rand bit[4] a;
+            exec pre_solve {
+                print("RES: S1.pre_solve");
+            }
+            exec post_solve {
+                print("RES: S1.post_solve");
+            }
+        }
+        struct S {
+            rand bit[4] a;
+            rand S1     b;
+            exec pre_solve {
+                print("RES: S.pre_solve");
+            }
+            exec post_solve {
+                print("RES: S.post_solve");
+            }
+        }
+        component pss_top {
+            action Entry {
+                rand S f1;
+                exec pre_solve {
+                    print("RES: Entry.pre_solve");
+                }
+                constraint f1.a == 4;
+                constraint f1.b.a == 7;
+                exec post_solve {
+                    print("RES: f1.a=%d f1.b.a=%d", f1.a, f1.b.a);
+                }
+            }
+        }
+    """
+    expect = """
+    RES: Entry.pre_solve
+    RES: S.pre_solve
+    RES: S1.pre_solve
+    RES: f1.a=4 f1.b.a=7
+    RES: S.post_solve
+    RES: S1.post_solve
+    """
+    run_unit_test(dirconfig, content, expect)
