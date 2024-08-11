@@ -71,6 +71,7 @@ bool TaskGenerate::generate() {
 
     m_out_pub->println("package %s_pkg;", actor.c_str());
     m_out_pub->inc_ind();
+    m_out_pub->println("import zsp_sv::*;");
     m_out_pub->println("import %s_prv::*;", actor.c_str());
 
     // TODO: generate content
@@ -115,7 +116,7 @@ bool TaskGenerate::generate() {
     m_out_prv->println("endpackage");
 
     // Define the actor
-    m_out_pub->println("class %s extends actor #(comp_t=%s, activity_t=activity_%p);", 
+    m_out_pub->println("class %s extends actor #(.comp_t(%s), .activity_t(activity_%p));", 
         actor.c_str(),
         getNameMap()->getName(m_comp_t).c_str(),
         root_activity.get());

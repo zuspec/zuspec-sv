@@ -73,7 +73,7 @@ class actor #(type comp_t=component, type activity_t=activity);
     endfunction
 
     task run();
-        activity_t root_activity = new(this);
+        activity_t root_activity = new();
 
         comp_tree.init();
 

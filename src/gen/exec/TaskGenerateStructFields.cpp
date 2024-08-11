@@ -47,6 +47,22 @@ void TaskGenerateStructFields::generate(vsc::dm::IDataTypeStruct *t) {
     }
 }
 
+void TaskGenerateStructFields::visitDataTypeBool(vsc::dm::IDataTypeBool *t) {
+
+}
+
+void TaskGenerateStructFields::visitDataTypeInt(vsc::dm::IDataTypeInt *t) {
+    m_out->println("%sbit%s[%d:0] %s;", 
+        qualifiers(m_field->getAttr()).c_str(),
+        (t->isSigned())?" signed":"",
+        (t->getWidth()-1),
+        m_field->name().c_str());
+}
+
+void TaskGenerateStructFields::visitDataTypeString(vsc::dm::IDataTypeString *t) {
+
+}
+
 void TaskGenerateStructFields::visitDataTypeComponent(arl::dm::IDataTypeComponent*t) {
     std::string qual;
 
@@ -62,6 +78,18 @@ void TaskGenerateStructFields::visitDataTypeComponent(arl::dm::IDataTypeComponen
 void TaskGenerateStructFields::visitTypeField(vsc::dm::ITypeField *f) {
     m_field = f;
     f->getDataType()->accept(m_this);
+}
+
+std::string TaskGenerateStructFields::qualifiers(vsc::dm::TypeFieldAttr attr) {
+    std::string ret;
+
+    DEBUG("qualifiers: 0x%08x", attr);
+
+    if ((attr & vsc::dm::TypeFieldAttr::Rand) != vsc::dm::TypeFieldAttr::NoAttr) {
+        ret += "rand ";
+    }
+
+    return ret;
 }
 
 }

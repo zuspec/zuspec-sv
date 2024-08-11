@@ -137,7 +137,7 @@ class TestSmoke(TestBase):
                 }
 
                 constraint ab_c {
-                    a != 0;
+                    a == 5;
                 }
             }
         }
@@ -156,5 +156,8 @@ class TestSmoke(TestBase):
             action_t,
             out)
         generator.generate()
+
+        with open("agent.sv", "w") as fp:
+                fp.write(out.getvalue())
 
         print("Output:\n%s" % out.getvalue())

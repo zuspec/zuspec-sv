@@ -42,9 +42,18 @@ public:
 
     virtual void generate(vsc::dm::IDataTypeStruct *t);
 
+    virtual void visitDataTypeBool(vsc::dm::IDataTypeBool *t) override;
+
+    virtual void visitDataTypeInt(vsc::dm::IDataTypeInt *t) override;
+
+    virtual void visitDataTypeString(vsc::dm::IDataTypeString *t) override;
+
     virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent*t) override;
 
     virtual void visitTypeField(vsc::dm::ITypeField *f) override;
+
+protected:
+    std::string qualifiers(vsc::dm::TypeFieldAttr attr);
 
 protected:
     dmgr::IDebug            *m_dbg;
