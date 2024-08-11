@@ -25,6 +25,7 @@
 #include "TaskGenerateStruct.h"
 #include "TaskGenerateStructConstraints.h"
 #include "TaskGenerateStructCtor.h"
+#include "TaskGenerateStructDoSolveExec.h"
 #include "TaskGenerateStructFields.h"
 
 
@@ -105,7 +106,9 @@ void TaskGenerateStruct::generate_execs(vsc::dm::IDataTypeStruct *t) {
                 TaskGenerateExecBlock(m_gen, &genref, m_out).generate(
                     execs, it->second.first, it->second.second);
             }
+            TaskGenerateStructDoSolveExec(m_gen, m_out).generate(t, it->second.second);
         }
+
     }
 }
 

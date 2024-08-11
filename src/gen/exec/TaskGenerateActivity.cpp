@@ -87,12 +87,12 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
         m_gen->getNameMap()->getName(t->getTarget()).c_str(), varname);
     run->println("// Traverse action %s", t->getTarget()->name().c_str());
     run->println("%s = new();", varname);
-    run->println("%s.pre_solve();", varname);
+    run->println("%s.do_pre_solve();", varname);
     run->println("if (!std::randomize(%s)) begin", varname);
     run->inc_ind();
     run->dec_ind();
     run->println("end");
-    run->println("%s.post_solve();", varname);
+    run->println("%s.do_post_solve();", varname);
     if (t->getTarget()->activities().size()) {
         // TODO: invoke activity
     } else if (t->getTarget()->getExecs(arl::dm::ExecKindT::Body).size()) {

@@ -15,7 +15,13 @@ class object;
     virtual function void dtor();
     endfunction
 
+    virtual function void do_pre_solve();
+    endfunction
+
     virtual function void pre_solve();
+    endfunction
+
+    virtual function void do_post_solve();
     endfunction
     
     virtual function void post_solve();
