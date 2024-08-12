@@ -40,25 +40,31 @@ TaskGenerateStructFields::~TaskGenerateStructFields() {
 }
 
 void TaskGenerateStructFields::generate(vsc::dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("generate");
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
         it=t->getFields().begin();
         it!=t->getFields().end(); it++) {
         (*it)->accept(m_this);
     }
+    DEBUG_LEAVE("generate");
 }
 
 void TaskGenerateStructFields::visitDataTypeBool(vsc::dm::IDataTypeBool *t) {
+    DEBUG_ENTER("visitDataTypeBool");
     m_out->println("%sbit %s;", 
         qualifiers(m_field->getAttr()).c_str(),
         m_field->name().c_str());
+    DEBUG_LEAVE("visitDataTypeBool");
 }
 
 void TaskGenerateStructFields::visitDataTypeInt(vsc::dm::IDataTypeInt *t) {
+    DEBUG_ENTER("visitDataTypeInt");
     m_out->println("%sbit%s[%d:0] %s;", 
         qualifiers(m_field->getAttr()).c_str(),
         (t->isSigned())?" signed":"",
         (t->getWidth()-1),
         m_field->name().c_str());
+    DEBUG_LEAVE("visitDataTypeInt");
 }
 
 void TaskGenerateStructFields::visitDataTypeString(vsc::dm::IDataTypeString *t) {
@@ -66,6 +72,7 @@ void TaskGenerateStructFields::visitDataTypeString(vsc::dm::IDataTypeString *t) 
 }
 
 void TaskGenerateStructFields::visitDataTypeComponent(arl::dm::IDataTypeComponent*t) {
+    DEBUG_ENTER("visitDataTypeComponent");
     std::string qual;
 
     if ((m_field->getAttr() & vsc::dm::TypeFieldAttr::Rand) != vsc::dm::TypeFieldAttr::NoAttr) {
@@ -75,18 +82,23 @@ void TaskGenerateStructFields::visitDataTypeComponent(arl::dm::IDataTypeComponen
     m_out->println("%s%s %s;", qual.c_str(),
         m_gen->getNameMap()->getName(t).c_str(),
         m_field->name().c_str());
+    DEBUG_LEAVE("visitDataTypeComponent");
 }
 
 void TaskGenerateStructFields::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("visitDataTypeStruct");
     m_out->println("%s%s %s;", 
         qualifiers(m_field->getAttr()).c_str(),
         m_gen->getNameMap()->getName(t).c_str(),
         m_field->name().c_str());
+    DEBUG_LEAVE("visitDataTypeStruct");
 }
 
 void TaskGenerateStructFields::visitTypeField(vsc::dm::ITypeField *f) {
+    DEBUG_ENTER("visitTypeField %s", f->name().c_str());
     m_field = f;
     f->getDataType()->accept(m_this);
+    DEBUG_LEAVE("visitTypeField %s", f->name().c_str());
 }
 
 std::string TaskGenerateStructFields::qualifiers(vsc::dm::TypeFieldAttr attr) {

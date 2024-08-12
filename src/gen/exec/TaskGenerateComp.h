@@ -41,6 +41,8 @@ public:
 
     virtual void generate(vsc::dm::IDataTypeStruct *t) override;
 
+    virtual void generate_check(vsc::dm::IDataTypeStruct *t);
+
     virtual void generate_ctor(vsc::dm::IDataTypeStruct *t) override;
 
     virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;

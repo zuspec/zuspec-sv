@@ -22,6 +22,7 @@
 #include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateComp.h"
+#include "TaskGenerateCompCheck.h"
 #include "TaskGenerateCompCtor.h"
 #include "TaskGenerateCompFields.h"
 #include "TaskGenerateCompInit.h"
@@ -54,6 +55,10 @@ void TaskGenerateComp::generate_head(vsc::dm::IDataTypeStruct *t) {
 
 void TaskGenerateComp::generate(vsc::dm::IDataTypeStruct *t) {
     TaskGenerateStruct::generate(t);
+}
+
+void TaskGenerateComp::generate_check(vsc::dm::IDataTypeStruct *t) {
+    TaskGenerateCompCheck(m_gen, m_out).generate(t);
 }
 
 void TaskGenerateComp::generate_ctor(vsc::dm::IDataTypeStruct *t) {
@@ -90,6 +95,7 @@ void TaskGenerateComp::generate_execs(vsc::dm::IDataTypeStruct *t) {
                 execs, it->second.first, it->second.second);
         }
     }
+    generate_check(t);
 }
 
 }

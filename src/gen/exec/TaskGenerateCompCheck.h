@@ -1,5 +1,5 @@
 /**
- * TaskGenerateCompFields.h
+ * TaskGenerateCompCheck.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,25 +19,41 @@
  *     Author: 
  */
 #pragma once
-#include "gen/exec/TaskGenerateStructFields.h"
+#include "dmgr/IDebugMgr.h"
+#include "zsp/arl/dm/impl/VisitorBase.h"
+#include "gen/IOutput.h"
 
 namespace zsp {
 namespace sv {
 namespace gen {
 namespace exec {
 
+class TaskGenerator;
 
-
-class TaskGenerateCompFields :
-    public virtual TaskGenerateStructFields {
+class TaskGenerateCompCheck :
+    public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateCompFields(
+    TaskGenerateCompCheck(
         TaskGenerate        *gen,
         IOutput             *out);
 
-    virtual ~TaskGenerateCompFields();
+    virtual ~TaskGenerateCompCheck();
+
+    virtual void generate(vsc::dm::IDataTypeStruct *t);
+
+    virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent *t) override;
+
+    virtual void visitTypeFieldPhy(vsc::dm::ITypeFieldPhy *f) override;
+
+    virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
 
     virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override;
+
+private:
+    static dmgr::IDebug         *m_dbg;
+    TaskGenerate                *m_gen;
+    IOutput                     *m_out;
+    vsc::dm::ITypeField         *m_field;
 
 };
 

@@ -52,7 +52,9 @@ def run_unit_test(dirconfig, content, expect):
         [pfv.FSPaths([top_pss], "pssSource")]))
     flow.addFileset("sim",
         pfv.FSPaths(
-            [actor_sv],
+            [
+                os.path.join(zsp_sv, "zsp_sv.sv"), 
+                actor_sv],
             "systemVerilogSource"
         )
     )

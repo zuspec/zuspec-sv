@@ -42,6 +42,8 @@ public:
 
     virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent *t) override;
 
+    virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override { }
+
 };
 
 }

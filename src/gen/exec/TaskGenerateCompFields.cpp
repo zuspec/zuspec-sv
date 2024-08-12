@@ -41,6 +41,12 @@ TaskGenerateCompFields::~TaskGenerateCompFields() {
 
 }
 
+void TaskGenerateCompFields::visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) {
+    DEBUG_ENTER("visitTypeFieldRegGroup");
+    m_out->println("addr_handle_t %s;", f->name().c_str());
+    DEBUG_LEAVE("visitTypeFieldRegGroup");
+}
+
 }
 }
 }

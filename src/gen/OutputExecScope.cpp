@@ -62,12 +62,18 @@ void OutputExecScope::apply(IOutput *out) {
         out->println("{");
         out->inc_ind();
     }
-    out->writes(m_decl.getValue());
-    out->writes("\n");
-    out->writes(m_init.getValue());
-    out->writes("\n");
-    out->writes(m_exec.getValue());
-    out->writes("\n");
+    if (m_decl.getValue().size()) {
+        out->writes(m_decl.getValue());
+        out->writes("\n");
+    }
+    if (m_init.getValue().size()) {
+        out->writes(m_init.getValue());
+        out->writes("\n");
+    }
+    if (m_exec.getValue().size()) {
+        out->writes(m_exec.getValue());
+        out->writes("\n");
+    }
     out->writes(m_dtor.getValue());
 
     if (m_new_scope) {
