@@ -47,15 +47,7 @@ void TaskGenerateCompInit::generate_head(vsc::dm::IDataTypeStruct *t) {
 void TaskGenerateCompInit::generate(vsc::dm::IDataTypeStruct *t) {
     generate_head(t);
 
-    m_init_down = true;
     m_out->println("init_down();");
-    for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
-        it=t->getFields().begin();
-        it!=t->getFields().end(); it++) {
-        (*it)->accept(m_this);
-    }
-
-    m_init_down = false;
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
         it=t->getFields().begin();
         it!=t->getFields().end(); it++) {
@@ -72,11 +64,7 @@ void TaskGenerateCompInit::generate_tail(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateCompInit::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
-    if (m_init_down) {
-        m_out->println("%s.init_down();", m_field->name().c_str());
-    } else {
-        m_out->println("%s.init_up();", m_field->name().c_str());
-    }
+    m_out->println("%s.init();", m_field->name().c_str());
 }
 
 void TaskGenerateCompInit::visitTypeField(vsc::dm::ITypeField *f) {
