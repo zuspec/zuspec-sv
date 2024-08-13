@@ -3,13 +3,14 @@ package zsp_sv;
 
 
 typedef class object_pool_base;
-typedef class actor;
+typedef class actor_c;
 typedef class component;
+typedef class executor_base;
 
 class empty_t;
 endclass
 
-class object;
+class object #(type executor_t=executor_base);
     object_pool_base    obj_pool;
 
     virtual function void init();
@@ -24,10 +25,10 @@ class object;
     virtual function void pre_solve();
     endfunction
 
-    virtual function void do_post_solve();
+    virtual function void do_post_solve(executor_t executor);
     endfunction
     
-    virtual function void post_solve();
+    virtual function void post_solve(executor_t executor);
     endfunction
 
 endclass
@@ -84,6 +85,14 @@ class addr_handle_t extends object_pool_base;
         end
         return ret;
     endfunction
+
+    virtual function bit[63:0] addr_value();
+        bit[63:0] ret = offset;
+        if (this.base != null) begin
+            ret += this.base.offset;
+        end
+        return ret;
+    endfunction
 endclass
 
 class addr_claim_t;
@@ -119,20 +128,23 @@ class activity extends object;
     endtask
 endclass
 
-class action extends object;
+class action #(type executor_t=executor_base) extends object #(executor_t);
 
-    virtual task body();
+    virtual task body(executor_t executor);
     endtask
 
 endclass
 
 class component;
-    string      m_name;
-    component   m_parent;
+    string      name;
+    component   parent;
+
+    // aspace_t_map
+    // executor_t_map
 
     function new(string name, component parent=null);
-        m_name = name;
-        m_parent = parent;
+        this.name = name;
+        this.parent = parent;
     endfunction
 
     virtual function void init_down();
@@ -164,30 +176,111 @@ interface class backend_api;
     pure virtual task read8(output bit[7:0] data, input bit[63:0] addr);
 endclass
 
-class actor #(
-    type comp_t=component, 
-    type activity_t=activity,
-    type api_t=backend_api);
-    comp_t      comp_tree;
-    component   comp_l[$];
-    api_t       api;
-    // TODO: address-space
+class executor_base extends component;
+    actor_c           actor_h;
+    backend_api         api;
 
-    function new(string name="");
-        comp_tree = new(name);
+    function new(string name, component parent);
+        super.new(name, parent);
+//        this.actor_h = actor_h;
     endfunction
 
-    task run();
-        activity_t root_activity = new();
-
-        comp_tree.init();
-
-        if (comp_tree.check()) begin
-            root_activity.run();
-        end else begin
-            $display("Error: initialization check failed");
+    function backend_api get_api();
+        if (api == null) begin
+            component c = this;
+            actor_c actor;
+            while (c.parent != null) begin
+                c = c.parent;
+            end
+            if (!$cast(actor, c)) begin
+                $display("Error: failed to cast root component to actor_c");
+            end
+            api = actor.get_backend();
         end
+        return api;
+    endfunction
+
+    virtual function bit[64] addr_value(addr_handle_t hndl);
+        return hndl.addr_value();
+    endfunction
+
+    virtual task read8 (output bit[7:0] data, input addr_handle_t hndl);
+        backend_api api = get_api();
+        bit[63:0] addr = addr_value(hndl);
+        api.read8(data, addr);
     endtask
+
+    virtual task read16(output bit[15:0] data, input addr_handle_t hndl);
+        backend_api api = get_api();
+        bit[63:0] addr = addr_value(hndl);
+        api.read16(data, addr);
+    endtask
+
+    virtual task read32(output bit[31:0] data, input addr_handle_t hndl);
+        backend_api api = get_api();
+        bit[63:0] addr = addr_value(hndl);
+        api.read32(data, addr);
+    endtask
+
+    virtual task read64(output bit[63:0] data, input addr_handle_t hndl);
+        backend_api api = get_api();
+        bit[63:0] addr = addr_value(hndl);
+        api.read64(data, addr);
+    endtask
+
+    virtual task write8 (addr_handle_t hndl, bit[8] data);
+        backend_api api = get_api();
+        bit[63:0] addr = addr_value(hndl);
+        api.write8(addr, data);
+    endtask
+
+    virtual task write16(addr_handle_t hndl, bit[16] data);
+        backend_api api = get_api();
+        bit[63:0] addr = addr_value(hndl);
+        api.write16(addr, data);
+    endtask
+
+    virtual task write32(addr_handle_t hndl, bit[32] data);
+        backend_api api = get_api();
+        bit[63:0] addr = addr_value(hndl);
+        api.write32(addr, data);
+    endtask
+
+    virtual task write64(addr_handle_t hndl, bit[64] data);
+        backend_api api = get_api();
+        bit[63:0] addr = addr_value(hndl);
+        api.write64(addr, data);
+    endtask
+
+    virtual task read_bytes (addr_handle_t hndl, bit[7:0] data[$], int size);
+        backend_api api = get_api();
+        bit[63:0] addr = addr_value(hndl);
+//        api.write64(addr, data);
+    endtask
+
+    virtual task write_bytes(addr_handle_t hndl, bit[7:0] data[$]);
+        backend_api api = get_api();
+        bit[63:0] addr = addr_value(hndl);
+//        api.write64(addr, data);
+    endtask
+
+endclass
+
+class actor_c extends component;
+    component   comp_l[$];
+    // TODO: address-space
+
+    function new();
+        super.new("<actor>", null);
+    endfunction
+
+    virtual task run();
+    endtask
+
+    virtual function backend_api get_backend();
+        return null;
+    endfunction
+
 
 endclass
 

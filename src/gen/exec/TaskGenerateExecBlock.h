@@ -46,11 +46,13 @@ public:
     virtual void generate(
         arl::dm::ITypeExecProc *t,
         bool                    istask,
+        bool                    executor,
         const std::string       &fname);
 
     virtual void generate(
         const std::vector<arl::dm::ITypeExecUP> &t,
         bool                                    istask,
+        bool                                    executor,
         const std::string                       &fname);
 
 protected:

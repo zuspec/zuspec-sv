@@ -42,5 +42,9 @@
   - repeat
   - match
   - select
+- executors
+  - associate with exec blocks / functions as hidden context
+  - support built-in functions
+  - support custom extensions (per-model executor base)
 - packed structs 
 - memory management

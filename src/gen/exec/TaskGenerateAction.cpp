@@ -18,6 +18,7 @@
  * Created on:
  *     Author:
  */
+#include <tuple>
 #include "dmgr/impl/DebugMacros.h"
 #include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
@@ -47,7 +48,7 @@ TaskGenerateAction::~TaskGenerateAction() {
 }
 
 void TaskGenerateAction::generate_head(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("class %s extends action;", m_gen->getNameMap()->getName(t).c_str());
+    m_out->println("class %s extends action #(executor_base_c);", m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
 }
 
@@ -69,6 +70,7 @@ void TaskGenerateAction::generate_ctor(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateAction::generate_execs(vsc::dm::IDataTypeStruct *t) {
+    using std::get;
     TaskGenerateStruct::generate_execs(t);
 
     GenRefExprExecModel genref(
@@ -77,17 +79,20 @@ void TaskGenerateAction::generate_execs(vsc::dm::IDataTypeStruct *t) {
         "this",
         false);
 
-    std::vector<std::pair<arl::dm::ExecKindT,std::pair<bool,std::string>>> exec_t = {
-        {arl::dm::ExecKindT::Body, {true, "body"}}
+    std::vector<std::tuple<arl::dm::ExecKindT,bool,bool,std::string>> exec_t = {
+        {arl::dm::ExecKindT::Body, true, true, "body"}
     };
 
     for (auto it=exec_t.begin(); it!=exec_t.end(); it++) {
         const std::vector<arl::dm::ITypeExecUP> &execs = 
-            dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(it->first);
+            dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(get<0>(*it));
         
         if (execs.size()) {
             TaskGenerateExecBlock(m_gen, &genref, m_out).generate(
-                execs, it->second.first, it->second.second);
+                execs, 
+                get<1>(*it),  // task
+                get<2>(*it),  // executor,
+                get<3>(*it)); // name
         }
     }
 }

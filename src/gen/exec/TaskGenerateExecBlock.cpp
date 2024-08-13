@@ -44,6 +44,7 @@ TaskGenerateExecBlock::~TaskGenerateExecBlock() {
 void TaskGenerateExecBlock::generate(
     arl::dm::ITypeExecProc *t,
     bool                    istask,
+    bool                    executor,
     const std::string       &fname) {
 
 }
@@ -51,8 +52,12 @@ void TaskGenerateExecBlock::generate(
 void TaskGenerateExecBlock::generate(
         const std::vector<arl::dm::ITypeExecUP> &t,
         bool                                    istask,
+        bool                                    executor,
         const std::string                       &fname) {
-    m_out->println("%s %s();", (istask)?"task":"function void", fname.c_str());
+    m_out->println("%s %s(%s);", 
+        (istask)?"task":"function void", 
+        fname.c_str(),
+        (executor)?"executor_t executor":"");
     m_out->inc_ind();
     for (std::vector<arl::dm::ITypeExecUP>::const_iterator
         it=t.begin();

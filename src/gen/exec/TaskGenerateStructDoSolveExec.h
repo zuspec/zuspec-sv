@@ -44,8 +44,9 @@ public:
     virtual ~TaskGenerateStructDoSolveExec();
 
     void generate(
-        vsc::dm::IDataTypeStruct *t,
-        std::string &kind);
+        vsc::dm::IDataTypeStruct    *t,
+        bool                        executor,
+        std::string                 &kind);
 
     virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
 
@@ -58,6 +59,7 @@ protected:
     TaskGenerate                    *m_gen;
     IOutput                         *m_out;
     std::string                     m_kind;
+    bool                            m_executor;
     vsc::dm::ITypeField             *m_field;
 
 };

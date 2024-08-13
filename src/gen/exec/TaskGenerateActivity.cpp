@@ -47,8 +47,10 @@ void TaskGenerateActivity::generate(ActivityVariant *variant) {
 
     m_out->println("class activity_%p extends activity;", activity);
     m_out->inc_ind();
-    m_out->println("function new();");
+    m_out->println("%s actor;", m_gen->getActorName().c_str());
+    m_out->println("function new(%s actor);", m_gen->getActorName().c_str());
     m_out->inc_ind();
+    m_out->println("this.actor = actor;");
     m_out->dec_ind();
     m_out->println("endfunction");
     m_out->println("");

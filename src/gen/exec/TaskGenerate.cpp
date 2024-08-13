@@ -25,6 +25,7 @@
 #include "gen/TaskBuildTypeCollection.h"
 #include "gen/exec/TaskBuildActivityInfo.h"
 #include "CustomGenPrintCall.h"
+#include "CustomGenRegAccessCall.h"
 #include "TaskDefineType.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateActivity.h"
@@ -58,6 +59,8 @@ bool TaskGenerate::generate() {
 
     attach_custom_gen();
 
+    m_actor_name = "actor_t";
+
     arl::dm::IDataTypeActivitySequenceUP root_activity(
         m_ctxt->mkDataTypeActivitySequence());
 
@@ -68,6 +71,11 @@ bool TaskGenerate::generate() {
     m_out_prv->println("package %s_prv;", actor.c_str());
     m_out_prv->inc_ind();
     m_out_prv->println("import zsp_sv::*;");
+    m_out_prv->println("");
+    m_out_prv->println("typedef class %s_actor;", actor.c_str());
+    m_out_prv->println("// TODO: define model-specific executor class");
+    m_out_prv->println("typedef executor_base executor_base_c;");
+    m_out_prv->println("typedef %s_actor actor_t;", actor.c_str());
 
     m_out_pub->println("package %s_pkg;", actor.c_str());
     m_out_pub->inc_ind();
@@ -112,17 +120,54 @@ bool TaskGenerate::generate() {
         }
     }
 
+    // Define the actor
+//     #(.comp_t(%s), .activity_t(activity_%p));", 
+    m_out_prv->println("class %s_actor extends actor_c;", actor.c_str());
+    m_out_prv->inc_ind();
+    m_out_prv->println("%s comp_tree;", getNameMap()->getName(m_comp_t).c_str());
+    m_out_prv->println("backend_api api;");
+    m_out_prv->println("");
+    m_out_prv->println("function new();");
+    m_out_prv->inc_ind();
+    m_out_prv->println("super.new();");
+    m_out_prv->println("comp_tree = new(\"pss_top\", this);");
+    m_out_prv->dec_ind();
+    m_out_prv->println("endfunction");
+    m_out_prv->println("");
+    m_out_prv->println("virtual task run();");
+    m_out_prv->inc_ind();
+    m_out_prv->println("activity_%p root_activity = new(this);", root_activity.get());
+    m_out_prv->println("");
+    m_out_prv->println("comp_tree.init();");
+    m_out_prv->println("");
+    m_out_prv->println("if (comp_tree.check()) begin");
+    m_out_prv->inc_ind();
+    m_out_prv->dec_ind();
+    m_out_prv->println("end else begin");
+    m_out_prv->inc_ind();
+    m_out_prv->println("$display(\"Error: initialization check failed\");");
+    m_out_prv->dec_ind();
+    m_out_prv->println("end");
+    m_out_prv->dec_ind();
+    m_out_prv->println("endtask");
+    m_out_prv->println("");
+    m_out_prv->println("virtual function backend_api get_backend();");
+    m_out_prv->inc_ind();
+    m_out_prv->println("return api;");
+    m_out_prv->dec_ind();
+    m_out_prv->println("endfunction");
+
+
+    m_out_prv->dec_ind();
+    m_out_prv->println("endclass");
+
     m_out_prv->dec_ind();
     m_out_prv->println("endpackage");
 
-    // Define the actor
-    m_out_pub->println("class %s extends actor #(.comp_t(%s), .activity_t(activity_%p));", 
+    m_out_pub->println("typedef %s_prv::%s_actor %s;", 
+        actor.c_str(), 
         actor.c_str(),
-        getNameMap()->getName(m_comp_t).c_str(),
-        root_activity.get());
-
-
-    m_out_pub->println("endclass");
+        actor.c_str());
 
     m_out_pub->dec_ind();
     m_out_pub->println("endpackage");
@@ -240,10 +285,10 @@ void TaskGenerate::attach_custom_gen() {
                     "zsp_rt_addr_space_add_nonallocatable_region";
             } else if (name.find("::reg_c") != -1) {
                 DEBUG("Attach reg-access generator");
-#ifdef UNDEFINED
-                (*it)->setAssociatedData(
-                    new TaskGenerateExecModelRegRwCall(m_dmgr));
-#endif
+                if (name.find("::write") != -1 || name.find("::read") != -1) {
+                    (*it)->setAssociatedData(new CustomGenRegAccessCall(m_dmgr));
+                }
+                // TODO: handle get_handle()
             }
         } else if (name.find("std_pkg::") == 0) {
             if (name.find("urandom_range") != -1) {

@@ -18,6 +18,7 @@
  * Created on:
  *     Author:
  */
+#include <tuple>
 #include "dmgr/impl/DebugMacros.h"
 #include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
@@ -86,6 +87,7 @@ void TaskGenerateStruct::generate_constraints(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateStruct::generate_execs(vsc::dm::IDataTypeStruct *t) {
+    using std::get;
     if (dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)) {
         GenRefExprExecModel genref(
             m_gen,
@@ -93,20 +95,26 @@ void TaskGenerateStruct::generate_execs(vsc::dm::IDataTypeStruct *t) {
             "this",
             false);
 
-        std::vector<std::pair<arl::dm::ExecKindT,std::pair<bool,std::string>>> exec_t = {
-            {arl::dm::ExecKindT::PreSolve, {false, "pre_solve"}},
-            {arl::dm::ExecKindT::PostSolve, {false, "post_solve"}},
+        std::vector<std::tuple<arl::dm::ExecKindT,bool,bool,std::string>> exec_t = {
+            {arl::dm::ExecKindT::PreSolve, false, false, "pre_solve"},
+            {arl::dm::ExecKindT::PostSolve, false, true, "post_solve"},
         };
 
         for (auto it=exec_t.begin(); it!=exec_t.end(); it++) {
             const std::vector<arl::dm::ITypeExecUP> &execs = 
-                dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(it->first);
+                dynamic_cast<arl::dm::IDataTypeArlStruct *>(t)->getExecs(get<0>(*it));
         
             if (execs.size()) {
                 TaskGenerateExecBlock(m_gen, &genref, m_out).generate(
-                    execs, it->second.first, it->second.second);
+                    execs, 
+                    get<1>(*it),  // task
+                    get<2>(*it),  // executor
+                    get<3>(*it)); // name
             }
-            TaskGenerateStructDoSolveExec(m_gen, m_out).generate(t, it->second.second);
+            TaskGenerateStructDoSolveExec(m_gen, m_out).generate(
+                t, 
+                get<2>(*it),
+                get<3>(*it));
         }
 
     }
