@@ -41,13 +41,19 @@ TaskGenerateCompCtor::~TaskGenerateCompCtor() {
 }
 
 void TaskGenerateCompCtor::generate_head(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("function new(string name, component parent=null);");
+    m_out->println("function new(string name, component_ctor_ctxt ctxt, component parent=null);");
     m_out->inc_ind();
-    m_out->println("super.new(name, parent);");
+    m_out->println("super.new(name, ctxt, parent);");
+}
+
+void TaskGenerateCompCtor::generate_tail(vsc::dm::IDataTypeStruct *t) {
+    m_out->println("executor_m = new[ctxt.executor_m.size()](ctxt.executor_m);");
+    m_out->dec_ind();
+    m_out->println("endfunction");
 }
 
 void TaskGenerateCompCtor::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
-    m_out->println("%s = new(\"%s\", this);",
+    m_out->println("%s = new(\"%s\", ctxt, this);",
         m_field->name().c_str(),
         m_field->name().c_str());
 }

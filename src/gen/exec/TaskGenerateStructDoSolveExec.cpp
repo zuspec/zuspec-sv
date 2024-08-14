@@ -50,7 +50,9 @@ void TaskGenerateStructDoSolveExec::generate(
         kind.c_str(),
         (executor)?"executor_t executor":"");
     m_out->inc_ind();
-    m_out->println("%s();", kind.c_str());
+    m_out->println("%s(%s);", 
+        kind.c_str(),
+        (executor)?"executor":"");
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
         it=t->getFields().begin();
         it!=t->getFields().end(); it++) {

@@ -1,5 +1,5 @@
-/*
- * TaskGenerateActionFields.cpp
+/**
+ * TaskGenerateImportApi.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -16,40 +16,41 @@
  * limitations under the License.
  *
  * Created on:
- *     Author:
+ *     Author: 
  */
-#include "dmgr/impl/DebugMacros.h"
-#include "TaskGenerate.h"
-#include "TaskGenerateActionFields.h"
-
+#pragma once
+#include "dmgr/IDebugMgr.h"
+#include "gen/IOutput.h"
+#include "zsp/arl/dm/impl/VisitorBase.h"
 
 namespace zsp {
 namespace sv {
 namespace gen {
 namespace exec {
 
+class TaskGenerate;
 
-TaskGenerateActionFields::TaskGenerateActionFields(
+class TaskGenerateImportApi :
+    public virtual arl::dm::VisitorBase {
+public:
+    TaskGenerateImportApi(
         TaskGenerate        *gen,
-        IOutput             *out) : TaskGenerateStructFields(gen, out) {
-    m_dbg = 0;
-    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateActionFields", gen->getDebugMgr());
-}
+        IOutput             *out
+    );
 
-TaskGenerateActionFields::~TaskGenerateActionFields() {
+    virtual ~TaskGenerateImportApi();
 
-}
+    void generate(const std::vector<arl::dm::IDataTypeFunction *> &funcs);
 
-void TaskGenerateActionFields::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
-    if (f->name() != "comp") {
-        TaskGenerateStructFields::visitTypeFieldRef(f);
-    } else {
-        m_out->println("%s comp;", 
-            m_gen->getNameMap()->getName(f->getDataType()).c_str());
-    }
-}
+protected:
+    static dmgr::IDebug         *m_dbg;
+    TaskGenerate                *m_gen;
+    IOutput                     *m_out;
+};
 
 }
 }
 }
 }
+
+

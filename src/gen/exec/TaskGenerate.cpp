@@ -91,6 +91,9 @@ bool TaskGenerate::generate() {
     for (std::vector<int32_t>::const_iterator
         it=sorted.begin();
         it!=sorted.end(); it++) {
+        if (it != sorted.begin()) {
+            m_out_prv->println("");
+        }
         TaskDefineType(this, m_out_prv.get()).generate(
             types->getType(*it));
     }
@@ -112,6 +115,9 @@ bool TaskGenerate::generate() {
         for (std::vector<ActivityVariantUP>::const_iterator
             v_it=(*it)->variants().begin(); 
             v_it!=(*it)->variants().end(); v_it++) {
+
+            m_out_prv->println("");
+
             TaskGenerateActivity(
                 this, 
                 0, 
@@ -129,8 +135,9 @@ bool TaskGenerate::generate() {
     m_out_prv->println("");
     m_out_prv->println("function new();");
     m_out_prv->inc_ind();
-    m_out_prv->println("super.new();");
-    m_out_prv->println("comp_tree = new(\"pss_top\", this);");
+    m_out_prv->println("component_ctor_ctxt ctxt = new(0);");
+    m_out_prv->println("super.new(\"<actor>\", null, null);");
+    m_out_prv->println("comp_tree = new(\"pss_top\", ctxt, this);");
     m_out_prv->dec_ind();
     m_out_prv->println("endfunction");
     m_out_prv->println("");
@@ -174,6 +181,9 @@ bool TaskGenerate::generate() {
 
     const std::string &s = dynamic_cast<OutputStr *>(m_out_prv.get())->getValue();
     m_out->write(s.c_str(), s.size());
+
+    (*m_out) << std::endl;
+    (*m_out) << "// Import the public package\n";
 
     const std::string &prv = dynamic_cast<OutputStr *>(m_out_pub.get())->getValue();
     m_out->write(prv.c_str(), prv.size());

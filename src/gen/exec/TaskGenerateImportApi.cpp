@@ -1,5 +1,5 @@
 /*
- * TaskGenerateActionFields.cpp
+ * TaskGenerateImportApi.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -20,7 +20,7 @@
  */
 #include "dmgr/impl/DebugMacros.h"
 #include "TaskGenerate.h"
-#include "TaskGenerateActionFields.h"
+#include "TaskGenerateImportApi.h"
 
 
 namespace zsp {
@@ -29,24 +29,26 @@ namespace gen {
 namespace exec {
 
 
-TaskGenerateActionFields::TaskGenerateActionFields(
+TaskGenerateImportApi::TaskGenerateImportApi(
         TaskGenerate        *gen,
-        IOutput             *out) : TaskGenerateStructFields(gen, out) {
-    m_dbg = 0;
-    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateActionFields", gen->getDebugMgr());
+        IOutput             *out) : m_gen(gen), m_out(out) {
+    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateImportApi", gen->getDebugMgr());
 }
 
-TaskGenerateActionFields::~TaskGenerateActionFields() {
+TaskGenerateImportApi::~TaskGenerateImportApi() {
 
 }
 
-void TaskGenerateActionFields::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
-    if (f->name() != "comp") {
-        TaskGenerateStructFields::visitTypeFieldRef(f);
-    } else {
-        m_out->println("%s comp;", 
-            m_gen->getNameMap()->getName(f->getDataType()).c_str());
+void TaskGenerateImportApi::generate(const std::vector<arl::dm::IDataTypeFunction *> &funcs) {
+    m_out->println("class import_api extends backend_api;");
+    m_out->inc_ind();
+    for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
+        it=funcs.begin();
+        it!=funcs.end(); it++) {
+        (*it)->accept(m_this);
     }
+    m_out->dec_ind();
+    m_out->println("endclass");
 }
 
 }

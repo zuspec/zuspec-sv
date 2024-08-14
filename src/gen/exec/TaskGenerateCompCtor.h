@@ -40,6 +40,8 @@ public:
 
     virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
 
+    virtual void generate_tail(vsc::dm::IDataTypeStruct *t) override;
+
     virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent *t) override;
 
     virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override { }

@@ -133,16 +133,30 @@ class action #(type executor_t=executor_base) extends object #(executor_t);
     virtual task body(executor_t executor);
     endtask
 
+    virtual function executor_t get_executor();
+    endfunction
+
+endclass
+
+class component_ctor_ctxt;
+    executor_base  executor_m[];
+
+    function new(int n_executor_types);
+        executor_m = new[n_executor_types+1];
+    endfunction
+
 endclass
 
 class component;
     string      name;
     component   parent;
 
+    executor_base  executor_m[];
+
     // aspace_t_map
     // executor_t_map
 
-    function new(string name, component parent=null);
+    function new(string name, component_ctor_ctxt ctxt, component parent=null);
         this.name = name;
         this.parent = parent;
     endfunction
@@ -176,16 +190,16 @@ interface class backend_api;
     pure virtual task read8(output bit[7:0] data, input bit[63:0] addr);
 endclass
 
-class executor_base extends component;
+class executor_base #(type api_t=backend_api) extends component;
     actor_c           actor_h;
-    backend_api         api;
+    api_t             api;
 
-    function new(string name, component parent);
-        super.new(name, parent);
+    function new(string name, component_ctor_ctxt ctxt, component parent);
+        super.new(name, ctxt, parent);
 //        this.actor_h = actor_h;
     endfunction
 
-    function backend_api get_api();
+    function api_t get_api();
         if (api == null) begin
             component c = this;
             actor_c actor;
@@ -195,7 +209,9 @@ class executor_base extends component;
             if (!$cast(actor, c)) begin
                 $display("Error: failed to cast root component to actor_c");
             end
-            api = actor.get_backend();
+            if (!$cast(api, actor.get_backend())) begin
+                $display("Error: failed to cast api to api_t");
+            end
         end
         return api;
     endfunction
@@ -270,8 +286,8 @@ class actor_c extends component;
     component   comp_l[$];
     // TODO: address-space
 
-    function new();
-        super.new("<actor>", null);
+    function new(string name, component_ctor_ctxt ctxt, component parent=null);
+        super.new(name, ctxt, null);
     endfunction
 
     virtual task run();
@@ -281,6 +297,8 @@ class actor_c extends component;
         return null;
     endfunction
 
+    virtual function executor_base get_default_executor();
+    endfunction
 
 endclass
 
