@@ -1,5 +1,5 @@
 /*
- * TaskGenerateImportApi.cpp
+ * TaskGenerateAddrSpace.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -20,7 +20,7 @@
  */
 #include "dmgr/impl/DebugMacros.h"
 #include "TaskGenerate.h"
-#include "TaskGenerateImportApi.h"
+#include "TaskGenerateAddrSpace.h"
 
 
 namespace zsp {
@@ -29,29 +29,29 @@ namespace gen {
 namespace exec {
 
 
-TaskGenerateImportApi::TaskGenerateImportApi(
-        TaskGenerate        *gen,
-        IOutput             *out) : m_gen(gen), m_out(out) {
-    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateImportApi", gen->getDebugMgr());
+TaskGenerateAddrSpace::TaskGenerateAddrSpace(
+    TaskGenerate        *gen,
+    IOutput             *out) : m_gen(gen), m_out(out) {
+    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateAddrSpace", gen->getDebugMgr());
 }
 
-TaskGenerateImportApi::~TaskGenerateImportApi() {
+TaskGenerateAddrSpace::~TaskGenerateAddrSpace() {
 
 }
 
-void TaskGenerateImportApi::generate(const std::vector<arl::dm::IDataTypeFunction *> &funcs) {
-    m_out->println("interface class import_api extends backend_api;");
+void TaskGenerateAddrSpace::generate(vsc::dm::IDataTypeStruct *t) {
+    m_out->println("class %s extends addr_space_c;", m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
-    for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
-        it=funcs.begin();
-        it!=funcs.end(); it++) {
-        (*it)->accept(m_this);
-    }
+    m_out->println("function new(string name, component_ctor_ctxt ctxt, component parent);");
+    m_out->inc_ind();
+    m_out->println("super.new(name, ctxt, parent);");
+    m_out->dec_ind();
+    m_out->println("endfunction");
     m_out->dec_ind();
     m_out->println("endclass");
 }
 
-dmgr::IDebug *TaskGenerateImportApi::m_dbg = 0;
+dmgr::IDebug *TaskGenerateAddrSpace::m_dbg = 0;
 
 }
 }

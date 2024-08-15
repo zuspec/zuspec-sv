@@ -1,5 +1,5 @@
 /**
- * TaskGenerateCompCtor.h
+ * TaskGenerateAddrSpace.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,7 +19,8 @@
  *     Author: 
  */
 #pragma once
-#include "gen/exec/TaskGenerateStructCtor.h"
+#include "dmgr/IDebugMgr.h"
+#include "zsp/arl/dm/impl/VisitorBase.h"
 #include "gen/IOutput.h"
 
 namespace zsp {
@@ -29,27 +30,20 @@ namespace exec {
 
 class TaskGenerate;
 
-class TaskGenerateCompCtor :
-    public virtual TaskGenerateStructCtor {
+class TaskGenerateAddrSpace {
 public:
-    TaskGenerateCompCtor(
-        TaskGenerate        *gen,
-        IOutput             *out);
+    TaskGenerateAddrSpace(
+        TaskGenerate            *gen,
+        IOutput                 *out);
 
-    virtual ~TaskGenerateCompCtor();
+    virtual ~TaskGenerateAddrSpace();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
+    void generate(vsc::dm::IDataTypeStruct *t);
 
-    virtual void generate_tail(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent *t) override;
-
-    virtual void visitDataTypeAddrSpaceC(arl::dm::IDataTypeAddrSpaceC *t) override;
-
-    virtual void visitDataTypeAddrSpaceTransparentC(arl::dm::IDataTypeAddrSpaceTransparentC *t) override;
-
-    virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override { }
-
+private:
+    static dmgr::IDebug         *m_dbg;
+    TaskGenerate                *m_gen;
+    IOutput                     *m_out;
 
 };
 

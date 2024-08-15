@@ -52,6 +52,17 @@ void TaskGenerateCompCtor::generate_tail(vsc::dm::IDataTypeStruct *t) {
     m_out->println("endfunction");
 }
 
+void TaskGenerateCompCtor::visitDataTypeAddrSpaceC(arl::dm::IDataTypeAddrSpaceC *t) {
+    m_out->println("%s = new(\"%s\", ctxt, this);",
+        m_field->name().c_str(),
+        m_field->name().c_str());
+    // TODO: register this address space with the context
+}
+
+void TaskGenerateCompCtor::visitDataTypeAddrSpaceTransparentC(arl::dm::IDataTypeAddrSpaceTransparentC *t) {
+    visitDataTypeAddrSpaceC(t);
+}
+
 void TaskGenerateCompCtor::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
     m_out->println("%s = new(\"%s\", ctxt, this);",
         m_field->name().c_str(),

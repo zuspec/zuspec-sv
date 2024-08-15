@@ -1,5 +1,5 @@
 /**
- * TaskGenerateImportApi.h
+ * CustomGenAddrHandle.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,32 +19,27 @@
  *     Author: 
  */
 #pragma once
-#include "dmgr/IDebugMgr.h"
-#include "gen/IOutput.h"
-#include "zsp/arl/dm/impl/VisitorBase.h"
+#include "CustomGenBase.h"
 
 namespace zsp {
 namespace sv {
 namespace gen {
 namespace exec {
 
-class TaskGenerate;
 
-class TaskGenerateImportApi :
-    public virtual arl::dm::VisitorBase {
+
+class CustomGenAddrHandle :
+    public virtual CustomGenBase {
 public:
-    TaskGenerateImportApi(
-        TaskGenerate        *gen,
-        IOutput             *out);
+    CustomGenAddrHandle(dmgr::IDebugMgr *dmgr);
 
-    virtual ~TaskGenerateImportApi();
+    virtual ~CustomGenAddrHandle();
 
-    void generate(const std::vector<arl::dm::IDataTypeFunction *> &funcs);
+    virtual void genDefinition(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        vsc::dm::IDataType                  *type) override;
 
-protected:
-    static dmgr::IDebug         *m_dbg;
-    TaskGenerate                *m_gen;
-    IOutput                     *m_out;
 };
 
 }

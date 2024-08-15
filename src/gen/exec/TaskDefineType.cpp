@@ -25,8 +25,8 @@
 #ifdef UNDEFINED
 #include "TaskActivity.h"
 #include "TaskAddrClaim.h"
-#include "TaskAddrSpace.h"
 #endif
+#include "TaskGenerateAddrSpace.h"
 #include "TaskGenerateComp.h"
 #include "TaskDefineType.h"
 #ifdef UNDEFINED
@@ -86,13 +86,13 @@ void TaskDefineType::visitDataTypeAddrClaim(arl::dm::IDataTypeAddrClaim *t) {
 
 void TaskDefineType::visitDataTypeAddrSpaceC(arl::dm::IDataTypeAddrSpaceC *t) {
     DEBUG_ENTER("visitDataTypeAddrSpaceC");
-//    TaskAddrSpace(m_gen, m_out_h, m_out_c).generate(t);
+    TaskGenerateAddrSpace(m_gen, m_out).generate(t);
     DEBUG_LEAVE("visitDataTypeAddrSpaceC");
 }
 
 void TaskDefineType::visitDataTypeAddrSpaceTransparentC(arl::dm::IDataTypeAddrSpaceTransparentC *t) {
     DEBUG_ENTER("visitDataTypeAddrSpaceTransparentC");
-//    TaskAddrSpace(m_gen, m_out_h, m_out_c).generate(t);
+    TaskGenerateAddrSpace(m_gen, m_out).generate(t);
     DEBUG_LEAVE("visitDataTypeAddrSpaceTransparentC");
 }
 

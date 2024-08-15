@@ -62,7 +62,7 @@ class addr_handle_t extends object_pool_base;
     addr_handle_t       base;
     bit[63:0]           offset;
     
-    function new(addr_handle_t base, bit[63:0] offset);
+    function new(addr_handle_t base=null, bit[63:0] offset=0);
         this.base = base;
         this.offset = offset;
         if (base != null) begin
@@ -177,6 +177,18 @@ class component;
 endclass
 
 class backend;
+endclass
+
+class addr_region_s;
+endclass
+
+class addr_space_c extends component;
+    function new(string name, component_ctor_ctxt ctxt, component parent);
+        super.new(name, ctxt, parent);
+    endfunction
+
+    virtual function addr_handle_t add_nonallocatable_region(addr_region_s region);
+    endfunction
 endclass
 
 interface class backend_api;

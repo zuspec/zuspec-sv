@@ -24,11 +24,14 @@
 #include "gen/OutputStr.h"
 #include "gen/TaskBuildTypeCollection.h"
 #include "gen/exec/TaskBuildActivityInfo.h"
+#include "CustomGenAddrHandle.h"
+#include "CustomGenMemRwCall.h"
 #include "CustomGenPrintCall.h"
 #include "CustomGenRegAccessCall.h"
 #include "TaskDefineType.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateActivity.h"
+#include "TaskGenerateImportApi.h"
 
 
 namespace zsp {
@@ -73,6 +76,7 @@ bool TaskGenerate::generate() {
     m_out_prv->println("import zsp_sv::*;");
     m_out_prv->println("");
     m_out_prv->println("typedef class %s_actor;", actor.c_str());
+    m_out_prv->println("typedef class import_api;", actor.c_str());
     m_out_prv->println("// TODO: define model-specific executor class");
     m_out_prv->println("typedef executor_base executor_base_c;");
     m_out_prv->println("typedef %s_actor actor_t;", actor.c_str());
@@ -94,8 +98,17 @@ bool TaskGenerate::generate() {
         if (it != sorted.begin()) {
             m_out_prv->println("");
         }
-        TaskDefineType(this, m_out_prv.get()).generate(
-            types->getType(*it));
+        ICustomGen *custom_gen = dynamic_cast<ICustomGen *>(
+            types->getType(*it)->getAssociatedData());
+        if (custom_gen) {
+            custom_gen->genDefinition(
+                this, 
+                m_out_prv.get(),
+                types->getType(*it));
+        } else {
+            TaskDefineType(this, m_out_prv.get()).generate(
+                types->getType(*it));
+        }
     }
 
     std::vector<ActivityInfoUP> activity_info = TaskBuildActivityInfo(
@@ -126,12 +139,18 @@ bool TaskGenerate::generate() {
         }
     }
 
+    // Define the import API
+    m_out_prv->println("");
+    TaskGenerateImportApi(this, m_out_prv.get()).generate(
+        m_ctxt->getDataTypeFunctions());
+    m_out_prv->println("");
+
     // Define the actor
 //     #(.comp_t(%s), .activity_t(activity_%p));", 
     m_out_prv->println("class %s_actor extends actor_c;", actor.c_str());
     m_out_prv->inc_ind();
     m_out_prv->println("%s comp_tree;", getNameMap()->getName(m_comp_t).c_str());
-    m_out_prv->println("backend_api api;");
+    m_out_prv->println("import_api api;");
     m_out_prv->println("");
     m_out_prv->println("function new();");
     m_out_prv->inc_ind();
@@ -149,16 +168,26 @@ bool TaskGenerate::generate() {
     m_out_prv->println("");
     m_out_prv->println("if (comp_tree.check()) begin");
     m_out_prv->inc_ind();
+    m_out_prv->println("if (api != null) begin");
+    m_out_prv->inc_ind();
+    m_out_prv->println("root_activity.run();");
+    m_out_prv->dec_ind();
+    m_out_prv->println("end else begin");
+    m_out_prv->inc_ind();
+    m_out_prv->println("$display(\"Error: no import API provided\");");
+    m_out_prv->dec_ind();
+    m_out_prv->println("end");
     m_out_prv->dec_ind();
     m_out_prv->println("end else begin");
     m_out_prv->inc_ind();
     m_out_prv->println("$display(\"Error: initialization check failed\");");
     m_out_prv->dec_ind();
     m_out_prv->println("end");
+    m_out_prv->println("");
     m_out_prv->dec_ind();
     m_out_prv->println("endtask");
     m_out_prv->println("");
-    m_out_prv->println("virtual function backend_api get_backend();");
+    m_out_prv->println("virtual function import_api get_api();");
     m_out_prv->inc_ind();
     m_out_prv->println("return api;");
     m_out_prv->dec_ind();
@@ -174,6 +203,9 @@ bool TaskGenerate::generate() {
     m_out_pub->println("typedef %s_prv::%s_actor %s;", 
         actor.c_str(), 
         actor.c_str(),
+        actor.c_str());
+    m_out_pub->println("typedef %s_prv::import_api %s_api;", 
+        actor.c_str(), 
         actor.c_str());
 
     m_out_pub->dec_ind();
@@ -196,9 +228,9 @@ void TaskGenerate::attach_custom_gen() {
 
     vsc::dm::IDataTypeStruct *addr_handle_t = m_ctxt->findDataTypeStruct(
         "addr_reg_pkg::addr_handle_t");
+    m_namemap->setName(addr_handle_t, "addr_handle_t");
+    addr_handle_t->setAssociatedData(new CustomGenAddrHandle(getDebugMgr()));
 #ifdef UNDEFINED
-    m_name_m->setName(addr_handle_t, "zsp_rt_addr_handle");
-    addr_handle_t->setAssociatedData(new TaskGenerateExecModelAddrHandle(getDebugMgr()));
     m_addr_handle_t = addr_handle_t;
 #endif
 
@@ -239,9 +271,7 @@ void TaskGenerate::attach_custom_gen() {
         it=rw_funcs.begin();
         it!=rw_funcs.end(); it++) {
         f_t = m_ctxt->findDataTypeFunction(*it);
-#ifdef UNDEFINED
-        f_t->setAssociatedData(new TaskGenerateExecModelMemRwCall(m_dmgr));
-#endif
+        f_t->setAssociatedData(new CustomGenMemRwCall(m_dmgr));
     }
 
     for (std::vector<vsc::dm::IDataTypeStructUP>::const_iterator
