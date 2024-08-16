@@ -33,6 +33,14 @@ class object #(type executor_t=executor_base);
 
 endclass
 
+interface class packed_s;
+
+    virtual function bit[1024] pack();
+
+    virtual function void pack_bytes(byte unsigned data[$]);
+
+endclass
+
 class object_pool_base;
     int     count;
 

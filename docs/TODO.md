@@ -1,26 +1,39 @@
 
-* Test component init_up / init_down
+- Component tree
+  - init_up / init_down sequencing
+  - type override
+
 - registers
   - Model virtually
   - Handle (physical or ref) modeled as address handle (ref+base)
 
 - Data types
   * bit/int
-  - string
+  - string  - activity 
   * struct
   - packed struct
   - Enum types
   - Implicit field constraints (eg <base> in <range> field)
 - std_pkg
-- import functions
-  - API interface class that extends base backend interface with import methods
-  - Base implementation with implementations that fatal out?
+- functions
+  - import functions
+    - API interface class that extends base backend interface with import methods
+    - Base implementation with implementations that fatal out?
+  - static native functions
+  - component-context native functions
 - constraints
   - if/else
+  - implies
+  - default
   - expression
   - foreach
+  - forall
   - unique
   - 'in'
+  - dist weight (soft?)
+  - constraints on component
+  - static
+  - dynamic
 
 - exec statements
   - if/else
@@ -37,14 +50,34 @@
   - solve
   - target
 - activity statements
-  - traversal
   - if/else
-  - repeat
   - match
+  - repeat
+  - replicate
   - select
+  - traversal
+    - type
+    - handle
+    - traversal inline constraints
+  - inline constraints
+  - scheduling constraints
 - executors
   - associate with exec blocks / functions as hidden context
   - support built-in functions
   - support custom extensions (per-model executor base)
 - packed structs 
 - memory management
+  - address space
+  - address space methods
+  - memory claims
+  - memory-allocation phase
+- memory access
+  - write_struct
+  - read_struct
+  - write64,32,16,8 read64,32,16,8
+- coverage
+  - data coverage
+    - covergroup
+    - implement sample points
+  - behavioral coverage
+    - 
