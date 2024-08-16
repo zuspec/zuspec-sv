@@ -26,6 +26,7 @@ def test_simple_memwrite(dirconfig):
             action Entry {
                 exec body {
                     write32(comp.hndl, 32);
+                    write32(comp.hndl, 64);
                 }
             }
         }

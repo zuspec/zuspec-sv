@@ -90,13 +90,37 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
     run->println("// Traverse action %s", t->getTarget()->name().c_str());
     run->println("begin");
     run->inc_ind();
-    run->println("executor_t executor;");
+    run->println("executor_base_c executor;");
+    run->println("int unsigned comp_id;");
     run->println("%s = new();", varname);
     run->println("%s.do_pre_solve();", varname);
-    run->println("if (!std::randomize(%s)) begin", varname);
+    run->indent();
+    run->write("if (!std::randomize(%s", varname);
+
+    // Add in extra variables
+    run->write(", comp_id");
+
+    // Option
+    bool include_with = true;
+    if (include_with) {
+        run->write(") with {\n");
+        run->inc_ind();
+        run->println("comp_id inside {0};");
+        run->dec_ind();
+        run->indent();
+        run->write("}) begin\n");
+    } else {
+        run->write(") begin\n");
+    }
     run->inc_ind();
     run->dec_ind();
     run->println("end");
+    run->println("if (!$cast(%s.comp, actor.comp_l[comp_id])) begin", varname);
+    run->inc_ind();
+    run->println("$display(\"Failed to cast component\");");
+    run->dec_ind();
+    run->println("end");
+    run->println("$cast(executor, %s.comp.get_default_executor());", varname);
     run->println("%s.do_post_solve(executor);", varname);
     if (t->getTarget()->activities().size()) {
         // TODO: invoke activity

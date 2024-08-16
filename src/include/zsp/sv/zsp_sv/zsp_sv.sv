@@ -139,15 +139,18 @@ class action #(type executor_t=executor_base) extends object #(executor_t);
 endclass
 
 class component_ctor_ctxt;
+    actor_c        actor;
     executor_base  executor_m[];
 
-    function new(int n_executor_types);
+    function new(actor_c actor, int n_executor_types);
+        this.actor = actor;
         executor_m = new[n_executor_types+1];
     endfunction
 
 endclass
 
 class component;
+    int         comp_id;
     string      name;
     component   parent;
 
@@ -157,6 +160,12 @@ class component;
     // executor_t_map
 
     function new(string name, component_ctor_ctxt ctxt, component parent=null);
+        if (ctxt != null) begin
+            this.comp_id = ctxt.actor.comp_l.size();
+            ctxt.actor.comp_l.push_back(this);
+        end else begin
+            this.comp_id = -1;
+        end
         this.name = name;
         this.parent = parent;
     endfunction
@@ -172,6 +181,17 @@ class component;
 
     virtual function bit check();
         return 1;
+    endfunction
+
+    virtual function executor_base get_default_executor();
+        component c = parent;
+        actor_c actor;
+
+        while (c.parent != null) begin
+            c = c.parent;
+        end
+        $cast(actor, c);
+        return actor.get_default_executor();
     endfunction
 
 endclass
@@ -202,16 +222,14 @@ interface class backend_api;
     pure virtual task read8(output bit[7:0] data, input bit[63:0] addr);
 endclass
 
-class executor_base #(type api_t=backend_api) extends component;
-    actor_c           actor_h;
-    api_t             api;
+class executor_base extends component;
+    backend_api        api;
 
-    function new(string name, component_ctor_ctxt ctxt, component parent);
-        super.new(name, ctxt, parent);
-//        this.actor_h = actor_h;
+    function new(string name, component parent);
+        super.new(name, null, parent);
     endfunction
 
-    function api_t get_api();
+    function backend_api get_api();
         if (api == null) begin
             component c = this;
             actor_c actor;
