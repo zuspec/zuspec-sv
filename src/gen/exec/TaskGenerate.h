@@ -56,6 +56,10 @@ protected:
 
     void attach_custom_gen();
 
+    bool isInstance(
+        vsc::dm::IDataTypeStruct *t, 
+        const std::vector<vsc::dm::IDataTypeStruct *> &bases);
+
 protected:
     static dmgr::IDebug             *m_dbg;
     dmgr::IDebugMgr                 *m_dmgr;

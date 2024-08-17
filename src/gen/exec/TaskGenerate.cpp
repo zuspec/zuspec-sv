@@ -25,6 +25,7 @@
 #include "gen/TaskBuildTypeCollection.h"
 #include "gen/exec/TaskBuildActivityInfo.h"
 #include "CustomGenAddrHandle.h"
+#include "CustomGenAddrRegion.h"
 #include "CustomGenMemRwCall.h"
 #include "CustomGenPrintCall.h"
 #include "CustomGenRegAccessCall.h"
@@ -289,10 +290,31 @@ void TaskGenerate::attach_custom_gen() {
         f_t->setAssociatedData(new CustomGenMemRwCall(m_dmgr));
     }
 
+    std::vector<vsc::dm::IDataTypeStruct *> addr_region_base_bases;
+
     for (std::vector<vsc::dm::IDataTypeStructUP>::const_iterator
         it=m_ctxt->getDataTypeStructs().begin();
         it!=m_ctxt->getDataTypeStructs().end(); it++) {
         const std::string &name = (*it)->name();
+        if (name.find("::addr_region_base_s") != -1) {
+            addr_region_base_bases.push_back(it->get());
+        }
+    }
+
+
+    for (std::vector<vsc::dm::IDataTypeStructUP>::const_iterator
+        it=m_ctxt->getDataTypeStructs().begin();
+        it!=m_ctxt->getDataTypeStructs().end(); it++) {
+        const std::string &name = (*it)->name();
+        const std::string sname = ((*it)->getSuper())?(*it)->getSuper()->name():"";
+
+        DEBUG("type name: %s sname: %s", name.c_str(), sname.c_str());
+
+        if (isInstance(it->get(), addr_region_base_bases)) {
+            DEBUG("Is derived from addr_region_base");
+            (*it)->setAssociatedData(new CustomGenAddrRegion(getDebugMgr()));
+        }
+
 
 #ifdef UNDEFINED
         if (name.find("::contiguous_addr_space_c") != -1 
@@ -372,6 +394,23 @@ void TaskGenerate::attach_custom_gen() {
     }
 
     DEBUG_LEAVE("attach_custom_gen");
+}
+
+bool TaskGenerate::isInstance(
+        vsc::dm::IDataTypeStruct *t, 
+        const std::vector<vsc::dm::IDataTypeStruct *> &bases) {
+    bool ret = false;
+
+    while (t && !ret) {
+        for (std::vector<vsc::dm::IDataTypeStruct *>::const_iterator
+            it=bases.begin();
+            it!=bases.end() && !ret; it++) {
+            ret |= (t == *it);
+        }
+        t = t->getSuper();
+    }
+
+    return ret;
 }
 
 

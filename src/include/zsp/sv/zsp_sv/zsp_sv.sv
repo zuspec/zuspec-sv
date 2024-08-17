@@ -35,9 +35,9 @@ endclass
 
 interface class packed_s;
 
-    virtual function bit[1024] pack();
+    pure virtual function bit[1024] pack();
 
-    virtual function void pack_bytes(byte unsigned data[$]);
+    pure virtual function void pack_bytes(byte unsigned data[$]);
 
 endclass
 
@@ -207,7 +207,7 @@ endclass
 class backend;
 endclass
 
-class addr_region_s;
+interface class addr_region_base;
 endclass
 
 class addr_space_c extends component;
@@ -215,7 +215,7 @@ class addr_space_c extends component;
         super.new(name, ctxt, parent);
     endfunction
 
-    virtual function addr_handle_t add_nonallocatable_region(addr_region_s region);
+    virtual function addr_handle_t add_nonallocatable_region(addr_region_base region);
     endfunction
 endclass
 
