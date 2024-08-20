@@ -48,11 +48,11 @@ void TaskGenerateStructDoSolveExec::generate(
     m_executor = executor;
     m_out->println("function void do_%s(%s);", 
         kind.c_str(),
-        (executor)?"executor_t executor":"");
+        (executor)?"executor_base base":"");
     m_out->inc_ind();
     m_out->println("%s(%s);", 
         kind.c_str(),
-        (executor)?"executor":"");
+        (executor)?"base":"");
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
         it=t->getFields().begin();
         it!=t->getFields().end(); it++) {
@@ -67,7 +67,7 @@ void TaskGenerateStructDoSolveExec::visitDataTypeStruct(vsc::dm::IDataTypeStruct
     m_out->println("%s.do_%s(%s);", 
         m_field->name().c_str(),
         m_kind.c_str(),
-        (m_executor)?"executor":"");
+        (m_executor)?"base":"");
 }
 
 void TaskGenerateStructDoSolveExec::visitTypeFieldPhy(vsc::dm::ITypeFieldPhy *f) {

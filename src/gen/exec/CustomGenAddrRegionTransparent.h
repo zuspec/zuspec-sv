@@ -1,5 +1,5 @@
 /**
- * TaskGenerateAddrRegion.h
+ * CustomGenAddrRegionTransparent.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,7 +19,7 @@
  *     Author: 
  */
 #pragma once
-#include "TaskGenerateStruct.h"
+#include "CustomGenBase.h"
 
 namespace zsp {
 namespace sv {
@@ -28,19 +28,17 @@ namespace exec {
 
 
 
-class TaskGenerateAddrRegion :
-    public virtual TaskGenerateStruct {
+class CustomGenAddrRegionTransparent :
+    public virtual CustomGenBase {
 public:
-    TaskGenerateAddrRegion(
-        TaskGenerate        *gen,
-        IOutput             *out
-    );
+    CustomGenAddrRegionTransparent(dmgr::IDebugMgr *dmgr);
 
-    virtual ~TaskGenerateAddrRegion();
+    virtual ~CustomGenAddrRegionTransparent();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
+    virtual void genDefinition(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        vsc::dm::IDataType                  *type) override;
 
 };
 

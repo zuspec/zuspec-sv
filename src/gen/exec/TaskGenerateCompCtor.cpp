@@ -69,6 +69,12 @@ void TaskGenerateCompCtor::visitDataTypeComponent(arl::dm::IDataTypeComponent *t
         m_field->name().c_str());
 }
 
+void TaskGenerateCompCtor::visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) {
+    m_out->println("%s = new(\"%s\", ctxt.get_default_executor());",
+        f->name().c_str(),
+        f->name().c_str());
+}
+
 }
 }
 }

@@ -1,5 +1,5 @@
 /*
- * TaskGenerateCompFields.cpp
+ * CustomGenAddrRegionTransparent.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,8 +19,8 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
-#include "TaskGenerate.h"
-#include "TaskGenerateCompFields.h"
+#include "CustomGenAddrRegionTransparent.h"
+#include "TaskGenerateAddrRegionTransparent.h"
 
 
 namespace zsp {
@@ -29,25 +29,25 @@ namespace gen {
 namespace exec {
 
 
-TaskGenerateCompFields::TaskGenerateCompFields(
-    TaskGenerate            *gen,
-    IOutput                 *out) : TaskGenerateStructFields(gen, out) {
+CustomGenAddrRegionTransparent::CustomGenAddrRegionTransparent(
+    dmgr::IDebugMgr *dmgr) : CustomGenBase(dmgr) {
     m_dbg = 0;
-    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateCompFields", gen->getDebugMgr());
+    DEBUG_INIT("zsp::sv::gen::exec::CustomGenAddrRegionTransparent", dmgr);
+}
+
+CustomGenAddrRegionTransparent::~CustomGenAddrRegionTransparent() {
 
 }
 
-TaskGenerateCompFields::~TaskGenerateCompFields() {
-
+void CustomGenAddrRegionTransparent::genDefinition(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        vsc::dm::IDataType                  *type) {
+    DEBUG_ENTER("genDefinition");
+    TaskGenerateAddrRegionTransparent(gen, out).generate(dynamic_cast<vsc::dm::IDataTypeStruct *>(type));
+    DEBUG_LEAVE("genDefinition");
 }
 
-void TaskGenerateCompFields::visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) {
-    DEBUG_ENTER("visitTypeFieldRegGroup");
-    m_out->println("reg_group_field_c #(%s) %s;", 
-        m_gen->getNameMap()->getName(f->getDataType()).c_str(),
-        f->name().c_str());
-    DEBUG_LEAVE("visitTypeFieldRegGroup");
-}
 
 }
 }

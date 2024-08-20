@@ -76,6 +76,10 @@ public:
 
 	virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override { }
 
+    virtual void visitTypeExprMethodCallContext(arl::dm:: ITypeExprMethodCallContext *e) override;
+
+    virtual void visitTypeExprMethodCallStatic(arl::dm::ITypeExprMethodCallStatic *e) override;
+
 	virtual void visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp *e) override;
 
 	virtual void visitTypeExprRefPath(vsc::dm::ITypeExprRefPath *e) override;
@@ -83,6 +87,8 @@ public:
 	virtual void visitTypeExprRefTopDown(vsc::dm::ITypeExprRefTopDown *e) override;
 
 	virtual void visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) override;
+
+    virtual void visitTypeExprVal(vsc::dm::ITypeExprVal *e) override;
 
 	virtual void visitTypeField(vsc::dm::ITypeField *f) override;
 

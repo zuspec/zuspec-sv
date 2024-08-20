@@ -10,7 +10,7 @@ typedef class executor_base;
 class empty_t;
 endclass
 
-class object #(type executor_t=executor_base);
+class object;
     object_pool_base    obj_pool;
 
     virtual function void init();
@@ -25,10 +25,10 @@ class object #(type executor_t=executor_base);
     virtual function void pre_solve();
     endfunction
 
-    virtual function void do_post_solve(executor_t executor);
+    virtual function void do_post_solve(executor_base base);
     endfunction
     
-    virtual function void post_solve(executor_t executor);
+    virtual function void post_solve(executor_base base);
     endfunction
 
 endclass
@@ -136,12 +136,12 @@ class activity extends object;
     endtask
 endclass
 
-class action #(type executor_t=executor_base) extends object #(executor_t);
+class action extends object;
 
-    virtual task body(executor_t executor);
+    virtual task body(executor_base exec_b);
     endtask
 
-    virtual function executor_t get_executor();
+    virtual function executor_base get_executor();
     endfunction
 
 endclass
@@ -153,6 +153,10 @@ class component_ctor_ctxt;
     function new(actor_c actor, int n_executor_types);
         this.actor = actor;
         executor_m = new[n_executor_types+1];
+    endfunction
+
+    function executor_base get_default_executor();
+        return actor.get_default_executor();
     endfunction
 
 endclass
@@ -178,13 +182,13 @@ class component;
         this.parent = parent;
     endfunction
 
-    virtual function void init_down();
+    virtual function void init_down(executor_base exec_b);
     endfunction
 
-    virtual function void init();
+    virtual function void init(executor_base exec_b);
     endfunction
 
-    virtual function void init_up();
+    virtual function void init_up(executor_base exec_b);
     endfunction
 
     virtual function bit check();
@@ -207,7 +211,14 @@ endclass
 class backend;
 endclass
 
-interface class addr_region_base;
+class addr_region_base_s extends object;
+    bit[63:0]           size;
+    string              tag;
+    bit[63:0]           addr;
+
+    virtual function bit[63:0] get_address();
+        return addr;
+    endfunction
 endclass
 
 class addr_space_c extends component;
@@ -215,7 +226,81 @@ class addr_space_c extends component;
         super.new(name, ctxt, parent);
     endfunction
 
-    virtual function addr_handle_t add_nonallocatable_region(addr_region_base region);
+    virtual function addr_handle_t add_nonallocatable_region(addr_region_base_s region);
+        addr_handle_t ret = new(null, region.addr);
+        $display("add_nonallocatable_region: 0x%08h", region.addr);
+        return ret;
+    endfunction
+endclass
+
+class reg_field_c;
+    string          name;
+    bit[63:0]       offset;
+
+    function new(string name);
+        this.name = name;
+    endfunction
+endclass
+
+class reg_field_arr_c extends reg_field_c;
+    int             dim;
+
+    function new(string name, int dim);
+        super.new(name);
+        this.dim = dim;
+    endfunction
+endclass
+
+class reg_group_c;
+    reg_field_c     fields[$];
+
+    function new();
+    endfunction
+
+    function void map_registers(executor_base exec_b);
+        foreach (fields[i]) begin
+            reg_field_arr_c arr;
+
+            if ($cast(arr, fields[i])) begin
+                // TODO: handle arrayed registers
+            end else begin
+                fields[i].offset = get_offset_of_instance(exec_b, fields[i].name);
+            end
+        end
+    endfunction
+
+    virtual function bit[63:0] get_offset_of_instance(executor_base exec_b, string name);
+        return {64{1'b1}};
+    endfunction
+
+    virtual function bit[63:0] get_offset_of_instance_array(executor_base exec_b, string name, int index);
+        return {64{1'b1}};
+    endfunction
+
+endclass
+
+class reg_group_field_base_c extends reg_field_c;
+
+    function new(string name);
+        super.new(name);
+    endfunction
+
+    virtual function reg_group_c get_type();
+        return null;
+    endfunction
+
+endclass
+
+class reg_group_field_c #(type group_t=reg_group_c) extends reg_group_field_base_c;
+    group_t     group;
+
+    function new(string name, executor_base exec_b);
+        super.new(name);
+        group = group_t::inst(exec_b);
+    endfunction
+
+    virtual function reg_group_c get_type();
+        return group;
     endfunction
 endclass
 

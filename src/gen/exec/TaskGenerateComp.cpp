@@ -93,7 +93,7 @@ void TaskGenerateComp::generate_execs(vsc::dm::IDataTypeStruct *t) {
         
         if (execs.size()) {
             TaskGenerateExecBlock(m_gen, &genref, m_out).generate(
-                execs, it->second.first, false, it->second.second);
+                execs, it->second.first, true, it->second.second);
         }
     }
     generate_check(t);

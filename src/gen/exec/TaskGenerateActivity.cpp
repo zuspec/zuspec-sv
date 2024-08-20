@@ -90,7 +90,7 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
     run->println("// Traverse action %s", t->getTarget()->name().c_str());
     run->println("begin");
     run->inc_ind();
-    run->println("executor_base_c executor;");
+    run->println("executor_t executor;");
     run->println("int unsigned comp_id;");
     run->println("%s = new();", varname);
     run->println("%s.do_pre_solve();", varname);

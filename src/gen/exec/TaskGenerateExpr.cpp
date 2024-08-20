@@ -89,7 +89,23 @@ void TaskGenerateExpr::visitTypeExprMethodCallContext(
             m_genref,
             e);
     } else {
-
+        std::string name = e->getTarget()->name();
+        int idx = name.rfind("::");
+        if (idx != -1) {
+            name = name.substr(idx+2);
+        }
+        m_out->write("%s.%s(",
+            m_genref->genRval(e->getContext()).c_str(),
+            name.c_str());
+        for (std::vector<vsc::dm::ITypeExprUP>::const_iterator
+            it=e->getParameters().begin();
+            it!=e->getParameters().end(); it++) {
+            if (it != e->getParameters().begin()) {
+                m_out->write(", ");
+            }
+            TaskGenerateExpr(m_gen, m_genref, m_out).generate(it->get());
+        }
+        m_out->write(")");
     }
 }
 

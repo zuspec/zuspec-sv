@@ -19,6 +19,7 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "vsc/dm/impl/TaskIsDataTypeStruct.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateDataType.h"
 #include "TaskGenerateExecScope.h"
@@ -46,6 +47,7 @@ TaskGenerateExecScope::~TaskGenerateExecScope() {
 void TaskGenerateExecScope::generate(
         arl::dm::ITypeProcStmtScope *scope,
         bool                        newscope) {
+    DEBUG_ENTER("generate");
     OutputExecScope out(newscope, m_out_top);
     m_exec = &out;
 
@@ -54,31 +56,53 @@ void TaskGenerateExecScope::generate(
         m_out_top->inc_ind();
     }
 
+    m_genref->pushScope(scope);
     for (std::vector<arl::dm::ITypeProcStmtUP>::const_iterator
         it=scope->getStatements().begin();
         it!=scope->getStatements().end(); it++) {
         (*it)->accept(m_this);
     }
+    m_genref->popScope();
 
     m_exec->apply(m_out_top);
+
 
     if (newscope) {
         m_out_top->dec_ind();
         m_out_top->println("end");
     }
+    DEBUG_LEAVE("generate");
+}
+
+void TaskGenerateExecScope::visitTypeProcStmtAssign(arl::dm::ITypeProcStmtAssign *s) {
+    DEBUG_ENTER("visitTypeProcStmtAssign");
+    m_exec->exec()->indent();
+    m_exec->exec()->write("%s", m_genref->genLval(s->getLhs()).c_str());
+    m_exec->exec()->write(" = ");
+    TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getRhs());
+    m_exec->exec()->write(";\n");
+    DEBUG_LEAVE("visitTypeProcStmtAssign");
 }
 
 void TaskGenerateExecScope::visitTypeProcStmtExpr(arl::dm::ITypeProcStmtExpr *s) {
+    DEBUG_ENTER("visitTypeProcStmtExpr");
     m_out_top->indent();
     TaskGenerateExpr(m_gen, m_genref, m_out_top).generate(s->getExpr());
     m_out_top->write(";\n");
+    DEBUG_LEAVE("visitTypeProcStmtExpr");
 }
 
 void TaskGenerateExecScope::visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDecl *t) {
+    DEBUG_ENTER("visitTypeProcStmtVarDecl");
     m_exec->decl()->indent();
     TaskGenerateDataType(m_gen, m_exec->decl()).generate(t->getDataType());
     // TODO: must 'new' if an aggregate type
-    m_exec->decl()->write(" %s;\n", t->name().c_str());
+    if (vsc::dm::TaskIsDataTypeStruct().check(t->getDataType())) {
+        m_exec->decl()->write(" %s = new();\n", t->name().c_str());
+    } else {
+        m_exec->decl()->write(" %s;\n", t->name().c_str());
+    }
+    DEBUG_LEAVE("visitTypeProcStmtVarDecl");
 }
  
 }

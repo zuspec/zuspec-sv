@@ -19,6 +19,7 @@ def test_simple_memwrite(dirconfig):
 
             exec init_down {
                 transparent_addr_region_s<> region;
+//                addr_region_s<> region;
                 region.addr = 0x80000000;
                 region.size = 0x10000000;
                 hndl = aspace.add_nonallocatable_region(region);

@@ -22,7 +22,10 @@
 #include "vsc/dm/impl/TaskIsTypeFieldRef.h"
 #include "zsp/arl/dm/impl/TaskGetSubField.h"
 #include "GenRefExprExecModel.h"
+#include "gen/OutputStr.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateExpr.h"
+#include "TaskGenerateExprVal.h"
 
 
 namespace zsp {
@@ -41,7 +44,6 @@ GenRefExprExecModel::GenRefExprExecModel(
         m_gen(gen), m_ctxt(ctxt), m_ctxtRef(ctxtRef), m_ctxtPtr(ctxtPtr),
         m_bupRef(bupRef), m_bupPtr(bupPtr) {
     DEBUG_INIT("zsp::be::sw::GenRefExprExecModel", gen->getDebugMgr());
-
 }
 
 GenRefExprExecModel::~GenRefExprExecModel() {
@@ -49,18 +51,22 @@ GenRefExprExecModel::~GenRefExprExecModel() {
 }
 
 std::string GenRefExprExecModel::genLval(vsc::dm::ITypeExpr *ref) {
+    DEBUG_ENTER("genLval");
     m_ret.clear();
     m_depth = 0;
     m_isRef = m_ctxtPtr;
     ref->accept(m_this);
+    DEBUG_LEAVE("genLval (%s)", m_ret.c_str());
     return m_ret;
 }
 
 std::string GenRefExprExecModel::genRval(vsc::dm::ITypeExpr *ref) {
+    DEBUG_ENTER("genRval");
     m_ret.clear();
     m_depth = 0;
     m_isRef = m_ctxtPtr;
     ref->accept(m_this);
+    DEBUG_LEAVE("genRval (%s)", m_ret.c_str());
     return m_ret;
 }
 
@@ -108,6 +114,22 @@ void GenRefExprExecModel::visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *
     DEBUG_ENTER("visitDataTypeAddrHandle");
     m_isRefCountedField = true;
     DEBUG_LEAVE("visitDataTypeAddrHandle");
+}
+
+void GenRefExprExecModel::visitTypeExprMethodCallContext(arl::dm:: ITypeExprMethodCallContext *e) {
+    DEBUG_ENTER("visitTypeExprMethodCallContext");
+    OutputStr out;
+    TaskGenerateExpr(m_gen, this, &out).generate(e);
+    m_ret.append(out.getValue());
+    DEBUG_LEAVE("visitTypeExprMethodCallContext");
+}
+
+void GenRefExprExecModel::visitTypeExprMethodCallStatic(arl::dm::ITypeExprMethodCallStatic *e) {
+    DEBUG_ENTER("visitTypeExprMethodCallStatic");
+    OutputStr out;
+    TaskGenerateExpr(m_gen, this, &out).generate(e);
+    m_ret.append(out.getValue());
+    DEBUG_LEAVE("visitTypeExprMethodCallStatic");
 }
 
 void GenRefExprExecModel::visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp *e) {
@@ -185,6 +207,14 @@ void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) {
     m_isRef = vsc::dm::TaskIsTypeFieldRef().eval(field);
 
     DEBUG_LEAVE("visitTypeExprSubField");
+}
+
+void GenRefExprExecModel::visitTypeExprVal(vsc::dm::ITypeExprVal *e) {
+    DEBUG_ENTER("visitTypeExprVal");
+    OutputStr out;
+    TaskGenerateExprVal(m_gen, &out).generate(e);
+    m_ret.append(out.getValue());
+    DEBUG_LEAVE("visitTypeExprVal");
 }
 
 void GenRefExprExecModel::visitTypeField(vsc::dm::ITypeField *f) {

@@ -54,11 +54,16 @@ void TaskGenerateExecBlock::generate(
         bool                                    istask,
         bool                                    executor,
         const std::string                       &fname) {
+    DEBUG_ENTER("generate %s", fname.c_str());
     m_out->println("%s %s(%s);", 
         (istask)?"task":"function void", 
         fname.c_str(),
-        (executor)?"executor_t executor":"");
+        (executor)?"executor_base exec_b":"");
     m_out->inc_ind();
+    if (executor) {
+        m_out->println("executor_t executor;");
+        m_out->println("$cast(executor, exec_b);");
+    }
     for (std::vector<arl::dm::ITypeExecUP>::const_iterator
         it=t.begin();
         it!=t.end(); it++) {
@@ -69,6 +74,7 @@ void TaskGenerateExecBlock::generate(
     m_out->dec_ind();
     m_out->println("end%s", (istask)?"task":"function");
     m_out->println("");
+    DEBUG_LEAVE("generate %s", fname.c_str());
 }
 
 }

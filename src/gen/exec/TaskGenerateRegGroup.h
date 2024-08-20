@@ -1,5 +1,5 @@
 /**
- * TaskGenerateAddrRegion.h
+ * TaskGenerateRegGroup.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,28 +19,43 @@
  *     Author: 
  */
 #pragma once
-#include "TaskGenerateStruct.h"
+#include "dmgr/IDebugMgr.h"
+#include "zsp/arl/dm/impl/VisitorBase.h"
+#include "gen/IOutput.h"
 
 namespace zsp {
 namespace sv {
 namespace gen {
 namespace exec {
 
+class TaskGenerate;
 
-
-class TaskGenerateAddrRegion :
-    public virtual TaskGenerateStruct {
+class TaskGenerateRegGroup :
+    public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateAddrRegion(
+    TaskGenerateRegGroup(
         TaskGenerate        *gen,
-        IOutput             *out
-    );
+        IOutput             *out);
 
-    virtual ~TaskGenerateAddrRegion();
+    virtual ~TaskGenerateRegGroup();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
+    void generate(vsc::dm::IDataTypeStruct *t);
 
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
+    virtual void visitTypeFieldReg(arl::dm::ITypeFieldReg *f) override;
+
+    virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override;
+    
+private:
+    enum PhaseE {
+        Decl,
+        Ctor
+    };
+
+private:
+    static dmgr::IDebug         *m_dbg;
+    TaskGenerate                *m_gen;
+    IOutput                     *m_out;
+    PhaseE                      m_phase;
 
 };
 

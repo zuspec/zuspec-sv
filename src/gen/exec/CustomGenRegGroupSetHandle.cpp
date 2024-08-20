@@ -1,5 +1,5 @@
-/**
- * TaskGenerateAddrRegion.h
+/*
+ * CustomGenRegGroupSetHandle.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -16,10 +16,10 @@
  * limitations under the License.
  *
  * Created on:
- *     Author: 
+ *     Author:
  */
-#pragma once
-#include "TaskGenerateStruct.h"
+#include "CustomGenRegGroupSetHandle.h"
+
 
 namespace zsp {
 namespace sv {
@@ -27,26 +27,15 @@ namespace gen {
 namespace exec {
 
 
+CustomGenRegGroupSetHandle::CustomGenRegGroupSetHandle() {
 
-class TaskGenerateAddrRegion :
-    public virtual TaskGenerateStruct {
-public:
-    TaskGenerateAddrRegion(
-        TaskGenerate        *gen,
-        IOutput             *out
-    );
+}
 
-    virtual ~TaskGenerateAddrRegion();
+CustomGenRegGroupSetHandle::~CustomGenRegGroupSetHandle() {
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
-
-};
+}
 
 }
 }
 }
 }
-
-

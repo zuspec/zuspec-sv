@@ -48,7 +48,7 @@ public:
 
     virtual void visitDataTypeAddrSpaceTransparentC(arl::dm::IDataTypeAddrSpaceTransparentC *t) override;
 
-    virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override { }
+    virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override;
 
 
 };

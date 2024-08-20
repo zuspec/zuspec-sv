@@ -47,6 +47,8 @@ public:
         arl::dm::ITypeProcStmtScope *scope,
         bool                        newscope);
 
+    virtual void visitTypeProcStmtAssign(arl::dm::ITypeProcStmtAssign *s) override;
+
 	virtual void visitTypeProcStmtExpr(arl::dm::ITypeProcStmtExpr *s) override;
 
     virtual void visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDecl *t) override;

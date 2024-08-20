@@ -1,5 +1,5 @@
 /*
- * TaskGenerateAddrRegion.cpp
+ * TaskGenerateAddrRegionTransparent.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -20,7 +20,7 @@
  */
 #include "dmgr/impl/DebugMacros.h"
 #include "TaskGenerate.h"
-#include "TaskGenerateAddrRegion.h"
+#include "TaskGenerateAddrRegionTransparent.h"
 #include "TaskGenerateStructFields.h"
 
 
@@ -30,28 +30,32 @@ namespace gen {
 namespace exec {
 
 
-TaskGenerateAddrRegion::TaskGenerateAddrRegion(
+TaskGenerateAddrRegionTransparent::TaskGenerateAddrRegionTransparent(
     TaskGenerate        *gen,
     IOutput             *out) : TaskGenerateStruct(gen, out) {
     m_dbg = 0;
-    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateAddrRegion", gen->getDebugMgr());
+    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateAddrRegionTransparent", gen->getDebugMgr());
 }
 
-TaskGenerateAddrRegion::~TaskGenerateAddrRegion() {
+TaskGenerateAddrRegionTransparent::~TaskGenerateAddrRegionTransparent() {
 
 }
 
-void TaskGenerateAddrRegion::generate_head(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("class %s extends addr_region_base_s;",
+void TaskGenerateAddrRegionTransparent::generate_head(vsc::dm::IDataTypeStruct *t) {
+    m_out->println("class %s extends addr_region_base_s;", 
         m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
 }
 
-void TaskGenerateAddrRegion::generate_fields(vsc::dm::IDataTypeStruct *t) {
+void TaskGenerateAddrRegionTransparent::generate_fields(vsc::dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("generate_fields %d", t->getFields().size());
     TaskGenerateStructFields gen(m_gen, m_out);
+    
+    // trait
+    t->getFields().at(1)->accept(&gen);
 
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
-        it=t->getFields().begin()+2;
+        it=t->getFields().begin()+3;
         it!=t->getFields().end(); it++) {
         (*it)->accept(&gen);
     }

@@ -1,5 +1,5 @@
 /**
- * TaskGenerateAddrRegion.h
+ * TaskGenerateAddrRegionTransparent.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -28,19 +28,18 @@ namespace exec {
 
 
 
-class TaskGenerateAddrRegion :
+class TaskGenerateAddrRegionTransparent :
     public virtual TaskGenerateStruct {
 public:
-    TaskGenerateAddrRegion(
+    TaskGenerateAddrRegionTransparent(
         TaskGenerate        *gen,
-        IOutput             *out
-    );
+        IOutput             *out);
 
-    virtual ~TaskGenerateAddrRegion();
+    virtual ~TaskGenerateAddrRegionTransparent();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
+    virtual void generate_head(vsc::dm::IDataTypeStruct *t);
 
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
+    virtual void generate_fields(vsc::dm::IDataTypeStruct *t);
 
 };
 

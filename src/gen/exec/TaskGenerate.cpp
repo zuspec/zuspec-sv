@@ -26,6 +26,7 @@
 #include "gen/exec/TaskBuildActivityInfo.h"
 #include "CustomGenAddrHandle.h"
 #include "CustomGenAddrRegion.h"
+#include "CustomGenAddrRegionTransparent.h"
 #include "CustomGenMemRwCall.h"
 #include "CustomGenPrintCall.h"
 #include "CustomGenRegAccessCall.h"
@@ -80,6 +81,7 @@ bool TaskGenerate::generate() {
     m_out_prv->println("typedef class import_api;", actor.c_str());
     m_out_prv->println("// TODO: define model-specific executor class");
     m_out_prv->println("typedef executor_base executor_base_c;");
+    m_out_prv->println("typedef executor_base executor_t;");
     m_out_prv->println("typedef %s_actor actor_t;", actor.c_str());
 
     m_out_pub->println("package %s_pkg;", actor.c_str());
@@ -168,7 +170,7 @@ bool TaskGenerate::generate() {
     m_out_prv->inc_ind();
     m_out_prv->println("activity_%p root_activity = new(this);", root_activity.get());
     m_out_prv->println("");
-    m_out_prv->println("comp_tree.init();");
+    m_out_prv->println("comp_tree.init(this.default_executor);");
     m_out_prv->println("");
     m_out_prv->println("if (comp_tree.check()) begin");
     m_out_prv->inc_ind();
@@ -290,13 +292,16 @@ void TaskGenerate::attach_custom_gen() {
         f_t->setAssociatedData(new CustomGenMemRwCall(m_dmgr));
     }
 
+    std::vector<vsc::dm::IDataTypeStruct *> addr_region_transparent_bases;
     std::vector<vsc::dm::IDataTypeStruct *> addr_region_base_bases;
 
     for (std::vector<vsc::dm::IDataTypeStructUP>::const_iterator
         it=m_ctxt->getDataTypeStructs().begin();
         it!=m_ctxt->getDataTypeStructs().end(); it++) {
         const std::string &name = (*it)->name();
-        if (name.find("::addr_region_base_s") != -1) {
+        if (name.find("::transparent_addr_region_s") != -1) {
+            addr_region_transparent_bases.push_back(it->get());
+        } else if (name.find("::addr_region_base_s") != -1) {
             addr_region_base_bases.push_back(it->get());
         }
     }
@@ -310,7 +315,10 @@ void TaskGenerate::attach_custom_gen() {
 
         DEBUG("type name: %s sname: %s", name.c_str(), sname.c_str());
 
-        if (isInstance(it->get(), addr_region_base_bases)) {
+        if (isInstance(it->get(), addr_region_transparent_bases)) {
+            DEBUG("Is derived from transparent_addr_region");
+            (*it)->setAssociatedData(new CustomGenAddrRegionTransparent(getDebugMgr()));
+        } else if (isInstance(it->get(), addr_region_base_bases)) {
             DEBUG("Is derived from addr_region_base");
             (*it)->setAssociatedData(new CustomGenAddrRegion(getDebugMgr()));
         }

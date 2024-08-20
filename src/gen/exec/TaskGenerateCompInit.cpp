@@ -40,20 +40,20 @@ TaskGenerateCompInit::~TaskGenerateCompInit() {
 }
 
 void TaskGenerateCompInit::generate_head(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("function void init();");
+    m_out->println("function void init(executor_base exec_b);");
     m_out->inc_ind();
 }
 
 void TaskGenerateCompInit::generate(vsc::dm::IDataTypeStruct *t) {
     generate_head(t);
 
-    m_out->println("init_down();");
+    m_out->println("init_down(exec_b);");
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
         it=t->getFields().begin();
         it!=t->getFields().end(); it++) {
         (*it)->accept(m_this);
     }
-    m_out->println("init_up();");
+    m_out->println("init_up(exec_b);");
 
     generate_tail(t);
 }
@@ -64,7 +64,7 @@ void TaskGenerateCompInit::generate_tail(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateCompInit::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
-    m_out->println("%s.init();", m_field->name().c_str());
+    m_out->println("%s.init(exec_b);", m_field->name().c_str());
 }
 
 void TaskGenerateCompInit::visitTypeField(vsc::dm::ITypeField *f) {

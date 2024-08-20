@@ -31,8 +31,8 @@
 #include "TaskDefineType.h"
 #ifdef UNDEFINED
 #include "TaskPackedStruct.h"
-#include "TaskRegGroup.h"
 #endif
+#include "TaskGenerateRegGroup.h"
 #include "TaskGenerateStruct.h"
 
 
@@ -112,7 +112,7 @@ void TaskDefineType::visitDataTypePackedStruct(arl::dm::IDataTypePackedStruct *t
 
 void TaskDefineType::visitDataTypeRegGroup(arl::dm::IDataTypeRegGroup *t) {
     DEBUG_ENTER("visitDataTypeRegGroup");
-//    TaskRegGroup(m_gen, m_out_h, m_out_c).generate(t);
+    TaskGenerateRegGroup(m_gen, m_out).generate(t);
     DEBUG_LEAVE("visitDataTypeRegGroup");
 }
 
