@@ -73,7 +73,10 @@ void TaskGenerateExprVal::visitDataTypeInt(vsc::dm::IDataTypeInt *t) {
 
 void TaskGenerateExprVal::visitDataTypePtr(vsc::dm::IDataTypePtr *t) { }
 
-void TaskGenerateExprVal::visitDataTypeString(vsc::dm::IDataTypeString *t) { }
+void TaskGenerateExprVal::visitDataTypeString(vsc::dm::IDataTypeString *t) { 
+    vsc::dm::ValRefStr val(m_val);
+    m_out->write("\"%s\"", val.val());
+}
 
 void TaskGenerateExprVal::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) { }
 

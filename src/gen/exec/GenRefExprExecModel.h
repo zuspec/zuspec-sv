@@ -50,13 +50,15 @@ public:
 
     virtual std::string genRval(vsc::dm::ITypeExpr *ref) override;
 
+    virtual std::string genRegAddr(vsc::dm::ITypeExpr *ref) override;
+
     virtual bool isFieldRefExpr(vsc::dm::ITypeExpr *ref) override;
 
     virtual bool isRefFieldRefExpr(vsc::dm::ITypeExpr *ref) override;
 
     virtual ResT isRefCountedField(vsc::dm::IAccept *ref) override;
     
-    virtual void pushScope(arl::dm::ITypeProcStmtScope *s) override {
+    virtual void pushScope(arl::dm::ITypeProcStmtDeclScope *s) override {
         m_scope_s.push_back(s);
     }
 
@@ -96,9 +98,21 @@ public:
 
 	virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
 
+    virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override;
+
+    virtual void visitTypeFieldRegGroupArr(arl::dm::ITypeFieldRegGroupArr *f) override;
+
+private:    
+    enum KindE {
+        Lval,
+        Rval,
+        RegAddr
+    };
+
 
 private:
     static dmgr::IDebug                             *m_dbg;
+    KindE                                           m_kind;
     TaskGenerate                                    *m_gen;
     vsc::dm::IDataTypeStruct                        *m_ctxt;
     std::string                                     m_ctxtRef;
@@ -108,11 +122,12 @@ private:
     std::string                                     m_ret;
     vsc::dm::IDataType                              *m_type;
     int32_t                                         m_depth;
+    bool                                            m_regRef;
     bool                                            m_isRef;
     bool                                            m_isFieldRef;
     bool                                            m_isRefFieldRef;
     bool                                            m_isRefCountedField;
-    std::vector<arl::dm::ITypeProcStmtScope *>      m_scope_s;
+    std::vector<arl::dm::ITypeProcStmtDeclScope *>  m_scope_s;
 
 };
 

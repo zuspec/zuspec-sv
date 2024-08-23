@@ -21,6 +21,7 @@
 #include "dmgr/impl/DebugMacros.h"
 #include "vsc/dm/impl/TaskIsTypeFieldRef.h"
 #include "zsp/arl/dm/impl/TaskGetSubField.h"
+#include "zsp/arl/dm/impl/TaskIsTypeFieldRegGroup.h"
 #include "GenRefExprExecModel.h"
 #include "gen/OutputStr.h"
 #include "TaskGenerate.h"
@@ -55,6 +56,7 @@ std::string GenRefExprExecModel::genLval(vsc::dm::ITypeExpr *ref) {
     m_ret.clear();
     m_depth = 0;
     m_isRef = m_ctxtPtr;
+    m_kind = KindE::Lval;
     ref->accept(m_this);
     DEBUG_LEAVE("genLval (%s)", m_ret.c_str());
     return m_ret;
@@ -65,8 +67,22 @@ std::string GenRefExprExecModel::genRval(vsc::dm::ITypeExpr *ref) {
     m_ret.clear();
     m_depth = 0;
     m_isRef = m_ctxtPtr;
+    m_kind = KindE::Rval;
     ref->accept(m_this);
     DEBUG_LEAVE("genRval (%s)", m_ret.c_str());
+    return m_ret;
+}
+
+std::string GenRefExprExecModel::genRegAddr(vsc::dm::ITypeExpr *ref) {
+    DEBUG_ENTER("genRegAddr");
+    m_ret.clear();
+    m_depth = 0;
+    m_isFieldRef = false;
+    m_isRefFieldRef = false;
+    m_kind = KindE::RegAddr;
+    m_regRef = false;
+    ref->accept(m_this);
+    DEBUG_LEAVE("genRegAddr");
     return m_ret;
 }
 
@@ -134,16 +150,46 @@ void GenRefExprExecModel::visitTypeExprMethodCallStatic(arl::dm::ITypeExprMethod
 
 void GenRefExprExecModel::visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp *e) {
     DEBUG_ENTER("visitTypeExprRefBottomUp (%d)", m_depth);
-    arl::dm::ITypeProcStmtScope *scope = m_scope_s.at(
+    arl::dm::ITypeProcStmtDeclScope *scope = m_scope_s.at(
         m_scope_s.size()-e->getScopeOffset()-1
     );
     arl::dm::ITypeProcStmtVarDecl *var = scope->getVariables().at(e->getSubFieldIndex()).get();
     DEBUG("var: %s", var->name().c_str());
-    if (m_bupRef.size()) {
-        m_ret.append(m_bupRef);
-        m_ret.append(m_bupPtr?"->":".");
+
+    switch (m_kind) {
+        case KindE::Lval:
+        case KindE::Rval:
+            if (m_bupRef.size()) {
+                m_ret.append(m_bupRef);
+                m_ret.append(m_bupPtr?"->":".");
+            }
+            m_ret.append(var->name());
+
+            if (m_depth) {
+                // TODO: this depends on whether the reference is scalar or
+                // composite, and whether it's scope local or a parameter
+                m_ret.append(".");
+            }
+            break;
+
+        case KindE::RegAddr:
+            if (m_regRef) {
+
+            } else {
+                if (m_bupRef.size()) {
+                    m_ret.append(m_bupRef);
+                    m_ret.append(m_bupPtr?"->":".");
+                }
+                m_ret.append(var->name());
+
+                if (m_depth) {
+                    // TODO: this depends on whether the reference is scalar or
+                    // composite, and whether it's scope local or a parameter
+                    m_ret.append(".");
+                }
+            }
+            break;
     }
-    m_ret.append(var->name());
     m_isFieldRef = true;
     m_isRefFieldRef = false;
     m_type = var->getDataType();
@@ -153,11 +199,6 @@ void GenRefExprExecModel::visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp
     // Track whether the next deref will be a pointer
     m_isRef = false;
 
-    if (m_depth) {
-        // TODO: this depends on whether the reference is scalar or
-        // composite, and whether it's scope local or a parameter
-        m_ret.append(".");
-    }
 
     DEBUG_LEAVE("visitTypeExprRefBottomUp (%d)", m_depth);
 }
@@ -170,7 +211,22 @@ void GenRefExprExecModel::visitTypeExprRefPath(vsc::dm::ITypeExprRefPath *e) {
 
 void GenRefExprExecModel::visitTypeExprRefTopDown(vsc::dm::ITypeExprRefTopDown *e) { 
     DEBUG_ENTER("visitTypeExprRefTopDown");
-    m_ret.append(m_ctxtRef);
+    switch (m_kind) {
+        case KindE::Lval:
+        case KindE::Rval:
+            m_ret.append(m_ctxtRef);
+            if (m_depth) {
+                m_ret.append(m_ctxtPtr?"->":".");
+            }
+            break;
+        case KindE::RegAddr:
+            m_ret.append(m_ctxtRef);
+            if (m_depth) {
+                m_ret.append(m_ctxtPtr?"->":".");
+            }
+            break;
+    }
+
     m_type = m_ctxt;
 
     m_isFieldRef = true;
@@ -178,9 +234,6 @@ void GenRefExprExecModel::visitTypeExprRefTopDown(vsc::dm::ITypeExprRefTopDown *
     // Track whether the next deref will be a pointer
     m_isRef = false;
 
-    if (m_depth) {
-        m_ret.append(m_ctxtPtr?"->":".");
-    }
     DEBUG_LEAVE("visitTypeExprRefTopDown");
 }
 
@@ -193,15 +246,47 @@ void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) {
     vsc::dm::ITypeField *field = arl::dm::TaskGetSubField().get(
         m_type, 
         e->getSubFieldIndex());
-    field->accept(m_this);
-    m_ret.append(field->name());
-    DEBUG("field: %s", field->name().c_str());
-    m_type = field->getDataType();
 
-    if (m_depth) {
-        // TODO: should determine based on field type
-        m_ret.append((m_isRef)?"->":".");
+    DEBUG("field: %s", field->name().c_str());
+    bool currRegRef = m_regRef;
+    field->accept(m_this);
+
+    switch (m_kind) {
+        case KindE::Lval:
+        case KindE::Rval:
+            m_ret.append(field->name());
+            if (m_depth) {
+                // TODO: should determine based on field type
+                m_ret.append((m_isRef)?"->":".");
+            }
+            break;
+        case KindE::RegAddr:
+            if (m_regRef) {
+                if (currRegRef) {
+                    m_ret.append("`zsp_reg_type_offset(");
+                    m_ret.append(m_gen->getNameMap()->getName(m_type));
+                    m_ret.append(", ");
+                    m_ret.append(field->name());
+                    m_ret.append(")");
+                } else {
+                    m_ret.append(field->name());
+                    m_ret.append(".offset");
+                }
+
+                if (m_depth) {
+                    m_ret.append(" + ");
+                }
+            } else {
+                m_ret.append(field->name());
+                if (m_depth) {
+                    // TODO: should determine based on field type
+                    m_ret.append((m_isRef)?"->":".");
+                }
+            }
+            break;
     }
+
+    m_type = field->getDataType();
 
     // Track whether the next deref will be a pointer
     m_isRef = vsc::dm::TaskIsTypeFieldRef().eval(field);
@@ -235,6 +320,14 @@ void GenRefExprExecModel::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
     m_isRefFieldRef = true;
     m_isRefCountedField = true;
     DEBUG_LEAVE("visitTypeFieldRef");
+}
+
+void GenRefExprExecModel::visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) {
+    m_regRef = true;
+}
+
+void GenRefExprExecModel::visitTypeFieldRegGroupArr(arl::dm::ITypeFieldRegGroupArr *f) {
+    visitTypeFieldRegGroup(f);
 }
 
 dmgr::IDebug *GenRefExprExecModel::m_dbg = 0;

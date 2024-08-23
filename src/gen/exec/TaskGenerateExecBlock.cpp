@@ -63,12 +63,18 @@ void TaskGenerateExecBlock::generate(
     if (executor) {
         m_out->println("executor_t executor;");
         m_out->println("$cast(executor, exec_b);");
+        m_out->println("begin");
+        m_out->inc_ind();
     }
     for (std::vector<arl::dm::ITypeExecUP>::const_iterator
         it=t.begin();
         it!=t.end(); it++) {
         arl::dm::ITypeExecProc *tp = dynamic_cast<arl::dm::ITypeExecProc *>(it->get());
         TaskGenerateExecScope(m_gen, m_genref, m_out).generate(tp->getBody(), it!=t.begin());
+    }
+    if (executor) {
+        m_out->dec_ind();
+        m_out->println("end");
     }
 
     m_out->dec_ind();

@@ -73,6 +73,7 @@ bool TaskGenerate::generate() {
         m_ctxt->mkTypeFieldActivity("", 
             m_ctxt->mkDataTypeActivityTraverseType(m_action_t, 0), true), true);
 
+    m_out_prv->println("`include \"zsp_sv_macros.svh\"");
     m_out_prv->println("package %s_prv;", actor.c_str());
     m_out_prv->inc_ind();
     m_out_prv->println("import zsp_sv::*;");
@@ -355,6 +356,7 @@ void TaskGenerate::attach_custom_gen() {
                         {"zsp_rt_addr_space_t *", "zsp_rt_addr_region_t *"}));
 #endif
             } else if (name.find("::reg_group_c") != -1) {
+                (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Solve);
                 if (name.find("set_handle") != -1) {
 #ifdef UNDEFINED
                     (*it)->setAssociatedData(

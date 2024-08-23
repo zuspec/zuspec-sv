@@ -55,7 +55,8 @@ def run_unit_test(dirconfig, content, expect):
             [
                 os.path.join(zsp_sv, "zsp_sv.sv"), 
                 actor_sv],
-            "systemVerilogSource"
+            "systemVerilogSource",
+            incs=[zsp_sv]
         )
     )
     flow.addFileset("sim",

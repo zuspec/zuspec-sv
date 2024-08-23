@@ -19,7 +19,9 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateFunction.h"
 #include "TaskGenerateRegGroup.h"
 
 namespace zsp {
@@ -65,6 +67,23 @@ void TaskGenerateRegGroup::generate(vsc::dm::IDataTypeStruct *t) {
     m_out->dec_ind();
     m_out->println("endfunction");
     m_out->println("");
+
+    GenRefExprExecModel genref(
+        m_gen,
+        t,
+        "this",
+        false);
+    std::string prefix = t->name() + "::";
+    for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
+        it=m_gen->getContext()->getDataTypeFunctions().begin();
+        it!=m_gen->getContext()->getDataTypeFunctions().end(); it++) {
+        if ((*it)->name().find(prefix) == 0) {
+            DEBUG("Function: %s", (*it)->name().c_str());
+            (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Solve);
+            TaskGenerateFunction(m_gen, &genref, m_out).generate(*it, true);
+            m_out->println("");
+        }
+    }
 
     m_out->println("static function %s inst(executor_base exec_b);",
         m_gen->getNameMap()->getName(t).c_str());

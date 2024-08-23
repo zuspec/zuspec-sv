@@ -45,11 +45,22 @@ public:
 
     virtual void generate(
         arl::dm::ITypeProcStmtScope *scope,
-        bool                        newscope);
+        bool                        newscope,
+        bool                        istask=false);
+
+    virtual void generate(
+        arl::dm::ITypeProcStmt      *stmt,
+        bool                        istask=false);
 
     virtual void visitTypeProcStmtAssign(arl::dm::ITypeProcStmtAssign *s) override;
 
 	virtual void visitTypeProcStmtExpr(arl::dm::ITypeProcStmtExpr *s) override;
+
+    virtual void visitTypeProcStmtIfClause(arl::dm::ITypeProcStmtIfClause *s) override;
+
+    virtual void visitTypeProcStmtIfElse(arl::dm::ITypeProcStmtIfElse *s) override;
+
+    virtual void visitTypeProcStmtReturn(arl::dm::ITypeProcStmtReturn *s) override;
 
     virtual void visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDecl *t) override;
 
@@ -64,6 +75,7 @@ protected:
     IOutput                         *m_out_top;
     IOutput                         *m_out;
     OutputExecScope                 *m_exec;
+    bool                            m_istask;
 
 };
 

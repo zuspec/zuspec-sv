@@ -64,15 +64,21 @@ void OutputExecScope::apply(IOutput *out) {
     }
     if (m_decl.getValue().size()) {
         out->writes(m_decl.getValue());
-        out->writes("\n");
+        if (m_init.getValue().size()) {
+            out->writes("\n");
+        }
     }
     if (m_init.getValue().size()) {
         out->writes(m_init.getValue());
-        out->writes("\n");
+        if (m_exec.getValue().size()) {
+            out->writes("\n");
+        }
     }
     if (m_exec.getValue().size()) {
         out->writes(m_exec.getValue());
-        out->writes("\n");
+        if (m_dtor.getValue().size()) {
+            out->writes("\n");
+        }
     }
     out->writes(m_dtor.getValue());
 

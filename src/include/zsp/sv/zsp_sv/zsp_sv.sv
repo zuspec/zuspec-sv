@@ -257,15 +257,19 @@ class reg_group_c;
     function new();
     endfunction
 
+
     function void map_registers(executor_base exec_b);
+        $display("map_registers");
         foreach (fields[i]) begin
             reg_field_arr_c arr;
 
             if ($cast(arr, fields[i])) begin
                 // TODO: handle arrayed registers
+                $display("TODO: handle arrayed registers");
             end else begin
                 fields[i].offset = get_offset_of_instance(exec_b, fields[i].name);
             end
+            $display("reg: %0s %0d", fields[i].name, fields[i].offset);
         end
     endfunction
 
@@ -283,6 +287,10 @@ class reg_group_field_base_c extends reg_field_c;
 
     function new(string name);
         super.new(name);
+    endfunction
+
+    function void set_handle(addr_handle_t hndl);
+        offset = hndl.addr_value();
     endfunction
 
     virtual function reg_group_c get_type();

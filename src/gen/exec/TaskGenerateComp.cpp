@@ -63,12 +63,14 @@ void TaskGenerateComp::generate_check(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateComp::generate_ctor(vsc::dm::IDataTypeStruct *t) {
+    m_out->println("");
     TaskGenerateCompCtor(m_gen, m_out).generate(t);
 
     m_out->println("");
 
     // Generate the 'init' at the same time
     TaskGenerateCompInit(m_gen, m_out).generate(t);
+    m_out->println("");
 }
 
 void TaskGenerateComp::generate_fields(vsc::dm::IDataTypeStruct *t) {

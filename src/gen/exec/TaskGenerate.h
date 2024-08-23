@@ -52,6 +52,8 @@ public:
 
     const std::string &getActorName() { return m_actor_name; }
 
+    arl::dm::IContext *getContext() { return m_ctxt; }
+
 protected:
 
     void attach_custom_gen();

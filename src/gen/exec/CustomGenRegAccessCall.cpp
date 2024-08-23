@@ -20,6 +20,7 @@
  */
 #include "dmgr/impl/DebugMacros.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateExpr.h"
 #include "CustomGenRegAccessCall.h"
 
 
@@ -51,6 +52,11 @@ void CustomGenRegAccessCall::genExprMethodCallContext(
     int64_t offset = 0; // TODO: caclucate from context
 
     if (name.find("::write_val") != -1) {
+        out->write("executor.write%d(make_handle_from_handle(null, %s), ",
+            width,
+            refgen->genRegAddr(call->getContext()).c_str());
+        TaskGenerateExpr(gen, refgen, out).generate(call->getParameters().at(0).get());
+        out->write(")");
     } else if (name.find("::read_val") != -1) {
     } else if (name.find("::write") != -1) {
     } else if (name.find("::read") != -1) {
