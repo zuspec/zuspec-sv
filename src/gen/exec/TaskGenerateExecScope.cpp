@@ -111,9 +111,24 @@ void TaskGenerateExecScope::generate(
 
 void TaskGenerateExecScope::visitTypeProcStmtAssign(arl::dm::ITypeProcStmtAssign *s) {
     DEBUG_ENTER("visitTypeProcStmtAssign");
+    const char *op = 0;
     m_exec->exec()->indent();
     m_exec->exec()->write("%s", m_genref->genLval(s->getLhs()).c_str());
-    m_exec->exec()->write(" = ");
+    switch (s->op()) {
+        case arl::dm::TypeProcStmtAssignOp::Eq: op = "="; break;
+        case arl::dm::TypeProcStmtAssignOp::PlusEq: op = "+="; break;
+        case arl::dm::TypeProcStmtAssignOp::MinusEq: op = "-="; break;
+        case arl::dm::TypeProcStmtAssignOp::ShlEq: op = "<<="; break;
+        case arl::dm::TypeProcStmtAssignOp::ShrEq: op = ">>="; break;
+        case arl::dm::TypeProcStmtAssignOp::OrEq: op = "|="; break;
+        case arl::dm::TypeProcStmtAssignOp::AndEq: op = "&="; break;
+    }
+    DEBUG("op: %s (%d)", op, s->op());
+
+    m_exec->exec()->write(" ");
+    m_exec->exec()->write(op);
+    m_exec->exec()->write(" ");
+
     TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getRhs());
     m_exec->exec()->write(";\n");
     DEBUG_LEAVE("visitTypeProcStmtAssign");
@@ -158,6 +173,22 @@ void TaskGenerateExecScope::visitTypeProcStmtExpr(arl::dm::ITypeProcStmtExpr *s)
     DEBUG_LEAVE("visitTypeProcStmtExpr");
 }
 
+void TaskGenerateExecScope::visitTypeProcStmtRepeat(arl::dm::ITypeProcStmtRepeat *s) {
+    DEBUG_ENTER("visitTypeProcStmtRepeat");
+
+    // TODO: handle index variable
+    m_exec->exec()->indent();
+    m_exec->exec()->write("repeat (");
+    TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getExpr());
+    m_exec->exec()->write(") begin\n");
+    m_exec->exec()->inc_ind();
+    s->getBody()->accept(m_this);
+    m_exec->exec()->dec_ind();
+    m_exec->exec()->println("end");
+
+    DEBUG_LEAVE("visitTypeProcStmtRepeat");
+}
+
 void TaskGenerateExecScope::visitTypeProcStmtReturn(arl::dm::ITypeProcStmtReturn *s) {
     DEBUG_ENTER("visitTypeProcStmtReturn %p", s);
     DEBUG("expr: %p", s->getExpr());
@@ -190,8 +221,17 @@ void TaskGenerateExecScope::visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDe
     // TODO: must 'new' if an aggregate type
     if (vsc::dm::TaskIsDataTypeStruct().check(t->getDataType())) {
         m_exec->decl()->write(" %s = new();\n", t->name().c_str());
+        // TODO: handle initialization?
     } else {
-        m_exec->decl()->write(" %s;\n", t->name().c_str());
+        m_exec->decl()->write(" %s", t->name().c_str());
+        if (t->getInit()) {
+            m_exec->decl()->write(" = ");
+            TaskGenerateExpr(
+                m_gen, 
+                m_genref, 
+                m_exec->decl()).generate(t->getInit());
+        }
+        m_exec->decl()->write(";\n");
     }
     DEBUG_LEAVE("visitTypeProcStmtVarDecl");
 }

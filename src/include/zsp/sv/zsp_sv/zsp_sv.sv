@@ -25,10 +25,10 @@ class object;
     virtual function void pre_solve();
     endfunction
 
-    virtual function void do_post_solve(executor_base base);
+    virtual function void do_post_solve(executor_base exec_b);
     endfunction
     
-    virtual function void post_solve(executor_base base);
+    virtual function void post_solve(executor_base exec_b);
     endfunction
 
 endclass

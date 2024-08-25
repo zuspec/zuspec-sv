@@ -12,7 +12,7 @@ def test_repeat_count(dirconfig):
             action Entry {
                 exec post_solve {
                     repeat (2) {
-//                        print("RES: Hello");
+                        print("RES: Hello");
                     }
                 }
             }
@@ -21,5 +21,104 @@ def test_repeat_count(dirconfig):
     expect = """
     RES: Hello
     RES: Hello
+    """
+    run_unit_test(dirconfig, content, expect)
+
+def test_if_else(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                exec post_solve {
+                    int i = 1;
+                    if (i == 1) {
+                        print("RES: i==1");
+                    } else {
+                        print("RES: !(i==1)");
+                    }
+                    if (i != 1) {
+                        print("RES: i!=1");
+                    } else {
+                        print("RES: !(i!=1)");
+                    }
+                }
+            }
+        }
+    """
+    expect = """
+    RES: i==1
+    RES: !(i!=1)
+    """
+    run_unit_test(dirconfig, content, expect)
+
+def test_if_elsif(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                exec post_solve {
+                    int i = 1;
+                    if (i == 2) {
+                        print("RES: i==2");
+                    } else if (i == 1) {
+                        print("RES: i==1");
+                    } else {
+                        print("RES: !(i==1)");
+                    }
+                    if (i != 1) {
+                        print("RES: i!=1");
+                    } else if (i != 2) {
+                        print("RES: i!=1");
+                    } else {
+                        print("RES: !(i!=1)");
+                    }
+                }
+            }
+        }
+    """
+    expect = """
+    RES: i==1
+    RES: i!=1
+    """
+    run_unit_test(dirconfig, content, expect)
+
+def test_assign(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                exec post_solve {
+                    int i = 1;
+                    print("RES: i==1 ; i=%d", i);
+                    i += 1;
+                    print("RES: i==2 ; i=%d", i);
+                    i = 1;
+                    print("RES: i==1 ; i=%d", i);
+                    i -= 1;
+                    print("RES: i==0 ; i=%d", i);
+                    i |= 1;
+                    print("RES: i==1 ; i=%d", i);
+                    i |= 2;
+                    print("RES: i==3 ; i=%d", i);
+                    i &= 2;
+                    print("RES: i==2 ; i=%d", i);
+                    i <<= 2;
+                    print("RES: i==8 ; i=%d", i);
+                    i >>= 2;
+                    print("RES: i==2 ; i=%d", i);
+                }
+            }
+        }
+    """
+    expect = """
+    RES: i==1 ; i=1
+    RES: i==2 ; i=2
+    RES: i==1 ; i=1
+    RES: i==0 ; i=0
+    RES: i==1 ; i=1
+    RES: i==3 ; i=3
+    RES: i==2 ; i=2
+    RES: i==8 ; i=8
+    RES: i==2 ; i=2
     """
     run_unit_test(dirconfig, content, expect)

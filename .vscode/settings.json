@@ -1,9 +1,7 @@
 {
     "python.defaultInterpreterPath": "${workspaceFolder}/packages/python/bin/python3",
     "python.testing.pytestArgs": [
-        "-v",
-        "-s",
-        "./tests"
+        "tests"
     ],
     "python.envFile": "${workspaceFolder}/.env",
     "python.testing.pytestEnabled": true,
