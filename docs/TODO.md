@@ -27,7 +27,7 @@
 - constraints
   - if/else
   - implies
-  - default
+  - default -- determine statically
   - expression
   - foreach
   - forall
@@ -39,11 +39,14 @@
   - dynamic
 
 - exec statements
-  - if/else
+  * if/else
   - repeat
+    - repeat count
+    - repeat while
+    - repeat .. while
   - foreach
   - match
-  - assignment
+  * assignment
   - Function call
     - static
     - context
