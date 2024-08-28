@@ -30,6 +30,7 @@
 #include "CustomGenMemRwCall.h"
 #include "CustomGenPrintCall.h"
 #include "CustomGenRegAccessCall.h"
+#include "CustomGenRegGetHandle.h"
 #include "TaskDefineType.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateActivity.h"
@@ -355,6 +356,10 @@ void TaskGenerate::attach_custom_gen() {
                         0,
                         {"zsp_rt_addr_space_t *", "zsp_rt_addr_region_t *"}));
 #endif
+            } else if (name.find("::reg_c") != -1) {
+                if (name.find("::get_handle") != -1) {
+                    (*it)->setAssociatedData(new CustomGenRegGetHandle(m_dmgr));
+                }
             } else if (name.find("::reg_group_c") != -1) {
                 (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Solve);
                 if (name.find("set_handle") != -1) {

@@ -5,7 +5,10 @@
 
 - registers
   - Model virtually
-  - Handle (physical or ref) modeled as address handle (ref+base)
+  - Base address of a physical instance can be set via set_handle()
+  - Ref is also implemented as a physical instance that computes an 
+    effective based when assigned
+  - Support 'get_handle' on individual registers
 
 - Data types
   * bit/int

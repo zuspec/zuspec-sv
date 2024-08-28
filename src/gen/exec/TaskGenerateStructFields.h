@@ -22,6 +22,7 @@
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
 #include "gen/IOutput.h"
+#include "IGenRefExpr.h"
 
 namespace zsp {
 namespace sv {
@@ -54,14 +55,20 @@ public:
 
     virtual void visitTypeField(vsc::dm::ITypeField *f) override;
 
+    virtual void visitTypeFieldPhy(vsc::dm::ITypeFieldPhy *f) override;
+
+    virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
+
 protected:
     std::string qualifiers(vsc::dm::TypeFieldAttr attr);
 
 protected:
     dmgr::IDebug            *m_dbg;
     TaskGenerate            *m_gen;
+    IGenRefExpr             *m_genref;
     IOutput                 *m_out;
     vsc::dm::ITypeField     *m_field;
+    vsc::dm::ITypeExpr      *m_init;
 
 };
 

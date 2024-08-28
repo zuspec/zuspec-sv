@@ -19,7 +19,10 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "vsc/dm/impl/TaskIsDataTypeStruct.h"
+#include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateExpr.h"
 #include "TaskGenerateStructFields.h"
 
 
@@ -41,6 +44,13 @@ TaskGenerateStructFields::~TaskGenerateStructFields() {
 
 void TaskGenerateStructFields::generate(vsc::dm::IDataTypeStruct *t) {
     DEBUG_ENTER("generate");
+    GenRefExprExecModel genref(
+        m_gen,
+        t,
+        "this",
+        false);
+    m_genref = &genref;
+
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
         it=t->getFields().begin();
         it!=t->getFields().end(); it++) {
@@ -59,11 +69,19 @@ void TaskGenerateStructFields::visitDataTypeBool(vsc::dm::IDataTypeBool *t) {
 
 void TaskGenerateStructFields::visitDataTypeInt(vsc::dm::IDataTypeInt *t) {
     DEBUG_ENTER("visitDataTypeInt");
-    m_out->println("%sbit%s[%d:0] %s;", 
+    m_out->indent();
+    m_out->write("%sbit%s[%d:0] %s", 
         qualifiers(m_field->getAttr()).c_str(),
         (t->isSigned())?" signed":"",
         (t->getWidth()-1),
         m_field->name().c_str());
+    
+    if (m_init) {
+        m_out->write(" = ");
+        TaskGenerateExpr(m_gen, m_genref, m_out).generate(m_init);
+    }
+
+    m_out->write(";\n");
     DEBUG_LEAVE("visitDataTypeInt");
 }
 
@@ -87,6 +105,7 @@ void TaskGenerateStructFields::visitDataTypeComponent(arl::dm::IDataTypeComponen
 
 void TaskGenerateStructFields::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
     DEBUG_ENTER("visitDataTypeStruct");
+    // TODO: 'new' struct?
     m_out->println("%s%s %s;", 
         qualifiers(m_field->getAttr()).c_str(),
         m_gen->getNameMap()->getName(t).c_str(),
@@ -99,6 +118,22 @@ void TaskGenerateStructFields::visitTypeField(vsc::dm::ITypeField *f) {
     m_field = f;
     f->getDataType()->accept(m_this);
     DEBUG_LEAVE("visitTypeField %s", f->name().c_str());
+}
+
+void TaskGenerateStructFields::visitTypeFieldPhy(vsc::dm::ITypeFieldPhy *f) {
+    DEBUG_ENTER("visitTypeFieldPhy (init=%p)", f->getInit());
+    m_field = f;
+    m_init = f->getInit();
+    f->getDataType()->accept(m_this);
+    DEBUG_LEAVE("visitTypeFieldPhy");
+}
+
+void TaskGenerateStructFields::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
+    DEBUG_ENTER("visitTypeFieldRef");
+    m_field = f;
+    m_init = 0;
+    f->getDataType()->accept(m_this);
+    DEBUG_LEAVE("visitTypeFieldRef");
 }
 
 std::string TaskGenerateStructFields::qualifiers(vsc::dm::TypeFieldAttr attr) {

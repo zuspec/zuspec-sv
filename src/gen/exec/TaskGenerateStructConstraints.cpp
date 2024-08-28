@@ -51,6 +51,7 @@ void TaskGenerateStructConstraints::generate(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateStructConstraints::visitTypeConstraintBlock(vsc::dm::ITypeConstraintBlock *c) { 
+    DEBUG_ENTER("visitTypeConstraintBlock (%d)", c->getConstraints().size());
     std::string name = c->name();
 
     if (name == "") {
@@ -68,6 +69,8 @@ void TaskGenerateStructConstraints::visitTypeConstraintBlock(vsc::dm::ITypeConst
     }
     m_out->dec_ind();
     m_out->println("}");
+
+    DEBUG_LEAVE("visitTypeConstraintBlock");
 }
 
 void TaskGenerateStructConstraints::visitTypeConstraintExpr(vsc::dm::ITypeConstraintExpr *c) { 
@@ -78,9 +81,33 @@ void TaskGenerateStructConstraints::visitTypeConstraintExpr(vsc::dm::ITypeConstr
 
 void TaskGenerateStructConstraints::visitTypeConstraintForeach(vsc::dm::ITypeConstraintForeach *c) { }
 
-void TaskGenerateStructConstraints::visitTypeConstraintIfElse(vsc::dm::ITypeConstraintIfElse *c) { }
+void TaskGenerateStructConstraints::visitTypeConstraintIfElse(vsc::dm::ITypeConstraintIfElse *c) { 
+    m_out->indent();
+    m_out->write("if (");
+    TaskGenerateExpr(m_gen, m_genref, m_out).generate(c->getCond());
+    m_out->write(") {\n");
+    m_out->inc_ind();
+    c->getTrue()->accept(m_this);
+    m_out->dec_ind();
+    if (c->getFalse()) {
+        m_out->println("} else {");
+        m_out->inc_ind();
+        c->getFalse()->accept(m_this);
+        m_out->dec_ind();
+    }
+    m_out->println("}\n");
+}
 
-void TaskGenerateStructConstraints::visitTypeConstraintImplies(vsc::dm::ITypeConstraintImplies *c) { }
+void TaskGenerateStructConstraints::visitTypeConstraintImplies(vsc::dm::ITypeConstraintImplies *c) { 
+    m_out->indent();
+    m_out->write("(");
+    TaskGenerateExpr(m_gen, m_genref, m_out).generate(c->getCond());
+    m_out->write(") -> {\n");
+    m_out->inc_ind();
+    c->getBody()->accept(m_this);
+    m_out->dec_ind();
+    m_out->println("}");
+}
 
 void TaskGenerateStructConstraints::visitTypeConstraintSoft(vsc::dm::ITypeConstraintSoft *c) { }
 
