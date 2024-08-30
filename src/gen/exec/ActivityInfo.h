@@ -21,6 +21,7 @@
 #pragma once
 #include <vector>
 #include "vsc/dm/impl/UP.h"
+#include "zsp/arl/dm/IDataTypeAction.h"
 #include "zsp/arl/dm/IDataTypeActivity.h"
 
 namespace zsp {
@@ -36,9 +37,14 @@ using ActivityInfoUP=vsc::dm::UP<ActivityInfo>;
 class ActivityInfo {
 public:
     ActivityInfo(
+        arl::dm::IDataTypeAction   *action,
         arl::dm::IDataTypeActivity *activity);
 
     virtual ~ActivityInfo();
+
+    arl::dm::IDataTypeAction *action() const {
+        return m_action;
+    }
 
     arl::dm::IDataTypeActivity *activity() const {
         return m_activity;
@@ -53,6 +59,7 @@ public:
     }
 
 protected:
+    arl::dm::IDataTypeAction            *m_action;
     arl::dm::IDataTypeActivity          *m_activity;
     std::vector<ActivityVariantUP>      m_variants;
 

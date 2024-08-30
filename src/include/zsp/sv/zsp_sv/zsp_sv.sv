@@ -137,6 +137,7 @@ class activity extends object;
 endclass
 
 class action extends object;
+    rand bit[16]        comp_id;
 
     virtual task body(executor_base exec_b);
     endtask

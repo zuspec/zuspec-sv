@@ -68,6 +68,11 @@ void TaskGenerateStructCtor::visitTypeField(vsc::dm::ITypeField *f) {
     f->getDataType()->accept(m_this);
 }
 
+void TaskGenerateStructCtor::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
+    m_field = f;
+    f->getDataType()->accept(m_this);
+}
+
 }
 }
 }

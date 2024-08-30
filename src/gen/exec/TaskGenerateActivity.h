@@ -48,17 +48,20 @@ public:
 
     virtual void visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) override;
 
+    virtual void visitDataTypeActivityTraverse(arl::dm::IDataTypeActivityTraverse *t) override;
+
     virtual void visitDataTypeActivityTraverseType(arl::dm::IDataTypeActivityTraverseType *t) override;
 
 
 private:
-    dmgr::IDebug                *m_dbg;
-    TaskGenerate                *m_gen;
-    IGenRefExpr                 *m_genref;
-    OutputActivityScope         *m_out_activity;
-    IOutput                     *m_out_top;
-    IOutput                     *m_out;
-    int32_t                     m_depth;
+    dmgr::IDebug                    *m_dbg;
+    TaskGenerate                    *m_gen;
+    IGenRefExpr                     *m_genref;
+    OutputActivityScope             *m_out_activity;
+    IOutput                         *m_out_top;
+    IOutput                         *m_out;
+    int32_t                         m_depth;
+    std::vector<ActivityVariant *>  m_variant_s;
 
 };
 

@@ -42,7 +42,7 @@ TaskBuildActivityInfo::~TaskBuildActivityInfo() {
 std::vector<ActivityInfoUP> TaskBuildActivityInfo::build(
     arl::dm::IDataTypeAction    *action_t,
     arl::dm::IDataTypeActivity  *root) {
-    DEBUG_ENTER("build");
+    DEBUG_ENTER("build %p", action_t);
     std::vector<ActivityInfoUP> ret;
     m_info = &ret;
     m_type_m.clear();
@@ -60,9 +60,10 @@ void TaskBuildActivityInfo::visitDataTypeActivity(arl::dm::IDataTypeActivity *t)
 }
 
 void TaskBuildActivityInfo::visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) {
-    DEBUG_ENTER("visitDataTypeActivitySequence");
+    DEBUG_ENTER("visitDataTypeActivitySequence %p", t);
     if (!m_depth) {
         std::pair<ActivityVariant *, bool> variant = getVariant(t);
+
         m_variant_s.push_back(variant.first);
     }
 
@@ -98,18 +99,18 @@ void TaskBuildActivityInfo::visitDataTypeActivityTraverseType(arl::dm::IDataType
 
         arl::dm::IDataTypeActivity *activity = 
             t->getTarget()->activities().at(0)->getDataTypeT<arl::dm::IDataTypeActivity>();
+        m_action_s.push_back(t->getTarget());
         std::pair<ActivityVariant *, bool> variant = getVariant(activity);
 
         // Ensure that the parent variant uses *this* type permutation
-        m_variant_s.back()->mapVariant(t, variant.first);
+        m_variant_s.back()->mapVariant(activity, variant.first);
 
         if (variant.second) {
             m_variant_s.push_back(variant.first);
-            m_action_s.push_back(t->getTarget());
             activity->accept(m_this);
-            m_action_s.pop_back();
             m_variant_s.pop_back();
         }
+        m_action_s.pop_back();
     }
     DEBUG_LEAVE("visitDataTypeActivityTraverseType");
 }
@@ -117,10 +118,14 @@ void TaskBuildActivityInfo::visitDataTypeActivityTraverseType(arl::dm::IDataType
 std::pair<ActivityVariant *, bool> TaskBuildActivityInfo::getVariant(arl::dm::IDataTypeActivity *t) {
     std::pair<ActivityVariant *, bool> ret = {0, false};
     std::map<arl::dm::IDataTypeActivity *, ActivityInfo *>::const_iterator it;
-    DEBUG_ENTER("getVariant");
+    DEBUG_ENTER("getVariant %d %p", 
+        m_action_s.size(),
+        m_action_s.size()?m_action_s.back():0);
 
     if ((it=m_type_m.find(t)) == m_type_m.end()) {
-        ActivityInfo *info = new ActivityInfo(t);
+        ActivityInfo *info = new ActivityInfo(
+            m_action_s.size()?m_action_s.back():0,
+            t);
         ret.first = new ActivityVariant(m_name_m->getName(t), info, m_ctxt);
         ret.second = true;
         info->addVariant(ret.first);
@@ -148,7 +153,7 @@ std::pair<ActivityVariant *, bool> TaskBuildActivityInfo::getVariant(arl::dm::ID
         }
     }
 
-    DEBUG_LEAVE("getVariant");
+    DEBUG_LEAVE("getVariant %p %d", ret.first, ret.second);
     return ret;
 }
 

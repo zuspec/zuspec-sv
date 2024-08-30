@@ -87,3 +87,8 @@
     - implement sample points
   - behavioral coverage
     - 
+
+Initial simplifications
+- Only a single pool per buffer/stream type
+  - Don't need to consider pool when matching connection
+- 

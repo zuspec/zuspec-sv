@@ -31,6 +31,7 @@
 #include "CustomGenPrintCall.h"
 #include "CustomGenRegAccessCall.h"
 #include "CustomGenRegGetHandle.h"
+#include "GenRefExprExecModel.h"
 #include "TaskDefineType.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateActivity.h"
@@ -136,9 +137,16 @@ bool TaskGenerate::generate() {
 
             m_out_prv->println("");
 
+            // TODO: temporary gen-ref
+            GenRefExprExecModel genref(
+                this,
+                (*v_it)->info()->action(),
+                "self",
+                false);
+
             TaskGenerateActivity(
                 this, 
-                0, 
+                &genref, 
                 m_out_prv.get()
             ).generate(v_it->get());
         }

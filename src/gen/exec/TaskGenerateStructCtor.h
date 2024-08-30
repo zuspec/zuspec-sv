@@ -49,6 +49,8 @@ public:
 
     virtual void visitTypeField(vsc::dm::ITypeField *f) override;
 
+    virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
+
 protected:
     dmgr::IDebug                *m_dbg;
     TaskGenerate                *m_gen;

@@ -28,8 +28,10 @@ namespace gen {
 namespace exec {
 
 
-ActivityInfo::ActivityInfo(arl::dm::IDataTypeActivity *activity) :
-    m_activity(activity) {
+ActivityInfo::ActivityInfo(
+    arl::dm::IDataTypeAction   *action,
+    arl::dm::IDataTypeActivity *activity) :
+    m_action(action), m_activity(activity) {
 
 }
 
