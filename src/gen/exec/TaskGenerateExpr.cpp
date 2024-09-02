@@ -44,7 +44,9 @@ TaskGenerateExpr::~TaskGenerateExpr() {
 }
 
 void TaskGenerateExpr::generate(vsc::dm::ITypeExpr *e) {
+    DEBUG_ENTER("generate");
     e->accept(m_this);
+    DEBUG_LEAVE("generate");
 }
 
 static std::map<vsc::dm::BinOp, std::string> binOpMap = {
@@ -71,14 +73,17 @@ static std::map<vsc::dm::BinOp, std::string> binOpMap = {
 };
 
 void TaskGenerateExpr::visitTypeExprBin(vsc::dm::ITypeExprBin *e) {
+    DEBUG_ENTER("visitTypeExprBin");
     e->lhs()->accept(m_this);
     m_out->write(" %s ", 
         binOpMap.find(e->op())->second.c_str());
     e->rhs()->accept(m_this);
+    DEBUG_LEAVE("visitTypeExprBin");
 }
 
 void TaskGenerateExpr::visitTypeExprMethodCallContext(
     arl::dm::ITypeExprMethodCallContext *e) {
+    DEBUG_ENTER("visitTypeExprMethodCallContext");
     arl::dm::IDataTypeFunction *f = e->getTarget();
     ICustomGen *custom_g = dynamic_cast<ICustomGen *>(f->getAssociatedData());
 
@@ -107,6 +112,7 @@ void TaskGenerateExpr::visitTypeExprMethodCallContext(
         }
         m_out->write(")");
     }
+    DEBUG_LEAVE("visitTypeExprMethodCallContext");
 }
 
 void TaskGenerateExpr::visitTypeExprMethodCallStatic(
@@ -134,15 +140,21 @@ void TaskGenerateExpr::visitTypeExprRangelist(vsc::dm::ITypeExprRangelist *e) {
 }
 
 void TaskGenerateExpr::visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp *e) { 
+    DEBUG_ENTER("visitTypeExprRefBottomUp");
     m_out->write("%s", m_genref->genRval(e).c_str());
+    DEBUG_LEAVE("visitTypeExprRefBottomUp");
 }
 
 void TaskGenerateExpr::visitTypeExprRefTopDown(vsc::dm::ITypeExprRefTopDown *e) { 
+    DEBUG_ENTER("visitTypeExprRefTopDown");
     m_out->write("%s", m_genref->genRval(e).c_str());
+    DEBUG_LEAVE("visitTypeExprRefTopDown");
 }
 
 void TaskGenerateExpr::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) { 
+    DEBUG_ENTER("visitTypeExprSubField");
     m_out->write("%s", m_genref->genRval(e).c_str());
+    DEBUG_LEAVE("visitTypeExprSubField");
 }
 
 void TaskGenerateExpr::visitTypeExprUnary(vsc::dm::ITypeExprUnary *e) { 

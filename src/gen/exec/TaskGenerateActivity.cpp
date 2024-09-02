@@ -21,6 +21,7 @@
 #include "dmgr/impl/DebugMacros.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateActivity.h"
+#include "TaskGenerateConstraint.h"
 #include "ActivityInfo.h"
 
 
@@ -50,20 +51,27 @@ void TaskGenerateActivity::generate(ActivityVariant *variant) {
 
     m_out->println("class activity_%p extends activity;", activity);
     m_out->inc_ind();
-//    m_out->println("%s actor;", m_gen->getActorName().c_str());
-    m_out->println("function new();");
-    m_out->inc_ind();
-    m_out->dec_ind();
-    m_out->println("endfunction");
-    m_out->println("");
+    m_out->println("%s actor;", m_gen->getActorName().c_str());
     if (variant->info()->action()) {
-        m_out->println("virtual task run(%s actor, %s self);",
+        m_out->println("%s self;", m_gen->getNameMap()->getName(variant->info()->action()).c_str());
+    }
+    if (variant->info()->action()) {
+        m_out->println("function new(%s actor, %s self);",
             m_gen->getActorName().c_str(),
             m_gen->getNameMap()->getName(variant->info()->action()).c_str());
     } else {
-        m_out->println("virtual task run(%s actor);",
+        m_out->println("function new(%s actor);",
             m_gen->getActorName().c_str());
     }
+    m_out->inc_ind();
+    m_out->println("this.actor = actor;");
+    if (variant->info()->action()) {
+        m_out->println("this.self = self;");
+    }
+    m_out->dec_ind();
+    m_out->println("endfunction");
+    m_out->println("");
+    m_out->println("virtual task run();");
     m_out->inc_ind();
     OutputActivityScope out(m_out);
     m_out_activity = &out;
@@ -116,11 +124,11 @@ void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActiv
     run->indent();
     run->write("if (%s.randomize()", varname.c_str());
 
-    bool include_with = true;
+    bool include_with = (t->getWithC());
     if (include_with) {
         run->write(" with {\n");
         run->inc_ind();
-        run->println("");
+        TaskGenerateConstraint(m_gen, m_genref, run).generate(t->getWithC());
         run->dec_ind();
         run->indent();
         run->write("}) begin\n");
@@ -159,11 +167,14 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
     run->write("if (!%s.randomize()", varname);
 
     // Option
-    bool include_with = true;
+    bool include_with = (t->getWithC());
     if (include_with) {
         run->write(" with {\n");
         run->inc_ind();
-        run->println("%s.comp_id inside {0};", varname);
+        m_genref->pushInline(t->getTarget());
+        TaskGenerateConstraint(m_gen, m_genref, run).generate(t->getWithC());
+        m_genref->popInline();
+//        run->println("%s.comp_id inside {0};", varname);
         run->dec_ind();
         run->indent();
         run->write("}) begin\n");
@@ -189,13 +200,19 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
         // TODO: invoke activity
         run->println("begin");
         run->inc_ind();
-        run->println("%s activity = new;",
-            m_gen->getNameMap()->getName(variant->info()->activity()).c_str());
+        if (variant->info()->action()) {
+            run->println("%s activity = new(actor, %s);",
+                m_gen->getNameMap()->getName(variant->info()->activity()).c_str(),
+                varname);
+        } else {
+            run->println("%s activity = new(actor);",
+                m_gen->getNameMap()->getName(variant->info()->activity()).c_str());
+        }
 
         if (variant->info()->action()) {
-            run->println("activity.run(actor, %s);", varname);
+            run->println("activity.run();", varname);
         } else {
-            run->println("activity.run(actor);");
+            run->println("activity.run();");
         }
         run->dec_ind();
         run->println("end");

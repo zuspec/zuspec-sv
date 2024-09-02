@@ -129,6 +129,18 @@ bool TaskGenerate::generate() {
         it=activity_info.begin();
         it!=activity_info.end(); it++) {
 
+        for (std::vector<ActivityVariantUP>::const_iterator
+            v_it=(*it)->variants().begin(); 
+            v_it!=(*it)->variants().end(); v_it++) {
+            m_out_prv->println("typedef class activity_%p;", 
+                v_it->get()->info()->activity());
+        }
+    }
+
+    for (std::vector<ActivityInfoUP>::const_iterator
+        it=activity_info.begin();
+        it!=activity_info.end(); it++) {
+
         DEBUG("variants: %d", (*it)->variants().size());
 
         for (std::vector<ActivityVariantUP>::const_iterator

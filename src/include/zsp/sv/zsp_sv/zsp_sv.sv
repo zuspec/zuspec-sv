@@ -143,6 +143,7 @@ class action extends object;
     endtask
 
     virtual function executor_base get_executor();
+        return null;
     endfunction
 
 endclass
@@ -430,6 +431,7 @@ class actor_c extends component;
     endfunction
 
     virtual function executor_base get_default_executor();
+        return null;
     endfunction
 
 endclass

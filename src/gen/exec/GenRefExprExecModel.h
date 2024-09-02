@@ -57,6 +57,14 @@ public:
     virtual bool isRefFieldRefExpr(vsc::dm::ITypeExpr *ref) override;
 
     virtual ResT isRefCountedField(vsc::dm::IAccept *ref) override;
+
+    virtual void pushInline(vsc::dm::IDataTypeStruct *t) override {
+        m_inline_s.push_back(t);
+    }
+
+    virtual void popInline() override {
+        m_inline_s.pop_back();
+    }
     
     virtual void pushScope(arl::dm::ITypeProcStmtDeclScope *s) override {
         m_scope_s.push_back(s);
@@ -83,6 +91,8 @@ public:
     virtual void visitTypeExprMethodCallStatic(arl::dm::ITypeExprMethodCallStatic *e) override;
 
 	virtual void visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp *e) override;
+
+	virtual void visitTypeExprRefInline(vsc::dm::ITypeExprRefInline *e) override;
 
 	virtual void visitTypeExprRefPath(vsc::dm::ITypeExprRefPath *e) override;
 
@@ -127,6 +137,7 @@ private:
     bool                                            m_isFieldRef;
     bool                                            m_isRefFieldRef;
     bool                                            m_isRefCountedField;
+    std::vector<vsc::dm::IDataTypeStruct *>         m_inline_s;
     std::vector<arl::dm::ITypeProcStmtDeclScope *>  m_scope_s;
 
 };

@@ -91,4 +91,6 @@
 Initial simplifications
 - Only a single pool per buffer/stream type
   - Don't need to consider pool when matching connection
-- 
+- No hierarchical constraints
+- Treat with constraints as uni-directional ()
+- Use solve-and-wait approach to resource allocation

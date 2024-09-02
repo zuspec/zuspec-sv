@@ -203,6 +203,12 @@ void GenRefExprExecModel::visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp
     DEBUG_LEAVE("visitTypeExprRefBottomUp (%d)", m_depth);
 }
 
+void GenRefExprExecModel::visitTypeExprRefInline(vsc::dm::ITypeExprRefInline *e) {
+    DEBUG_ENTER("visitTypeExprRefInline");
+    m_type = (m_inline_s.size())?m_inline_s.back():0;
+    DEBUG_LEAVE("visitTypeExprRefInline %p", m_type);
+}
+
 void GenRefExprExecModel::visitTypeExprRefPath(vsc::dm::ITypeExprRefPath *e) { 
     DEBUG_ENTER("visitTypeExprRefPath");
 
