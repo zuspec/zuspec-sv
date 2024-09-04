@@ -8,6 +8,9 @@ echo "BUILD_NUM=${BUILD_NUM}" >> python/zsp_sv/__build_num__.py
 ${IVPM_PYTHON} -m pip install ivpm cython
 ${IVPM_PYTHON} -m ivpm update -a
 
+echo "Requirements Files"
+cat packages/*.txt
+
 PYTHON=./packages/python/bin/python
 ${PYTHON} -m pip install twine auditwheel ninja wheel cython
 ${PYTHON} setup.py bdist_wheel
