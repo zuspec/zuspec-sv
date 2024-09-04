@@ -52,20 +52,67 @@ def test_subactivity_with(dirconfig):
             action Mid {
                 int i;
                 activity {
-                    do Leaf;
+                    do Leaf with {
+                      val == 1;
+                    };
                     do Leaf with {
                       val == 2;
                     }
-                    do Leaf;
-//                    do Leaf with {
-//                      val == 1;
-//                    };
                 }
             }
 
             action Entry {
                 activity {
                     do Mid;
+                }
+            }
+        }
+    """
+
+    expect = """
+    RES: leaf 1
+    RES: leaf 2
+    """
+    run_unit_test(dirconfig, content, expect)
+
+def test_subactivity_subcomp(dirconfig):
+    content = """
+        import std_pkg::*;
+        component C {
+            int cv;
+            action Leaf {
+                rand bit[16] val0, val;
+                exec post_solve {
+                    print("RES: leaf %d", val);
+                }
+            }
+
+            action Mid {
+                int i;
+                activity {
+                    do Leaf with {
+                      val == 1;
+                    };
+                    do Leaf with {
+                      val == 2;
+                    }
+                }
+            }
+
+        }
+        component pss_top {
+            C c1, c2, c3, c4;
+
+            exec init_down {
+                c1.cv = 1;
+                c2.cv = 2;
+                c3.cv = 3;
+                c4.cv = 4;
+            }
+
+            action Entry {
+                activity {
+                    do C::Mid;
                 }
             }
         }

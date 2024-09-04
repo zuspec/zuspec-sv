@@ -21,6 +21,8 @@
 #pragma once
 #include <iostream>
 #include "zsp/arl/dm/IContext.h"
+#include "zsp/arl/eval/IComponentTreeData.h"
+#include "zsp/arl/eval/IFactory.h"
 #include "zsp/sv/gen/ITaskGenerate.h"
 #include "gen/INameMap.h"
 #include "gen/IOutput.h"
@@ -38,6 +40,7 @@ public:
     TaskGenerate(
         dmgr::IDebugMgr                 *dmgr,
         arl::dm::IContext               *ctxt,
+        arl::eval::IFactory             *eval_f,
         arl::dm::IDataTypeComponent     *comp_t,
         arl::dm::IDataTypeAction        *action_t,
         std::ostream                    *out);
@@ -54,6 +57,8 @@ public:
 
     arl::dm::IContext *getContext() { return m_ctxt; }
 
+    arl::eval::IComponentTreeData *getCompTreeData() { return m_comptree_data.get(); }
+
 protected:
 
     void attach_custom_gen();
@@ -66,6 +71,7 @@ protected:
     static dmgr::IDebug             *m_dbg;
     dmgr::IDebugMgr                 *m_dmgr;
     arl::dm::IContext               *m_ctxt;
+    arl::eval::IFactory             *m_eval_f;
     arl::dm::IDataTypeComponent     *m_comp_t;
     arl::dm::IDataTypeAction        *m_action_t;
     std::ostream                    *m_out;
@@ -73,6 +79,7 @@ protected:
     IOutputUP                       m_out_prv;
     INameMapUP                      m_namemap;
     std::string                     m_actor_name;
+    arl::eval::IComponentTreeDataUP m_comptree_data;
 
 
 

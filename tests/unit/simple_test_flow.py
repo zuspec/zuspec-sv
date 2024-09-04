@@ -42,7 +42,8 @@ def run_unit_test(dirconfig, content, expect):
         dirconfig.test_srcdir(),
         "../../src/include/zsp/sv/zsp_sv"
     ))
-    flow = pfv.FlowSim(dirconfig, sim_id="mti")
+#    flow = pfv.FlowSim(dirconfig, sim_id="mti")
+    flow = pfv.FlowSim(dirconfig, sim_id="vlt")
 
     print("test_srcdir: %s" % dirconfig.test_srcdir(), flush=True)
     flow.addTaskToPhase("generate.main", TaskGenSvActor(

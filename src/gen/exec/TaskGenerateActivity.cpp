@@ -49,7 +49,7 @@ void TaskGenerateActivity::generate(ActivityVariant *variant) {
     m_variant_s.clear();
     m_variant_s.push_back(variant);
 
-    m_out->println("class activity_%p extends activity;", activity);
+    m_out->println("class activity_%p extends activity_c;", activity);
     m_out->inc_ind();
     m_out->println("%s actor;", m_gen->getActorName().c_str());
     if (variant->info()->action()) {
@@ -113,6 +113,7 @@ void TaskGenerateActivity::visitDataTypeActivitySequence(arl::dm::IDataTypeActiv
 void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActivityTraverse *t) {
     DEBUG_ENTER("visitDataTypeActivityTraverse");
     IOutput *run = m_out_activity->run();
+    ActivityVariant *variant = m_variant_s.back();
 
     std::string varname = m_genref->genRval(t->getTarget());
 
@@ -124,11 +125,18 @@ void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActiv
     run->indent();
     run->write("if (%s.randomize()", varname.c_str());
 
-    bool include_with = (t->getWithC());
+    bool include_with = true;
     if (include_with) {
         run->write(" with {\n");
         run->inc_ind();
-        TaskGenerateConstraint(m_gen, m_genref, run).generate(t->getWithC());
+        if (variant->info()->action()) {
+            run->println("parent_comp_id == self.comp_id;");
+        } else {
+            run->println("parent_comp_id == 0;");
+        }
+        if (t->getWithC()) {
+            TaskGenerateConstraint(m_gen, m_genref, run).generate(t->getWithC());
+        }
         run->dec_ind();
         run->indent();
         run->write("}) begin\n");
@@ -139,6 +147,8 @@ void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActiv
     // TODO: error handling
     run->dec_ind();
     run->println("end");
+//    run->println("$display(\"parent_comp_id=%%0d ; comp_id=%%0d\", %s.parent_comp_id, %s.comp_id);",
+//        varname.c_str(), varname.c_str());
 
     // TODO: handle calling exec, activity, etc
 
@@ -152,6 +162,7 @@ void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActiv
 void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeActivityTraverseType *t) {
     DEBUG_ENTER("visitDataTypeActivityTraverseType");
     IOutput *run = m_out_activity->run();
+    ActivityVariant *variant = m_variant_s.back();
     char varname[64];
     snprintf(varname, sizeof(varname), "%s_%p", 
         m_gen->getNameMap()->getName(t->getTarget()).c_str(), t);
@@ -167,13 +178,20 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
     run->write("if (!%s.randomize()", varname);
 
     // Option
-    bool include_with = (t->getWithC());
+    bool include_with = true;
     if (include_with) {
         run->write(" with {\n");
         run->inc_ind();
-        m_genref->pushInline(t->getTarget());
-        TaskGenerateConstraint(m_gen, m_genref, run).generate(t->getWithC());
-        m_genref->popInline();
+        if (variant->info()->action()) {
+            run->println("parent_comp_id == self.comp_id;");
+        } else {
+            run->println("parent_comp_id == 0;");
+        }
+        if (t->getWithC()) {
+            m_genref->pushInline(t->getTarget());
+            TaskGenerateConstraint(m_gen, m_genref, run).generate(t->getWithC());
+            m_genref->popInline();
+        }
 //        run->println("%s.comp_id inside {0};", varname);
         run->dec_ind();
         run->indent();
@@ -184,6 +202,8 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
     run->inc_ind();
     run->dec_ind();
     run->println("end");
+//    run->println("$display(\"parent_comp_id=%%0d ; comp_id=%%0d\", %s.parent_comp_id, %s.comp_id);",
+//        varname, varname);
     run->println("if (!$cast(%s.comp, actor.comp_l[%s.comp_id])) begin", 
         varname, varname);
     run->inc_ind();

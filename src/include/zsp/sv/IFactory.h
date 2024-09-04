@@ -22,6 +22,7 @@
 #include <iostream>
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/IContext.h"
+#include "zsp/arl/eval/IFactory.h"
 #include "zsp/sv/gen/ITaskGenerate.h"
 
 namespace zsp {
@@ -38,6 +39,7 @@ public:
 
     virtual gen::ITaskGenerate *mkGenerateExecActor(
         arl::dm::IContext               *ctxt,
+        arl::eval::IFactory             *eval_f,
         arl::dm::IDataTypeComponent     *comp_t,
         arl::dm::IDataTypeAction        *action_t,
         std::ostream                    *out) = 0;

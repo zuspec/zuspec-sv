@@ -83,10 +83,12 @@ setup_args = dict(
 
 if isSrcBuild:
     setup_args["ivpm_extdep_pkgs"] = [
+        "pyapi-compat-if",
         "zuspec-parser", 
         "zuspec-fe-parser", 
         "zuspec-arl-dm",
         "zuspec-arl-eval",
+        "vsc-solvers",
         "vsc-dm"]
     setup_args["ivpm_extra_data"] = {
         "zsp_sv": [

@@ -11,6 +11,7 @@ cimport vsc_dm.decl as vsc_dm_decl
 cimport vsc_dm.core as vsc_dm
 cimport zsp_arl_dm.core as arl_dm
 cimport zsp_arl_dm.decl as arl_dm_decl
+cimport zsp_arl_eval.core as arl_eval
 
 cdef _FactoryInst = None
 
@@ -25,9 +26,11 @@ cdef class Factory(object):
         arl_dm.DataTypeComponent   comp_t,
         arl_dm.DataTypeAction      action_t,
         object                     out):
+        cdef arl_eval.Factory eval_f = arl_eval.Factory.inst()
         cdef costream out_s = costream(out)
         cdef decl.ITaskGenerate *gen = self._hndl.mkGenerateExecActor(
             ctxt.asContext(),
+            eval_f._hndl,
             comp_t.asComponent(),
             action_t.asAction(),
             out_s.stream())

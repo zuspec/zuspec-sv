@@ -35,7 +35,7 @@ endclass
 
 interface class packed_s;
 
-    pure virtual function bit[1024] pack();
+    pure virtual function bit[1023:0] pack();
 
     pure virtual function void pack_bytes(byte unsigned data[$]);
 
@@ -131,13 +131,14 @@ function automatic addr_handle_t make_handle_from_handle(
     return ret;
 endfunction
 
-class activity extends object;
+class activity_c extends object;
     virtual task run();
     endtask
 endclass
 
 class action extends object;
-    rand bit[16]        comp_id;
+    rand bit[15:0]        parent_comp_id;
+    rand bit[15:0]        comp_id;
 
     virtual task body(executor_base exec_b);
     endtask
@@ -349,7 +350,7 @@ class executor_base extends component;
         return api;
     endfunction
 
-    virtual function bit[64] addr_value(addr_handle_t hndl);
+    virtual function bit[63:0] addr_value(addr_handle_t hndl);
         return hndl.addr_value();
     endfunction
 
@@ -377,25 +378,25 @@ class executor_base extends component;
         api.read64(data, addr);
     endtask
 
-    virtual task write8 (addr_handle_t hndl, bit[8] data);
+    virtual task write8 (addr_handle_t hndl, bit[7:0] data);
         backend_api api = get_api();
         bit[63:0] addr = addr_value(hndl);
         api.write8(addr, data);
     endtask
 
-    virtual task write16(addr_handle_t hndl, bit[16] data);
+    virtual task write16(addr_handle_t hndl, bit[15:0] data);
         backend_api api = get_api();
         bit[63:0] addr = addr_value(hndl);
         api.write16(addr, data);
     endtask
 
-    virtual task write32(addr_handle_t hndl, bit[32] data);
+    virtual task write32(addr_handle_t hndl, bit[31:0] data);
         backend_api api = get_api();
         bit[63:0] addr = addr_value(hndl);
         api.write32(addr, data);
     endtask
 
-    virtual task write64(addr_handle_t hndl, bit[64] data);
+    virtual task write64(addr_handle_t hndl, bit[63:0] data);
         backend_api api = get_api();
         bit[63:0] addr = addr_value(hndl);
         api.write64(addr, data);

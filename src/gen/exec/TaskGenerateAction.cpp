@@ -60,6 +60,44 @@ void TaskGenerateAction::generate_fields(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateAction::generate_constraints(vsc::dm::IDataTypeStruct *t) {
+    arl::dm::IDataTypeAction *action_t = dynamic_cast<arl::dm::IDataTypeAction *>(t);
+    const arl::eval::IComponentTreeData::TypeM &comp_m = 
+        m_gen->getCompTreeData()->getTypeMap(action_t->getComponentType());
+
+    m_out->println("constraint __comp_id_c {");
+    m_out->inc_ind();
+    for (arl::eval::IComponentTreeData::TypeM::const_iterator
+        it=comp_m.begin();
+        it!=comp_m.end(); it++) {
+        m_out->indent();
+        if (it->parent_id.size() == 1) {
+            m_out->write("(parent_comp_id == %d) -> ", it->parent_id.at(0));
+        } else {
+            m_out->write("(parent_comp_id inside {");
+            for (uint32_t i=0; i<it->parent_id.size(); i++) {
+                if (i) {
+                    m_out->write(", ");
+                }
+                m_out->write("%d", it->parent_id.at(i));
+            }
+            m_out->write("}) -> ");
+        }
+        if (it->child_id.size() == 1) {
+            m_out->write("comp_id == %d;\n", it->child_id.at(0));
+        } else {
+            m_out->write("comp_id inside {");
+            for (uint32_t i=0; i<it->child_id.size(); i++) {
+                if (i) {
+                    m_out->write(", ");
+                }
+                m_out->write("%d", it->child_id.at(i));
+            }
+            m_out->write("};\n");
+        }
+    }
+    m_out->dec_ind();
+    m_out->println("}");
+
     GenRefExprExecModel genref(
         m_gen,
         t,

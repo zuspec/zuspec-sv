@@ -41,12 +41,14 @@ void Factory::init(dmgr::IDebugMgr *dmgr) {
 
 gen::ITaskGenerate *Factory::mkGenerateExecActor(
         arl::dm::IContext               *ctxt,
+        arl::eval::IFactory             *eval_f,
         arl::dm::IDataTypeComponent     *comp_t,
         arl::dm::IDataTypeAction        *action_t,
         std::ostream                    *out) {
     return new gen::exec::TaskGenerate(
         m_dmgr,
         ctxt,
+        eval_f,
         comp_t,
         action_t,
         out);

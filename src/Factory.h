@@ -37,6 +37,7 @@ public:
 
     virtual gen::ITaskGenerate *mkGenerateExecActor(
         arl::dm::IContext               *ctxt,
+        arl::eval::IFactory             *eval_f,
         arl::dm::IDataTypeComponent     *comp_t,
         arl::dm::IDataTypeAction        *action_t,
         std::ostream                    *out) override;

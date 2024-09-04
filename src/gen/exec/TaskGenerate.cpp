@@ -47,10 +47,11 @@ namespace exec {
 TaskGenerate::TaskGenerate(
     dmgr::IDebugMgr                 *dmgr,
     arl::dm::IContext               *ctxt,
+    arl::eval::IFactory             *eval_f,
     arl::dm::IDataTypeComponent     *comp_t,
     arl::dm::IDataTypeAction        *action_t,
     std::ostream                    *out) : m_dmgr(dmgr), m_ctxt(ctxt),
-    m_comp_t(comp_t), m_action_t(action_t), m_out(out),
+    m_eval_f(eval_f), m_comp_t(comp_t), m_action_t(action_t), m_out(out),
     m_namemap(new NameMap()) {
     DEBUG_INIT("zsp::sv::gen::exec::TaskGenerate", dmgr);
 }
@@ -67,6 +68,10 @@ bool TaskGenerate::generate() {
     attach_custom_gen();
 
     m_actor_name = "actor_t";
+
+    // First, build out the component-tree data structure
+    m_comptree_data = arl::eval::IComponentTreeDataUP(
+        m_eval_f->mkComponentTreeData(m_comp_t));
 
     arl::dm::IDataTypeActivitySequenceUP root_activity(
         m_ctxt->mkDataTypeActivitySequence());

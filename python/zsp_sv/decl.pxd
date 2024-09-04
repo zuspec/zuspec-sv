@@ -1,5 +1,6 @@
 cimport ciostream.core as ciostream
 cimport zsp_arl_dm.decl as arl_dm
+cimport zsp_arl_eval.decl as arl_eval
 cimport vsc_dm.decl as vsc_dm_decl
 cimport debug_mgr.decl as dm
 
@@ -18,6 +19,7 @@ cdef extern from "zsp/sv/IFactory.h" namespace "zsp::sv":
         void init(dm.IDebugMgr *)
         ITaskGenerate *mkGenerateExecActor(
             arl_dm.IContext             *ctxt,
+            arl_eval.IFactory           *eval_f,
             arl_dm.IDataTypeComponent   *comp_t,
             arl_dm.IDataTypeAction      *action_t,
             ciostream.ostream           *out

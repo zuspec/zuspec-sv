@@ -33,7 +33,7 @@ def test_simple_memwrite(dirconfig):
         }
     """
     expect = """
-    RES: init_down
-    RES: init_up
+    RES: write32 0x80000000 0x00000020
+    RES: write32 0x80000000 0x00000040
     """
     run_unit_test(dirconfig, content, expect)

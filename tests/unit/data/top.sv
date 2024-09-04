@@ -2,7 +2,11 @@
 package top_pkg;
     import pss_top__Entry_pkg::*;
 
+`ifdef VERILATOR
+    class pss_top__Entry_api_impl implements pss_top__Entry_prv::import_api;
+`else
     class pss_top__Entry_api_impl implements pss_top__Entry_api;
+`endif
         virtual task write64(bit[63:0] addr, bit[63:0] data);
             $display("RES: write64 0x%08x 0x%08x", addr, data);
         endtask
@@ -37,6 +41,7 @@ module top;
 
         entry = new(api_impl);
         entry.run();
+        $finish;
     end
 
 endmodule
