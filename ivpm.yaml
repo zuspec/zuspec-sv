@@ -35,6 +35,9 @@ package:
       url: https://github.com/fvutils/fltools.git
     - name: fusesoc
       url: https://github.com/olofk/fusesoc.git
+    - name: simplesat
+      version: 0.8.2
+      src: pypi
     - name: ciostream
       url: https://github.com/mballance-utils/ciostream.git
     - name: ninja
@@ -67,6 +70,9 @@ package:
     - name: pytest-fv
       url: https://github.com/fvutils/pytest-fv.git
     - name: ninja
+      src: pypi
+    - name: simplesat
+      version: 0.8.2
       src: pypi
     - name: cython
       src: pypi
