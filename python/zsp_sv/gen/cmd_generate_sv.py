@@ -25,7 +25,7 @@ from .gen_data_type import GenDataType
 from .gen_get_ref_val import GenGetRefVal
 from .gen_set_ret_val import GenSetRetVal
 from zuspec.gen import Output
-from zuspec.cmd import CmdParseBase
+from zuspec.cli import CmdParseBase
 import zsp_arl_dm.core as arl_dm
 
 class Phase(Enum):
