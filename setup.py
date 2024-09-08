@@ -51,8 +51,8 @@ ext.cython_directives={'language_level' : '3'}
 setup_args = dict(
   name = "zuspec-sv",
   version=version,
-  packages=['zsp_sv'],
-  package_dir = {'' : 'python'},
+  packages=find_namespace_packages(where='python'),
+  package_dir={'' : 'python'},
   author = "Matthew Ballance",
   author_email = "matt.ballance@gmail.com",
   description = ("Core ARL data model library"),
