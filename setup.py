@@ -72,6 +72,9 @@ setup_args = dict(
   entry_points={
       'ivpm.pkginfo': [
           'zuspec-sv = zsp_sv.pkginfo.PkgInfo'
+      ], 
+      "zuspec.ext": [
+          'ext = zsp_sv.__ext__'
       ]
   },
   setup_requires=[
