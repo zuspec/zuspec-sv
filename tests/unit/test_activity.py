@@ -123,3 +123,49 @@ def test_subactivity_subcomp(dirconfig):
     RES: leaf 2
     """
     run_unit_test(dirconfig, content, expect)
+
+def test_subactivity_listener(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+
+            action Leaf {
+                exec post_solve {
+                    print("RES: leaf");
+                }
+            }
+
+            action Mid {
+                activity {
+                    do Leaf;
+                    do Leaf;
+                }
+            }
+
+            action Entry {
+                activity {
+                    do Mid;
+                }
+            }
+        }
+    """
+
+    expect = """
+    RES: enter_actor
+    RES: enter_traverse
+    RES: enter_traverse
+    RES: leaf
+    RES: enter_traverse
+    RES: leave_traverse
+    RES: leaf
+    RES: enter_traverse
+    RES: leave_traverse
+    RES: leave_traverse
+    RES: leave_traverse
+    RES: leave_actor
+    """
+    run_unit_test(
+        dirconfig, 
+        content, 
+        expect,
+        "top_activity_listener.sv")

@@ -149,6 +149,8 @@ class action extends object;
 
 endclass
 
+    `include "activity_listener_c.svh"
+
 class component_ctor_ctxt;
     actor_c        actor;
     executor_base  executor_m[];
@@ -315,15 +317,39 @@ class reg_group_field_c #(type group_t=reg_group_c) extends reg_group_field_base
     endfunction
 endclass
 
-interface class backend_api;
-    pure virtual task write64(bit[63:0] addr, bit[63:0] data);
-    pure virtual task write32(bit[63:0] addr, bit[31:0] data);
-    pure virtual task write16(bit[63:0] addr, bit[15:0] data);
-    pure virtual task write8(bit[63:0] addr, bit[7:0] data);
-    pure virtual task read64(output bit[63:0] data, input bit[63:0] addr);
-    pure virtual task read32(output bit[31:0] data, input bit[63:0] addr);
-    pure virtual task read16(output bit[15:0] data, input bit[63:0] addr);
-    pure virtual task read8(output bit[7:0] data, input bit[63:0] addr);
+class backend_api #(type BaseT=empty_t) extends BaseT;
+    virtual task write64(bit[63:0] addr, bit[63:0] data);
+        $display("Fatal: write64 not implemented");
+        $finish;
+    endtask
+    virtual task write32(bit[63:0] addr, bit[31:0] data);
+        $display("Fatal: write32 not implemented");
+        $finish;
+    endtask
+    virtual task write16(bit[63:0] addr, bit[15:0] data);
+        $display("Fatal: write16 not implemented");
+        $finish;
+    endtask
+    virtual task write8(bit[63:0] addr, bit[7:0] data);
+        $display("Fatal: write8 not implemented");
+        $finish;
+    endtask
+    virtual task read64(output bit[63:0] data, input bit[63:0] addr);
+        $display("Fatal: read64 not implemented");
+        $finish;
+    endtask
+    virtual task read32(output bit[31:0] data, input bit[63:0] addr);
+        $display("Fatal: read32 not implemented");
+        $finish;
+    endtask
+    virtual task read16(output bit[15:0] data, input bit[63:0] addr);
+        $display("Fatal: read16 not implemented");
+        $finish;
+    endtask
+    virtual task read8(output bit[7:0] data, input bit[63:0] addr);
+        $display("Fatal: read8 not implemented");
+        $finish;
+    endtask
 endclass
 
 class executor_base extends component;
@@ -417,7 +443,8 @@ class executor_base extends component;
 endclass
 
 class actor_c extends component;
-    component   comp_l[$];
+    component               comp_l[$];
+    activity_listener_c     listeners[$];
     // TODO: address-space
 
     function new(string name, component_ctor_ctxt ctxt, component parent=null);
@@ -426,6 +453,10 @@ class actor_c extends component;
 
     virtual task run();
     endtask
+
+    virtual function void add_listener(activity_listener_c listener);
+        listeners.push_back(listener);
+    endfunction
 
     virtual function backend_api get_backend();
         return null;

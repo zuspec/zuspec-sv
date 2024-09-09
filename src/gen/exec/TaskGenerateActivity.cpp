@@ -150,7 +150,19 @@ void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActiv
 //    run->println("$display(\"parent_comp_id=%%0d ; comp_id=%%0d\", %s.parent_comp_id, %s.comp_id);",
 //        varname.c_str(), varname.c_str());
 
+    run->println("foreach (actor.listeners[i]) begin");
+    run->inc_ind();
+    run->println("actor.listeners[i].enter_traverse(%s);", varname.c_str());
+    run->dec_ind();
+    run->println("end");
+
     // TODO: handle calling exec, activity, etc
+
+    run->println("foreach (actor.listeners[i]) begin");
+    run->inc_ind();
+    run->println("actor.listeners[i].leave_traverse(%s);", varname.c_str());
+    run->dec_ind();
+    run->println("end");
 
     run->println("%s.dtor();", varname.c_str());
     run->dec_ind();
@@ -212,6 +224,12 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
     run->println("end");
     run->println("$cast(executor, %s.comp.get_default_executor());", varname);
     run->println("%s.do_post_solve(executor);", varname);
+    run->println("");
+    run->println("foreach (actor.listeners[i]) begin");
+    run->inc_ind();
+    run->println("actor.listeners[i].enter_traverse(%s);", varname);
+    run->dec_ind();
+    run->println("end");
     if (t->getTarget()->activities().size()) {
         arl::dm::IDataTypeActivity *activity = t->getTarget()->activities().at(0)->getDataTypeT<arl::dm::IDataTypeActivity>();
         DEBUG("activity: %p", activity);
@@ -239,6 +257,13 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
     } else if (t->getTarget()->getExecs(arl::dm::ExecKindT::Body).size()) {
         run->println("%s.body(executor);", varname);
     }
+    run->println("");
+    run->println("foreach (actor.listeners[i]) begin");
+    run->inc_ind();
+    run->println("actor.listeners[i].leave_traverse(%s);", varname);
+    run->dec_ind();
+    run->println("end");
+    run->println("");
     run->println("%s.dtor();", varname);
     run->dec_ind();
     run->println("end");

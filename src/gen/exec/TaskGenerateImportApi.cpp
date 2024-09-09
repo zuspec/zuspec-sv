@@ -40,7 +40,7 @@ TaskGenerateImportApi::~TaskGenerateImportApi() {
 }
 
 void TaskGenerateImportApi::generate(const std::vector<arl::dm::IDataTypeFunction *> &funcs) {
-    m_out->println("interface class import_api extends backend_api;");
+    m_out->println("class import_api #(type BaseT=zsp_sv::empty_t) extends backend_api #(BaseT);");
     m_out->inc_ind();
     for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
         it=funcs.begin();

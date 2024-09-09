@@ -22,8 +22,9 @@ def read_runlog(runlog, pref) -> List[str]:
             if line.startswith("#"):
                 line = line[1:]
             line = line.strip()
-            if line.startswith(pref):
-                ret.append(line)
+            for p in pref:
+                if line.startswith(p):
+                    ret.append(line)
     return ret
 
 def clean_expect(expect):
@@ -35,7 +36,12 @@ def clean_expect(expect):
     return ret
     
 
-def run_unit_test(dirconfig, content, expect):
+def run_unit_test(
+        dirconfig, 
+        content, 
+        expect,
+        test_top="top.sv",
+        prefixes=("RES:",)):
     top_pss = dirconfig.mkBuildDirFile("top.pss", content)
     actor_sv = os.path.join(dirconfig.builddir(), "actor.sv")
     zsp_sv = os.path.abspath(os.path.join(
@@ -44,6 +50,9 @@ def run_unit_test(dirconfig, content, expect):
     ))
 #    flow = pfv.FlowSim(dirconfig, sim_id="mti")
     flow = pfv.FlowSim(dirconfig, sim_id="vlt")
+
+    if not isinstance(prefixes,tuple):
+        prefixes = (prefixes,)
 
     print("test_srcdir: %s" % dirconfig.test_srcdir(), flush=True)
     flow.addTaskToPhase("generate.main", TaskGenSvActor(
@@ -62,7 +71,7 @@ def run_unit_test(dirconfig, content, expect):
     )
     flow.addFileset("sim",
         pfv.FSPaths(
-            [os.path.join(dirconfig.test_srcdir(), "data", "top.sv")],
+            [os.path.join(dirconfig.test_srcdir(), "data", test_top)],
             "systemVerilogSource"
         )
     )
@@ -72,7 +81,7 @@ def run_unit_test(dirconfig, content, expect):
     run_args = flow.sim.mkRunArgs(dirconfig.rundir())
     flow.addTaskToPhase("run.main", flow.sim.mkRunTask(run_args))
     async def check(args, expect):
-        runlog_l = read_runlog(os.path.join(args.rundir, args.run_logfile), "RES:")
+        runlog_l = read_runlog(os.path.join(args.rundir, args.run_logfile), prefixes)
         expect_l = clean_expect(expect)
         errors = 0
         for i in range(max(len(runlog_l),len(expect_l))):
