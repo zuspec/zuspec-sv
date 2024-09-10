@@ -19,6 +19,8 @@
  *     Author: 
  */
 #pragma once
+#include <set>
+#include <string>
 #include "TaskGenerateStruct.h"
 
 namespace zsp {
@@ -41,6 +43,9 @@ public:
     virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
 
     virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
+
+private:
+    std::set<std::string>           m_exclude;
 
 };
 

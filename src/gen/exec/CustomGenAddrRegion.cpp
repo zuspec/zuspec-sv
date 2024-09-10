@@ -46,9 +46,7 @@ void CustomGenAddrRegion::genDefinition(
         vsc::dm::IDataType                  *type) {
     DEBUG_ENTER("genDefinition");
     vsc::dm::IDataTypeStruct *t = dynamic_cast<vsc::dm::IDataTypeStruct *>(type);
-    if (t->getFields().size() > 1) {
-        TaskGenerateAddrRegion(gen, out).generate(t);
-    }
+    TaskGenerateAddrRegion(gen, out).generate(t);
     DEBUG_LEAVE("genDefinition");
 }
 

@@ -41,7 +41,8 @@ def run_unit_test(
         content, 
         expect,
         test_top="top.sv",
-        prefixes=("RES:",)):
+        prefixes=("RES:",),
+        debug=False):
     top_pss = dirconfig.mkBuildDirFile("top.pss", content)
     actor_sv = os.path.join(dirconfig.builddir(), "actor.sv")
     zsp_sv = os.path.abspath(os.path.join(
@@ -59,7 +60,8 @@ def run_unit_test(
         "pss_top", 
         "pss_top::Entry", 
         actor_sv,
-        [pfv.FSPaths([top_pss], "pssSource")]))
+        [pfv.FSPaths([top_pss], "pssSource")],
+        debug=debug))
     flow.addFileset("sim",
         pfv.FSPaths(
             [

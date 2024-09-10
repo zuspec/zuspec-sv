@@ -35,6 +35,7 @@ TaskGenerateAddrRegion::TaskGenerateAddrRegion(
     IOutput             *out) : TaskGenerateStruct(gen, out) {
     m_dbg = 0;
     DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateAddrRegion", gen->getDebugMgr());
+    m_exclude = {"size", "addr"};
 }
 
 TaskGenerateAddrRegion::~TaskGenerateAddrRegion() {
@@ -51,9 +52,11 @@ void TaskGenerateAddrRegion::generate_fields(vsc::dm::IDataTypeStruct *t) {
     TaskGenerateStructFields gen(m_gen, m_out);
 
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
-        it=t->getFields().begin()+2;
+        it=t->getFields().begin();
         it!=t->getFields().end(); it++) {
-        (*it)->accept(&gen);
+        if (m_exclude.find((*it)->name()) == m_exclude.end()) {
+            (*it)->accept(&gen);
+        }
     }
 }
 

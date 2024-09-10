@@ -60,4 +60,5 @@ def test_default_api_impl_mem_access(dirconfig):
         content, 
         expect,
         "top_default_api.sv",
-        "Fatal:")
+        "Fatal:",
+        debug=True)
