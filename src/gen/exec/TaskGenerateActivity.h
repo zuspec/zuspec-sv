@@ -31,13 +31,13 @@ namespace sv {
 namespace gen {
 namespace exec {
 
-class TaskGenerate;
+class TaskGenerateActorPkgPrv;
 
 class TaskGenerateActivity :   
     public virtual arl::dm::VisitorBase {
 public:
     TaskGenerateActivity(
-        TaskGenerate            *gen,
+        TaskGenerateActorPkgPrv *gen,
         IGenRefExpr             *genref,
         IOutput                 *out
     );
@@ -55,7 +55,7 @@ public:
 
 private:
     dmgr::IDebug                    *m_dbg;
-    TaskGenerate                    *m_gen;
+    TaskGenerateActorPkgPrv         *m_gen;
     IGenRefExpr                     *m_genref;
     OutputActivityScope             *m_out_activity;
     IOutput                         *m_out_top;

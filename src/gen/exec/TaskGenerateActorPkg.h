@@ -1,5 +1,5 @@
 /**
- * IFactory.h
+ * TaskGenerateActorPkg.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,46 +19,39 @@
  *     Author: 
  */
 #pragma once
-#include <iostream>
-#include "dmgr/IDebugMgr.h"
-#include "zsp/arl/dm/IContext.h"
-#include "zsp/arl/eval/IFactory.h"
-#include "zsp/sv/gen/ITaskGenerate.h"
+#include "TaskGenerate.h"
 
 namespace zsp {
 namespace sv {
+namespace gen {
+namespace exec {
 
 
 
-class IFactory {
+class TaskGenerateActorPkg :
+    public virtual TaskGenerate {
 public:
-
-    virtual ~IFactory() { }
-
-    virtual void init(dmgr::IDebugMgr *dmgr) = 0;
-
-    virtual gen::ITaskGenerate *mkGenerateActorPkg(
+    TaskGenerateActorPkg(
+        dmgr::IDebugMgr                 *dmgr,
         arl::dm::IContext               *ctxt,
         arl::eval::IFactory             *eval_f,
         arl::dm::IDataTypeComponent     *comp_t,
         arl::dm::IDataTypeAction        *action_t,
-        std::ostream                    *out) = 0;
+        std::ostream                    *out);
 
-    virtual gen::ITaskGenerate *mkGenerateActorPkgPrv(
-        arl::dm::IContext               *ctxt,
-        arl::eval::IFactory             *eval_f,
-        arl::dm::IDataTypeComponent     *comp_t,
-        arl::dm::IDataTypeAction        *action_t,
-        std::ostream                    *out) = 0;
+    virtual ~TaskGenerateActorPkg();
 
-    virtual gen::ITaskGenerate *mkGenerateTypesPkg(
-        arl::dm::IContext               *ctxt,
-        arl::eval::IFactory             *eval_f,
-        std::ostream                    *out) = 0;
+    virtual bool generate() override;
+
+protected:
+    arl::dm::IDataTypeComponent         *m_comp_t;
+    arl::dm::IDataTypeAction            *m_action_t;
 
 };
 
-} /* namespace sv */
-} /* namespace zsp */
+}
+}
+}
+}
 
 

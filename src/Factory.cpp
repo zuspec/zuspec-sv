@@ -19,7 +19,9 @@
  *     Author:
  */
 #include "Factory.h"
-#include "gen/exec/TaskGenerate.h"
+#include "gen/exec/TaskGenerateActorPkg.h"
+#include "gen/exec/TaskGenerateActorPkgPrv.h"
+#include "gen/exec/TaskGenerateTypesPkg.h"
 
 
 namespace zsp {
@@ -39,18 +41,44 @@ void Factory::init(dmgr::IDebugMgr *dmgr) {
 }
 
 
-gen::ITaskGenerate *Factory::mkGenerateExecActor(
+gen::ITaskGenerate *Factory::mkGenerateActorPkg(
         arl::dm::IContext               *ctxt,
         arl::eval::IFactory             *eval_f,
         arl::dm::IDataTypeComponent     *comp_t,
         arl::dm::IDataTypeAction        *action_t,
         std::ostream                    *out) {
-    return new gen::exec::TaskGenerate(
+    return new gen::exec::TaskGenerateActorPkg(
         m_dmgr,
         ctxt,
         eval_f,
         comp_t,
         action_t,
+        out);
+}
+
+gen::ITaskGenerate *Factory::mkGenerateActorPkgPrv(
+        arl::dm::IContext               *ctxt,
+        arl::eval::IFactory             *eval_f,
+        arl::dm::IDataTypeComponent     *comp_t,
+        arl::dm::IDataTypeAction        *action_t,
+        std::ostream                    *out) {
+    return new gen::exec::TaskGenerateActorPkgPrv(
+        m_dmgr,
+        ctxt,
+        eval_f,
+        comp_t,
+        action_t,
+        out);
+}
+
+gen::ITaskGenerate *Factory::mkGenerateTypesPkg(
+        arl::dm::IContext               *ctxt,
+        arl::eval::IFactory             *eval_f,
+        std::ostream                    *out) {
+    return new gen::exec::TaskGenerateTypesPkg(
+        m_dmgr,
+        ctxt,
+        eval_f,
         out);
 }
 

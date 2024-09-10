@@ -61,6 +61,7 @@ void TaskGenerateAction::generate_fields(vsc::dm::IDataTypeStruct *t) {
 
 void TaskGenerateAction::generate_constraints(vsc::dm::IDataTypeStruct *t) {
     arl::dm::IDataTypeAction *action_t = dynamic_cast<arl::dm::IDataTypeAction *>(t);
+#ifdef UNDEFINED
     const arl::eval::IComponentTreeData::TypeM &comp_m = 
         m_gen->getCompTreeData()->getTypeMap(action_t->getComponentType());
 
@@ -97,6 +98,7 @@ void TaskGenerateAction::generate_constraints(vsc::dm::IDataTypeStruct *t) {
     }
     m_out->dec_ind();
     m_out->println("}");
+#endif
 
     GenRefExprExecModel genref(
         m_gen,

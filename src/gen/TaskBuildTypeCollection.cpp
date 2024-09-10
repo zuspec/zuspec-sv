@@ -36,6 +36,20 @@ TaskBuildTypeCollection::~TaskBuildTypeCollection() {
 
 }
 
+TypeCollectionUP TaskBuildTypeCollection::build(arl::dm::IContext *ctxt) {
+    DEBUG_ENTER("build");
+    m_type_c = TypeCollectionUP(new TypeCollection());
+
+    for (std::vector<vsc::dm::IDataTypeStructUP>::const_iterator
+        it=ctxt->getDataTypeStructs().begin();
+        it!=ctxt->getDataTypeStructs().end(); it++) {
+        (*it)->accept(m_this);
+    }
+
+    DEBUG_LEAVE("build");
+    return std::move(m_type_c);
+}
+
 TypeCollectionUP TaskBuildTypeCollection::build(
         arl::dm::IDataTypeComponent     *comp_t,
         arl::dm::IDataTypeAction        *action_t) {

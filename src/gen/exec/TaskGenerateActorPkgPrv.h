@@ -1,5 +1,5 @@
 /**
- * TaskGenerate.h
+ * TaskGenerateActorPkgPrv.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,13 +19,8 @@
  *     Author: 
  */
 #pragma once
-#include <iostream>
-#include "zsp/arl/dm/IContext.h"
-#include "zsp/arl/eval/IFactory.h"
-#include "zsp/sv/gen/ITaskGenerate.h"
-#include "gen/INameMap.h"
-#include "gen/IOutput.h"
-#include "gen/TypeCollection.h"
+#include "TaskGenerate.h"
+#include "zsp/arl/eval/IComponentTreeData.h"
 
 namespace zsp {
 namespace sv {
@@ -34,41 +29,32 @@ namespace exec {
 
 
 
-class TaskGenerate : public virtual gen::ITaskGenerate {
+class TaskGenerateActorPkgPrv :
+    public virtual TaskGenerate {
 public:
-    TaskGenerate(
+    TaskGenerateActorPkgPrv(
         dmgr::IDebugMgr                 *dmgr,
         arl::dm::IContext               *ctxt,
         arl::eval::IFactory             *eval_f,
+        arl::dm::IDataTypeComponent     *comp_t,
+        arl::dm::IDataTypeAction        *action_t,
         std::ostream                    *out);
 
-    virtual ~TaskGenerate();
+    virtual ~TaskGenerateActorPkgPrv();
 
-    virtual bool generate() = 0;
+    virtual bool generate() override;
 
-    dmgr::IDebugMgr *getDebugMgr() { return m_dmgr; }
+    const std::string &getActorName() { return m_actor_name; }
 
-    INameMap *getNameMap() { return m_namemap.get(); }
-
-    arl::dm::IContext *getContext() { return m_ctxt; }
+    arl::eval::IComponentTreeData *getCompTreeData() { return m_comptree_data.get(); }
 
 protected:
-
-    void attach_custom_gen();
-
-    bool isInstance(
-        vsc::dm::IDataTypeStruct *t, 
-        const std::vector<vsc::dm::IDataTypeStruct *> &bases);
-
-protected:
-    dmgr::IDebug                    *m_dbg;
-    dmgr::IDebugMgr                 *m_dmgr;
-    arl::dm::IContext               *m_ctxt;
-    arl::eval::IFactory             *m_eval_f;
-    std::ostream                    *m_out;
-    INameMapUP                      m_namemap;
-
-
+    arl::dm::IDataTypeComponent     *m_comp_t;
+    arl::dm::IDataTypeAction        *m_action_t;
+    IOutputUP                       m_out_pub;
+    IOutputUP                       m_out_prv;
+    std::string                     m_actor_name;
+    arl::eval::IComponentTreeDataUP m_comptree_data;
 
 };
 

@@ -35,12 +35,25 @@ public:
 
     virtual void init(dmgr::IDebugMgr *dmgr) override;
 
-    virtual gen::ITaskGenerate *mkGenerateExecActor(
+    virtual gen::ITaskGenerate *mkGenerateActorPkg(
         arl::dm::IContext               *ctxt,
         arl::eval::IFactory             *eval_f,
         arl::dm::IDataTypeComponent     *comp_t,
         arl::dm::IDataTypeAction        *action_t,
         std::ostream                    *out) override;
+
+    virtual gen::ITaskGenerate *mkGenerateActorPkgPrv(
+        arl::dm::IContext               *ctxt,
+        arl::eval::IFactory             *eval_f,
+        arl::dm::IDataTypeComponent     *comp_t,
+        arl::dm::IDataTypeAction        *action_t,
+        std::ostream                    *out) override;
+
+    virtual gen::ITaskGenerate *mkGenerateTypesPkg(
+        arl::dm::IContext               *ctxt,
+        arl::eval::IFactory             *eval_f,
+        std::ostream                    *out) override;
+
 
     static Factory *inst();
 

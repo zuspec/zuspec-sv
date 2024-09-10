@@ -19,7 +19,7 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
-#include "TaskGenerate.h"
+#include "TaskGenerateActorPkgPrv.h"
 #include "TaskGenerateActivity.h"
 #include "TaskGenerateConstraint.h"
 #include "ActivityInfo.h"
@@ -32,7 +32,7 @@ namespace exec {
 
 
 TaskGenerateActivity::TaskGenerateActivity(
-    TaskGenerate            *gen,
+    TaskGenerateActorPkgPrv *gen,
     IGenRefExpr             *genref,
     IOutput                 *out) : m_dbg(0), m_gen(gen), m_genref(genref), m_out(out) {
     DEBUG_INIT("Zsp::sv::gen::exec::TaskGenerateActivity", gen->getDebugMgr());
@@ -134,6 +134,40 @@ void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActiv
         } else {
             run->println("parent_comp_id == 0;");
         }
+        arl::dm::IDataTypeAction *action_t = variant->info()->action();
+        const arl::eval::IComponentTreeData::TypeM &comp_m = 
+            m_gen->getCompTreeData()->getTypeMap(action_t->getComponentType());
+
+        for (arl::eval::IComponentTreeData::TypeM::const_iterator
+            it=comp_m.begin();
+            it!=comp_m.end(); it++) {
+            run->indent();
+            if (it->parent_id.size() == 1) {
+                run->write("(parent_comp_id == %d) -> ", it->parent_id.at(0));
+            } else {
+                run->write("(parent_comp_id inside {");
+                for (uint32_t i=0; i<it->parent_id.size(); i++) {
+                    if (i) {
+                        run->write(", ");
+                    }
+                    run->write("%d", it->parent_id.at(i));
+                }
+                run->write("}) -> ");
+            }
+            if (it->child_id.size() == 1) {
+                run->write("comp_id == %d;\n", it->child_id.at(0));
+            } else {
+                run->write("comp_id inside {");
+                for (uint32_t i=0; i<it->child_id.size(); i++) {
+                    if (i) {
+                        run->write(", ");
+                    }
+                    run->write("%d", it->child_id.at(i));
+                }
+                run->write("};\n");
+            }
+        }
+
         if (t->getWithC()) {
             TaskGenerateConstraint(m_gen, m_genref, run).generate(t->getWithC());
         }
@@ -199,6 +233,40 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
         } else {
             run->println("parent_comp_id == 0;");
         }
+        arl::dm::IDataTypeAction *action_t = t->getTarget();
+        const arl::eval::IComponentTreeData::TypeM &comp_m = 
+            m_gen->getCompTreeData()->getTypeMap(action_t->getComponentType());
+
+        for (arl::eval::IComponentTreeData::TypeM::const_iterator
+            it=comp_m.begin();
+            it!=comp_m.end(); it++) {
+            run->indent();
+            if (it->parent_id.size() == 1) {
+                run->write("(parent_comp_id == %d) -> ", it->parent_id.at(0));
+            } else {
+                run->write("(parent_comp_id inside {");
+                for (uint32_t i=0; i<it->parent_id.size(); i++) {
+                    if (i) {
+                        run->write(", ");
+                    }
+                    run->write("%d", it->parent_id.at(i));
+                }
+                run->write("}) -> ");
+            }
+            if (it->child_id.size() == 1) {
+                run->write("comp_id == %d;\n", it->child_id.at(0));
+            } else {
+                run->write("comp_id inside {");
+                for (uint32_t i=0; i<it->child_id.size(); i++) {
+                    if (i) {
+                        run->write(", ");
+                    }
+                    run->write("%d", it->child_id.at(i));
+                }
+                run->write("};\n");
+            }
+        }
+
         if (t->getWithC()) {
             m_genref->pushInline(t->getTarget());
             TaskGenerateConstraint(m_gen, m_genref, run).generate(t->getWithC());

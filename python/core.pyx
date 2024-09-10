@@ -20,7 +20,7 @@ cdef class Factory(object):
     cpdef void init(self, dm_core.Factory dmgr):
         self._hndl.init(dmgr._hndl.getDebugMgr())
 
-    cpdef TaskGenerate mkGenerateExecActor(
+    cpdef TaskGenerate mkGenerateActorPkg(
         self,
         arl_dm.Context             ctxt,
         arl_dm.DataTypeComponent   comp_t,
@@ -28,13 +28,40 @@ cdef class Factory(object):
         object                     out):
         cdef arl_eval.Factory eval_f = arl_eval.Factory.inst()
         cdef costream out_s = costream(out)
-        cdef decl.ITaskGenerate *gen = self._hndl.mkGenerateExecActor(
+        cdef decl.ITaskGenerate *gen = self._hndl.mkGenerateActorPkg(
             ctxt.asContext(),
             eval_f._hndl,
             comp_t.asComponent(),
             action_t.asAction(),
             out_s.stream())
+        return TaskGenerate.mk(gen, out_s, True)
 
+    cpdef TaskGenerate mkGenerateActorPkgPrv(
+        self,
+        arl_dm.Context             ctxt,
+        arl_dm.DataTypeComponent   comp_t,
+        arl_dm.DataTypeAction      action_t,
+        object                     out):
+        cdef arl_eval.Factory eval_f = arl_eval.Factory.inst()
+        cdef costream out_s = costream(out)
+        cdef decl.ITaskGenerate *gen = self._hndl.mkGenerateActorPkgPrv(
+            ctxt.asContext(),
+            eval_f._hndl,
+            comp_t.asComponent(),
+            action_t.asAction(),
+            out_s.stream())
+        return TaskGenerate.mk(gen, out_s, True)
+
+    cpdef TaskGenerate mkGenerateTypesPkg(
+        self,
+        arl_dm.Context             ctxt,
+        object                     out):
+        cdef arl_eval.Factory eval_f = arl_eval.Factory.inst()
+        cdef costream out_s = costream(out)
+        cdef decl.ITaskGenerate *gen = self._hndl.mkGenerateTypesPkg(
+            ctxt.asContext(),
+            eval_f._hndl,
+            out_s.stream())
         return TaskGenerate.mk(gen, out_s, True)
 
     @staticmethod

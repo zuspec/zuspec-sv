@@ -20,6 +20,7 @@
  */
 #pragma once
 #include "dmgr/IDebugMgr.h"
+#include "zsp/arl/dm/IContext.h"
 #include "zsp/arl/dm/IDataTypeAction.h"
 #include "zsp/arl/dm/IDataTypeComponent.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
@@ -38,6 +39,8 @@ public:
     );
 
     virtual ~TaskBuildTypeCollection();
+
+    TypeCollectionUP build(arl::dm::IContext *ctxt);
 
     TypeCollectionUP build(
         arl::dm::IDataTypeComponent     *comp_t,

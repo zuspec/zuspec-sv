@@ -1,12 +1,9 @@
 
 package top_pkg;
+    import pss_types::*;
     import pss_top__Entry_pkg::*;
 
-`ifdef VERILATOR
-    class pss_top__Entry_api_impl extends pss_top__Entry_prv::import_api;
-`else
-    class pss_top__Entry_api_impl extends pss_top__Entry_api;
-`endif
+    class pss_top__Entry_api_impl extends pss_import_api;
         virtual task write64(bit[63:0] addr, bit[63:0] data);
             $display("RES: write64 0x%08x 0x%08x", addr, data);
         endtask

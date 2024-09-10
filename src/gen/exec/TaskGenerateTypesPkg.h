@@ -1,7 +1,7 @@
 /**
- * Output.h
+ * TaskGenerateTypesPkg.h
  *
- * Copyright 2022 Matthew Ballance and Contributors
+ * Copyright 2023 Matthew Ballance and Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may 
  * not use this file except in compliance with the License.  
@@ -19,40 +19,31 @@
  *     Author: 
  */
 #pragma once
-#include <iostream>
-#include <memory>
-#include <string>
-#include "IOutput.h"
-#include "OutputBase.h"
+#include "TaskGenerate.h"
 
 namespace zsp {
 namespace sv {
 namespace gen {
+namespace exec {
 
-class Output;
-using OutputUP=std::unique_ptr<Output>;
-class Output : 
-    public virtual IOutput,
-    public virtual OutputBase {
+
+
+class TaskGenerateTypesPkg :
+    public virtual TaskGenerate {
 public:
-    Output(
-        std::ostream            *out,
-        bool                    owned,
-        const std::string       &ind=""
-    );
+    TaskGenerateTypesPkg(
+        dmgr::IDebugMgr         *dmgr,
+        arl::dm::IContext       *ctxt,
+        arl::eval::IFactory     *eval_f,
+        std::ostream            *out);
 
-    virtual ~Output();
+    virtual ~TaskGenerateTypesPkg();
 
-    virtual void close() override;
-
-    virtual void writes(const std::string &str) override;
-
-private:
-    std::ostream                *m_out;
-    bool                        m_owned;
+    virtual bool generate() override;
 
 };
 
+}
 }
 }
 }

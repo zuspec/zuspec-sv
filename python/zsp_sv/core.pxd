@@ -14,11 +14,23 @@ cdef class Factory(object):
 
     cpdef void init(self, dm_core.Factory dmgr)
 
-    cpdef TaskGenerate mkGenerateExecActor(
+    cpdef TaskGenerate mkGenerateActorPkg(
         self,
         arl_dm.Context             ctxt,
         arl_dm.DataTypeComponent   comp_t,
         arl_dm.DataTypeAction      action_t,
+        object                     out)
+
+    cpdef TaskGenerate mkGenerateActorPkgPrv(
+        self,
+        arl_dm.Context             ctxt,
+        arl_dm.DataTypeComponent   comp_t,
+        arl_dm.DataTypeAction      action_t,
+        object                     out)
+
+    cpdef TaskGenerate mkGenerateTypesPkg(
+        self,
+        arl_dm.Context             ctxt,
         object                     out)
 
 cdef class TaskGenerate(object):

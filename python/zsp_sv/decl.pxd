@@ -17,13 +17,25 @@ ctypedef ITaskGenerate *ITaskGenerateP
 cdef extern from "zsp/sv/IFactory.h" namespace "zsp::sv":
     cdef cppclass IFactory:
         void init(dm.IDebugMgr *)
-        ITaskGenerate *mkGenerateExecActor(
+
+        ITaskGenerate *mkGenerateActorPkg(
             arl_dm.IContext             *ctxt,
             arl_eval.IFactory           *eval_f,
             arl_dm.IDataTypeComponent   *comp_t,
             arl_dm.IDataTypeAction      *action_t,
-            ciostream.ostream           *out
-        )
+            ciostream.ostream           *out)
+
+        ITaskGenerate *mkGenerateActorPkgPrv(
+            arl_dm.IContext             *ctxt,
+            arl_eval.IFactory           *eval_f,
+            arl_dm.IDataTypeComponent   *comp_t,
+            arl_dm.IDataTypeAction      *action_t,
+            ciostream.ostream           *out)
+
+        ITaskGenerate *mkGenerateTypesPkg(
+            arl_dm.IContext             *ctxt,
+            arl_eval.IFactory           *eval_f,
+            ciostream.ostream           *out)
 
 cdef extern from "zsp/sv/gen/ITaskGenerate.h" namespace "zsp::sv::gen":
     cdef cppclass ITaskGenerate:
