@@ -60,13 +60,15 @@ def test_simple_memread(dirconfig):
             action Entry {
                 exec body {
                     bit[32] val;
+                    write32(comp.hndl, 32);
                     val = read32(comp.hndl);
                 }
             }
         }
     """
     expect = """
-    RES: read32 0x80000000
+    RES: write32 0x80000000 0x00000020
+    RES: read32 0x80000000 0x00000020
     """
     run_unit_test(dirconfig, content, expect,
                   debug=True)
