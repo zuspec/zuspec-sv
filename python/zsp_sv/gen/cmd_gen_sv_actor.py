@@ -93,7 +93,17 @@ class CmdGenSvActor(object):
         
         zsp_sv_f = zsp_sv.Factory.inst()
         with open(args.output, "w") as fp:
-            generator = zsp_sv_f.mkGenerateExecActor(
+            generator = zsp_sv_f.mkGeneratorTypesPkg(
+                arl_ctxt,
+                fp)
+            generator.generate()
+            generator = zsp_sv_f.mkGenerateActorPkgPrv(
+                arl_ctxt,
+                pss_top,
+                pss_top_Entry,
+                fp)
+            generator.generate()
+            generator = zsp_sv_f.mkGenerateActorPkg(
                 arl_ctxt,
                 pss_top,
                 pss_top_Entry,

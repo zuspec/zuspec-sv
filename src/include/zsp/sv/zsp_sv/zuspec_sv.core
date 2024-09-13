@@ -5,7 +5,8 @@ name: zuspec::sv
 filesets:
   hvl:
     files:
-    - zuspec.sv
+    - zsp_sv.sv:
+        include_path: .
     file_type: systemVerilogSource
 
 targets:
