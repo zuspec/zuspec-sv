@@ -35,6 +35,10 @@ public:
 
     virtual void init(dmgr::IDebugMgr *dmgr) override;
 
+    virtual void prepContextExec(
+        arl::dm::IContext               *ctxt,
+        arl::eval::IFactory             *eval_f) override;
+
     virtual gen::ITaskGenerate *mkGenerateActorPkg(
         arl::dm::IContext               *ctxt,
         arl::eval::IFactory             *eval_f,

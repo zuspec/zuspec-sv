@@ -22,6 +22,7 @@
 #include "gen/exec/TaskGenerateActorPkg.h"
 #include "gen/exec/TaskGenerateActorPkgPrv.h"
 #include "gen/exec/TaskGenerateTypesPkg.h"
+#include "gen/exec/TaskPrepContext.h"
 
 
 namespace zsp {
@@ -40,6 +41,11 @@ void Factory::init(dmgr::IDebugMgr *dmgr) {
     m_dmgr = dmgr;
 }
 
+void Factory::prepContextExec(
+        arl::dm::IContext               *ctxt,
+        arl::eval::IFactory             *eval_f) {
+    gen::exec::TaskPrepContext(m_dmgr, ctxt, eval_f).prepare();
+}
 
 gen::ITaskGenerate *Factory::mkGenerateActorPkg(
         arl::dm::IContext               *ctxt,

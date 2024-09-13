@@ -100,6 +100,9 @@ class TaskGenSvActor(object):
             raise Exception("root action %s could not be found" % self.root_action)
         
         zsp_sv_f = zsp_sv.Factory.inst()
+
+        zsp_sv_f.prepContextExec(arl_ctxt)
+
         with open(self.outpath, "w") as fp:
             generator = zsp_sv_f.mkGenerateTypesPkg(
                 arl_ctxt,

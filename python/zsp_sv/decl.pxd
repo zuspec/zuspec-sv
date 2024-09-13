@@ -18,6 +18,10 @@ cdef extern from "zsp/sv/IFactory.h" namespace "zsp::sv":
     cdef cppclass IFactory:
         void init(dm.IDebugMgr *)
 
+        void prepContextExec(
+            arl_dm.IContext             *ctxt,
+            arl_eval.IFactory           *eval_f)
+
         ITaskGenerate *mkGenerateActorPkg(
             arl_dm.IContext             *ctxt,
             arl_eval.IFactory           *eval_f,

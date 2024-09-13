@@ -14,6 +14,10 @@ cdef class Factory(object):
 
     cpdef void init(self, dm_core.Factory dmgr)
 
+    cpdef void prepContextExec(
+        self,
+        arl_dm.Context             ctxt)
+
     cpdef TaskGenerate mkGenerateActorPkg(
         self,
         arl_dm.Context             ctxt,
