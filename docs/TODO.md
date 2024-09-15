@@ -40,10 +40,10 @@
 
 - exec statements
   * if/else
-  - repeat
-    - repeat count
-    - repeat while
-    - repeat .. while
+  * repeat
+    * repeat count
+    * while
+    * repeat .. while
   - foreach
   - match
   * assignment

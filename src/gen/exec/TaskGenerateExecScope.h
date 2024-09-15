@@ -62,13 +62,17 @@ public:
 
     virtual void visitTypeProcStmtRepeat(arl::dm::ITypeProcStmtRepeat *s) override;
 
+    virtual void visitTypeProcStmtRepeatWhile(arl::dm::ITypeProcStmtRepeatWhile *s) override;
+
     virtual void visitTypeProcStmtReturn(arl::dm::ITypeProcStmtReturn *s) override;
+
+    virtual void visitTypeProcStmtScope(arl::dm::ITypeProcStmtScope *s) override;
 
     virtual void visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDecl *t) override;
 
-	virtual void visitTypeProcStmtWhile(arl::dm::ITypeProcStmtWhile *s) override { }
+	virtual void visitTypeProcStmtWhile(arl::dm::ITypeProcStmtWhile *s) override;
 
-	virtual void visitTypeProcStmtYield(arl::dm::ITypeProcStmtYield *s) override { }
+	virtual void visitTypeProcStmtYield(arl::dm::ITypeProcStmtYield *s) override;
 
 protected:
     dmgr::IDebug                    *m_dbg;

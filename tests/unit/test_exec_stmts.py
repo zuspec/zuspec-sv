@@ -24,6 +24,86 @@ def test_repeat_count(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
+def test_repeat_count(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                exec post_solve {
+                    repeat (2) {
+                        print("RES: Hello");
+                    }
+                }
+            }
+        }
+    """
+    expect = """
+    RES: Hello
+    RES: Hello
+    """
+    run_unit_test(dirconfig, content, expect, debug=True)
+
+def test_repeat_count_var(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                exec post_solve {
+                    repeat (i : 2) {
+                        print("RES: Hello %d", i);
+                    }
+                }
+            }
+        }
+    """
+    expect = """
+    RES: Hello 0
+    RES: Hello 1
+    """
+    run_unit_test(dirconfig, content, expect, debug=True)
+
+def test_while(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                exec post_solve {
+                    int i = 0;
+                    while (i < 2) {
+                        print("RES: Hello %d", i);
+                        i += 1;
+                    }
+                }
+            }
+        }
+    """
+    expect = """
+    RES: Hello 0
+    RES: Hello 1
+    """
+    run_unit_test(dirconfig, content, expect, debug=True)
+
+def test_repeat_while(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                exec post_solve {
+                    int i = 0;
+                    repeat {
+                        print("RES: Hello %d", i);
+                        i += 1;
+                    } while (i < 2);
+                }
+            }
+        }
+    """
+    expect = """
+    RES: Hello 0
+    RES: Hello 1
+    """
+    run_unit_test(dirconfig, content, expect, debug=True)
+
 def test_if_else(dirconfig):
     content = """
         import std_pkg::*;

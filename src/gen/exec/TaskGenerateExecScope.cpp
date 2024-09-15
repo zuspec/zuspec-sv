@@ -176,17 +176,54 @@ void TaskGenerateExecScope::visitTypeProcStmtExpr(arl::dm::ITypeProcStmtExpr *s)
 void TaskGenerateExecScope::visitTypeProcStmtRepeat(arl::dm::ITypeProcStmtRepeat *s) {
     DEBUG_ENTER("visitTypeProcStmtRepeat");
 
+    m_genref->pushScope(s);
+
     // TODO: handle index variable
-    m_exec->exec()->indent();
-    m_exec->exec()->write("repeat (");
-    TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getExpr());
-    m_exec->exec()->write(") begin\n");
-    m_exec->exec()->inc_ind();
+    if (s->getNumVariables()) {
+        m_exec->exec()->indent();
+        m_exec->exec()->write("for (");
+        TaskGenerateDataType(m_gen, m_exec->exec()).generate(
+            s->getVariables().front()->getDataType());
+        m_exec->exec()->write(" %s=0; %s<",
+            s->getVariables().front()->name().c_str(),
+            s->getVariables().front()->name().c_str());
+        TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getExpr());
+        m_exec->exec()->write("; %s+=1) begin\n",
+            s->getVariables().front()->name().c_str());
+        m_exec->exec()->inc_ind();
+        for (std::vector<arl::dm::ITypeProcStmtVarDeclUP>::const_iterator
+            it=s->getVariables().begin();
+            it!=s->getVariables().end(); it++) {
+            (*it)->accept(m_this);
+        }
+    } else {
+        m_exec->exec()->indent();
+        m_exec->exec()->write("repeat (");
+        TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getExpr());
+        m_exec->exec()->write(") begin\n");
+        m_exec->exec()->inc_ind();
+    }
+
     s->getBody()->accept(m_this);
     m_exec->exec()->dec_ind();
     m_exec->exec()->println("end");
 
+    m_genref->popScope();
+
     DEBUG_LEAVE("visitTypeProcStmtRepeat");
+}
+
+void TaskGenerateExecScope::visitTypeProcStmtRepeatWhile(arl::dm::ITypeProcStmtRepeatWhile *s) {
+    DEBUG_ENTER("visitTypeProcStmtRepeatWhile");
+    m_exec->exec()->println("do begin");
+    m_exec->exec()->inc_ind();
+    s->getBody()->accept(m_this);
+    m_exec->exec()->dec_ind();
+    m_exec->exec()->indent();
+    m_exec->exec()->write("end while(");
+    TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getExpr());
+    m_exec->exec()->write(");\n");
+    DEBUG_LEAVE("visitTypeProcStmtRepeatWhile");
 }
 
 void TaskGenerateExecScope::visitTypeProcStmtReturn(arl::dm::ITypeProcStmtReturn *s) {
@@ -214,6 +251,14 @@ void TaskGenerateExecScope::visitTypeProcStmtReturn(arl::dm::ITypeProcStmtReturn
     DEBUG_LEAVE("visitTypeProcStmtReturn");
 }
 
+void TaskGenerateExecScope::visitTypeProcStmtScope(arl::dm::ITypeProcStmtScope *s) {
+    DEBUG_ENTER("visitTypeProcStmtScope");
+    m_genref->pushScope(s);
+    VisitorBase::visitTypeProcStmtScope(s);
+    m_genref->popScope();
+    DEBUG_LEAVE("visitTypeProcStmtScope");
+}
+
 void TaskGenerateExecScope::visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDecl *t) {
     DEBUG_ENTER("visitTypeProcStmtVarDecl");
     m_exec->decl()->indent();
@@ -234,6 +279,23 @@ void TaskGenerateExecScope::visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDe
         m_exec->decl()->write(";\n");
     }
     DEBUG_LEAVE("visitTypeProcStmtVarDecl");
+}
+
+void TaskGenerateExecScope::visitTypeProcStmtWhile(arl::dm::ITypeProcStmtWhile *s) {
+    DEBUG_ENTER("visitTypeProcStmtWhile");
+    m_exec->exec()->indent();
+    m_exec->exec()->write("while (");
+    TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getCond());
+    m_exec->exec()->write(") begin\n");
+    m_exec->exec()->inc_ind();
+    s->getBody()->accept(m_this);
+    m_exec->exec()->dec_ind();
+    m_exec->exec()->println("end");
+    DEBUG_LEAVE("visitTypeProcStmtWhile");
+}
+
+void TaskGenerateExecScope::visitTypeProcStmtYield(arl::dm::ITypeProcStmtYield *s) {
+    m_exec->exec()->println("#0;");
 }
  
 }

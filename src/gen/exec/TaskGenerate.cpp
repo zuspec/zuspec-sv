@@ -48,9 +48,9 @@ TaskGenerate::TaskGenerate(
     dmgr::IDebugMgr                 *dmgr,
     arl::dm::IContext               *ctxt,
     arl::eval::IFactory             *eval_f,
-    std::ostream                    *out) : m_dmgr(dmgr), m_ctxt(ctxt),
-    m_eval_f(eval_f), m_out(out),
-    m_namemap(new NameMap()) {
+    std::ostream                    *out) : 
+    m_dbg(0), m_dmgr(dmgr), m_ctxt(ctxt),
+    m_eval_f(eval_f), m_out(out), m_namemap(new NameMap()) {
     DEBUG_INIT("zsp::sv::gen::exec::TaskGenerate", dmgr);
 }
 

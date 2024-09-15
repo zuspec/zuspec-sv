@@ -60,20 +60,30 @@ def run_unit_test(
         "pss_top", 
         "pss_top::Entry", 
         actor_sv,
-        [pfv.FSPaths([top_pss], "pssSource")],
+        [pfv.FSPaths(
+            os.path.dirname(top_pss),
+            [top_pss], 
+            "pssSource")],
         debug=debug))
     flow.addFileset("sim",
         pfv.FSPaths(
-            [
-                os.path.join(zsp_sv, "zsp_sv.sv"), 
-                actor_sv],
+            zsp_sv,
+            ["zsp_sv.sv"], 
             "systemVerilogSource",
             incs=[zsp_sv]
         )
     )
     flow.addFileset("sim",
         pfv.FSPaths(
-            [os.path.join(dirconfig.test_srcdir(), "data", test_top)],
+            os.path.dirname(actor_sv),
+            [actor_sv],
+            "systemVerilogSource"
+        )
+    )
+    flow.addFileset("sim",
+        pfv.FSPaths(
+            dirconfig.test_srcdir(),
+            [os.path.join("data", test_top)],
             "systemVerilogSource"
         )
     )
