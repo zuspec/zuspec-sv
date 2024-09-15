@@ -20,6 +20,7 @@
  */
 #include "CustomGenBase.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateExpr.h"
 
 
 namespace zsp {
@@ -41,13 +42,47 @@ void CustomGenBase::genExprMethodCallStatic(
         TaskGenerate                        *gen,
         IOutput                             *out,
         IGenRefExpr                         *refgen,
-        arl::dm::ITypeExprMethodCallStatic  *call) { }
+        arl::dm::ITypeExprMethodCallStatic  *call) { 
+    std::string name = call->getTarget()->name();
+    int idx = name.rfind("::");
+    if (idx != -1) {
+        name = name.substr(idx+2);
+    }
+    out->write("%s(", name.c_str());
+    for (std::vector<vsc::dm::ITypeExprUP>::const_iterator
+        it=call->getParameters().begin();
+        it!=call->getParameters().end(); it++) {
+        if (it != call->getParameters().begin()) {
+            out->write(", ");
+        }
+        TaskGenerateExpr(gen, refgen, out).generate(it->get());
+    }
+    out->write(")");
+}
 
 void CustomGenBase::genExprMethodCallContext(
         TaskGenerate                        *gen,
         IOutput                             *out,
         IGenRefExpr                         *refgen,
-        arl::dm::ITypeExprMethodCallContext *call) { }
+        arl::dm::ITypeExprMethodCallContext *call) { 
+    std::string name = call->getTarget()->name();
+    int idx = name.rfind("::");
+    if (idx != -1) {
+        name = name.substr(idx+2);
+    }
+    out->write("%s.%s(",
+        refgen->genRval(call->getContext()).c_str(),
+        name.c_str());
+    for (std::vector<vsc::dm::ITypeExprUP>::const_iterator
+        it=call->getParameters().begin();
+        it!=call->getParameters().end(); it++) {
+        if (it != call->getParameters().begin()) {
+            out->write(", ");
+        }
+        TaskGenerateExpr(gen, refgen, out).generate(it->get());
+    }
+    out->write(")");
+ }
 
 void CustomGenBase::genDefinition(
         TaskGenerate                        *gen,
