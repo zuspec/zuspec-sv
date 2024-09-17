@@ -44,7 +44,7 @@ public:
 
     void generate(
         arl::dm::IDataTypeFunction *f,
-        bool                        is_ctxt);
+        bool                        is_ctxt=false);
 
 private:
     static dmgr::IDebug         *m_dbg;

@@ -50,7 +50,8 @@ def run_unit_test(
         "../../src/include/zsp/sv/zsp_sv"
     ))
 #    flow = pfv.FlowSim(dirconfig, sim_id="mti")
-    flow = pfv.FlowSim(dirconfig, sim_id="vlt")
+#    flow = pfv.FlowSim(dirconfig, sim_id="vlt")
+    flow = pfv.FlowSim(dirconfig)
 
     if not isinstance(prefixes,tuple):
         prefixes = (prefixes,)

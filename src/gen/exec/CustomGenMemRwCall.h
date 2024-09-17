@@ -41,6 +41,13 @@ public:
         IGenRefExpr                         *refgen,
         arl::dm::ITypeExprMethodCallStatic  *call) override;
 
+    // Don't generate this function
+    virtual void genFunctionDefinition(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        arl::dm::IDataTypeFunction          *func) override { }
+
 };
 
 }

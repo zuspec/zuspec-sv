@@ -82,6 +82,17 @@ bool TaskGenerateTypesPkg::generate() {
                 types->getType(*it));
         }
     }
+    out->println("");
+
+    for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
+        it=m_ctxt->getDataTypeFunctions().begin();
+        it!=m_ctxt->getDataTypeFunctions().end(); it++) {
+        // TODO: filter out specific functions
+        if (!(*it)->hasFlags(arl::dm::DataTypeFunctionFlags::Context) 
+            && !(*it)->hasFlags(arl::dm::DataTypeFunctionFlags::Core)) {
+            TaskDefineType(this, out.get()).generate(*it);
+        }
+    }
 
     out->println("");
     TaskGenerateImportApi(this, out.get()).generate(

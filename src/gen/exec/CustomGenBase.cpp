@@ -21,6 +21,7 @@
 #include "CustomGenBase.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateExpr.h"
+#include "TaskGenerateFunction.h"
 
 
 namespace zsp {
@@ -89,6 +90,14 @@ void CustomGenBase::genDefinition(
         IOutput                             *out,
         vsc::dm::IDataType                  *type) {
 
+}
+
+void CustomGenBase::genFunctionDefinition(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        arl::dm::IDataTypeFunction          *func) {
+    TaskGenerateFunction(gen, refgen, out).generate(func);
 }
 
 }

@@ -50,6 +50,8 @@ void TaskPrepContext::prepare() {
         (*it)->accept(m_this);
     }
 
+    tag_functions();
+
     DEBUG_LEAVE("prepare");
 }
 
@@ -70,6 +72,23 @@ void TaskPrepContext::visitTypeExecProc(arl::dm::ITypeExecProc *e) {
     DEBUG_ENTER("visitTypeExecProc");
     TaskRewriteTargetRvCalls(m_dmgr, m_ctxt).rewrite(e->getBody());
     DEBUG_LEAVE("visitTypeExecProc");
+}
+
+void TaskPrepContext::tag_functions() {
+    for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
+        it=m_ctxt->getDataTypeFunctions().begin();
+        it!=m_ctxt->getDataTypeFunctions().end(); it++) {
+        const std::string &name = (*it)->name();
+
+        if (name.find("std_pkg::") == 0) {
+            (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Core);
+        } else if (name.find("addr_reg_pkg::") == 0) {
+            (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Core);
+        } else if (name.find("executor_pkg::") == 0) {
+            (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Core);
+        }
+    }
+
 }
 
 dmgr::IDebug *TaskPrepContext::m_dbg = 0;

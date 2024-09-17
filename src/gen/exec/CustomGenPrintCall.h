@@ -48,6 +48,12 @@ public:
         IGenRefExpr                         *refgen,
         arl::dm::ITypeExprMethodCallStatic  *call) override;
 
+    virtual void genFunctionDefinition(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        arl::dm::IDataTypeFunction          *func) override { }
+
 private:
     std::string                     m_name;
     int32_t                         m_cast_offset;

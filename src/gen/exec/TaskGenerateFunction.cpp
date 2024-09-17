@@ -46,6 +46,8 @@ void TaskGenerateFunction::generate(
     bool                                is_ctxt) {
     std::string name;
 
+    is_ctxt = f->hasFlags(arl::dm::DataTypeFunctionFlags::Context);
+
     if (is_ctxt) {
         int idx = f->name().rfind("::");
         if (idx != -1) {
@@ -57,21 +59,15 @@ void TaskGenerateFunction::generate(
         name = m_gen->getNameMap()->getName(f);
     }
 
+    bool is_task = f->hasFlags(
+        arl::dm::DataTypeFunctionFlags::Target
+        |arl::dm::DataTypeFunctionFlags::Blocks);
 
     m_out->indent();
-    if (f->hasFlags(arl::dm::DataTypeFunctionFlags::Solve)) {
-        m_out->write("%sfunction ", (is_ctxt)?"virtual ":"");
-        if (f->getReturnType()) {
-            TaskGenerateDataType(m_gen, m_out).generate(f->getReturnType());
-        } else {
-            m_out->write("void");
-        }
-        m_out->write(" %s(\n", name.c_str());
-        m_out->inc_ind();
-        m_out->inc_ind();
-    } else {
-        m_out->write("%stask %s(\n", 
+    if (is_task) {
+        m_out->write("%stask%s%s(\n", 
             (is_ctxt)?"virtual ":"",
+            (is_ctxt)?" ":" automatic ",
             name.c_str());
         m_out->inc_ind();
         m_out->inc_ind();
@@ -81,6 +77,18 @@ void TaskGenerateFunction::generate(
             TaskGenerateDataType(m_gen, m_out).generate(f->getReturnType());
             m_out->write("__retval,\n");
         }
+    } else {
+        m_out->write("%sfunction%s", 
+            (is_ctxt)?"virtual ":"",
+            (!is_ctxt)?" automatic ":" ");
+        if (f->getReturnType()) {
+            TaskGenerateDataType(m_gen, m_out).generate(f->getReturnType());
+        } else {
+            m_out->write("void");
+        }
+        m_out->write(" %s(\n", name.c_str());
+        m_out->inc_ind();
+        m_out->inc_ind();
     }
     // We're indented for the remaining parameters
     m_out->println("input executor_base exec_b%s", (f->getParameters().size())?",":"");
@@ -105,7 +113,7 @@ void TaskGenerateFunction::generate(
 
     // 
     m_out->dec_ind();
-    m_out->println("end%s", ((f->hasFlags(arl::dm::DataTypeFunctionFlags::Solve)))?"function":"task");
+    m_out->println("end%s", is_task?"task":"function");
 }
 
 }

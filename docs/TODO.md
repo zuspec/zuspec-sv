@@ -1,6 +1,6 @@
 
 - Component tree
-  - init_up / init_down sequencing
+  * init_up / init_down sequencing
   - type override
 
 - registers
@@ -17,6 +17,10 @@
   - packed struct
   - Enum types
   - Implicit field constraints (eg <base> in <range> field)
+  - list
+  - array
+  - map
+  - set
 - std_pkg
 - functions
   - import functions
@@ -24,13 +28,14 @@
     - Base implementation with implementations that fatal out?
   - static native functions
   - component-context native functions
+  - export functions
 - constraints
-  - if/else
-  - implies
+  * if/else
+  * implies
   - default -- determine statically
-  - expression
+  * expression
   - foreach
-  - forall
+  - forall -- determine statically
   - unique
   - 'in'
   - dist weight (soft?)
@@ -55,6 +60,9 @@
   - context
   - solve
   - target
+  - pass-by-handle semantics
+  - return-by-value semantics
+  - local assign-by-value semantics
 - activity statements
   - if/else
   - match
@@ -68,7 +76,7 @@
   - inline constraints
   - scheduling constraints
 - executors
-  - associate with exec blocks / functions as hidden context
+  * associate with exec blocks / functions as hidden context
   - support built-in functions
   - support custom extensions (per-model executor base)
 - packed structs 
@@ -80,7 +88,7 @@
 - memory access
   - write_struct
   - read_struct
-  - write64,32,16,8 read64,32,16,8
+  * write64,32,16,8 read64,32,16,8
 - coverage
   - data coverage
     - covergroup

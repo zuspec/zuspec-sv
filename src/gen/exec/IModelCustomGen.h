@@ -72,6 +72,12 @@ public:
         IOutput                             *out,
         vsc::dm::IDataType                  *type) = 0;
 
+    virtual void genFunctionDefinition(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        arl::dm::IDataTypeFunction          *func) = 0;
+
 };
 
 } /* namespace exec */

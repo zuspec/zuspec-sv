@@ -55,6 +55,12 @@ public:
         IOutput                             *out,
         vsc::dm::IDataType                  *type) override;
 
+    virtual void genFunctionDefinition(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        arl::dm::IDataTypeFunction          *func) override;
+
 protected:
     dmgr::IDebug                *m_dbg;
 

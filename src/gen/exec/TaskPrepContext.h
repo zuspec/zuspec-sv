@@ -48,6 +48,9 @@ public:
 
 	virtual void visitTypeExecProc(arl::dm::ITypeExecProc *e) override;
 
+protected:
+    void tag_functions();
+
 private:
     static dmgr::IDebug             *m_dbg;
     dmgr::IDebugMgr                 *m_dmgr;

@@ -19,7 +19,8 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
-#include "IModelCustomGen.h"
+#include "ICustomGen.h"
+#include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateAction.h"
 #ifdef UNDEFINED
@@ -28,6 +29,7 @@
 #endif
 #include "TaskGenerateAddrSpace.h"
 #include "TaskGenerateComp.h"
+#include "TaskGenerateFunction.h"
 #include "TaskDefineType.h"
 #ifdef UNDEFINED
 #include "TaskPackedStruct.h"
@@ -44,7 +46,14 @@ namespace exec {
 
 TaskDefineType::TaskDefineType(
     TaskGenerate       *gen,
-    IOutput            *out) : m_gen(gen), m_out(out) {
+    IOutput            *out) : m_gen(gen), m_genref(0), m_out(out) {
+    DEBUG_INIT("zsp::be::sw::TaskDefineType", gen->getDebugMgr());
+}
+
+TaskDefineType::TaskDefineType(
+    TaskGenerate       *gen,
+    IGenRefExpr        *genref,
+    IOutput            *out) : m_gen(gen), m_genref(genref), m_out(out) {
     DEBUG_INIT("zsp::be::sw::TaskDefineType", gen->getDebugMgr());
 }
 
@@ -53,10 +62,20 @@ TaskDefineType::~TaskDefineType() {
 }
 
 void TaskDefineType::generate(vsc::dm::IDataType *item) {
-    IModelCustomGen *custom_gen = 
-        dynamic_cast<IModelCustomGen *>(item->getAssociatedData());
+    ICustomGen *custom_gen = 
+        dynamic_cast<ICustomGen *>(item->getAssociatedData());
     if (custom_gen) {
 //        custom_gen->genDefinition(m_gen, m_out_h, m_out_c, item);
+    } else {
+        item->accept(m_this);
+    }
+}
+
+void TaskDefineType::generate(arl::dm::IDataTypeFunction *item) {
+    ICustomGen *custom_gen = 
+        dynamic_cast<ICustomGen *>(item->getAssociatedData());
+    if (custom_gen) {
+        custom_gen->genFunctionDefinition(m_gen, m_out, m_genref, item);
     } else {
         item->accept(m_this);
     }
@@ -102,7 +121,14 @@ void TaskDefineType::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
     DEBUG_LEAVE("visitDataTypeComponent");
 }
 
-void TaskDefineType::visitDataTypeFunction(arl::dm::IDataTypeFunction *t) { }
+void TaskDefineType::visitDataTypeFunction(arl::dm::IDataTypeFunction *t) { 
+    if (m_genref) {
+        TaskGenerateFunction(m_gen, m_genref, m_out).generate(t, false);
+    } else {
+        GenRefExprExecModel genref(m_gen, 0, "", false);
+        TaskGenerateFunction(m_gen, &genref, m_out).generate(t, false);
+    }
+}
 
 void TaskDefineType::visitDataTypePackedStruct(arl::dm::IDataTypePackedStruct *t) {
     DEBUG_ENTER("visitDataTypePackedStruct");

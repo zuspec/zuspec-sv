@@ -132,12 +132,12 @@ void TaskGenerateExpr::visitTypeExprMethodCallStatic(
         if (idx != -1) {
             name = name.substr(idx+2);
         }
-        m_out->write("%s(", name.c_str());
+        m_out->write("%s(exec_b", name.c_str());
         for (std::vector<vsc::dm::ITypeExprUP>::const_iterator
             it=e->getParameters().begin();
             it!=e->getParameters().end(); it++) {
+            m_out->write(", ");
             if (it != e->getParameters().begin()) {
-                m_out->write(", ");
             }
             TaskGenerateExpr(m_gen, m_genref, m_out).generate(it->get());
         }

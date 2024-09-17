@@ -22,6 +22,7 @@
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
 #include "gen/IOutput.h"
+#include "IGenRefExpr.h"
 
 namespace zsp {
 namespace sv {
@@ -38,9 +39,17 @@ public:
         IOutput            *out
     );
 
+    TaskDefineType(
+        TaskGenerate       *gen,
+        IGenRefExpr        *genref,
+        IOutput            *out
+    );
+
     virtual ~TaskDefineType();
 
     virtual void generate(vsc::dm::IDataType *item);
+
+    virtual void generate(arl::dm::IDataTypeFunction *item);
 
     virtual void generate_dflt(vsc::dm::IDataType *item);
 
@@ -67,6 +76,7 @@ public:
 private:
     static dmgr::IDebug             *m_dbg;
     TaskGenerate                    *m_gen;
+    IGenRefExpr                     *m_genref;
     IOutput                         *m_out;
 
 };

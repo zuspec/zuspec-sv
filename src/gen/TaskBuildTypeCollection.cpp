@@ -45,6 +45,11 @@ TypeCollectionUP TaskBuildTypeCollection::build(arl::dm::IContext *ctxt) {
         it!=ctxt->getDataTypeStructs().end(); it++) {
         (*it)->accept(m_this);
     }
+    for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
+        it=ctxt->getDataTypeFunctions().begin();
+        it!=ctxt->getDataTypeFunctions().end(); it++) {
+        (*it)->accept(m_this);
+    }
 
     DEBUG_LEAVE("build");
     return std::move(m_type_c);
@@ -203,6 +208,12 @@ void TaskBuildTypeCollection::visitDataTypeFlowObj(arl::dm::IDataTypeFlowObj *t)
     // Flow objects are always references
     // We need to generate a representation for this type, but don't record deps
     m_type_c->addType(t);
+}
+
+void TaskBuildTypeCollection::visitDataTypeFunction(arl::dm::IDataTypeFunction *f) {
+    DEBUG_ENTER("visitDataTypeFunction");
+//    m_type_c->addType(f);
+    DEBUG_LEAVE("visitDataTypeFunction");
 }
 
 void TaskBuildTypeCollection::visitDataTypePackedStruct(arl::dm::IDataTypePackedStruct *t) {
