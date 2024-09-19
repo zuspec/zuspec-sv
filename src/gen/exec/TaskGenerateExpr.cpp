@@ -83,11 +83,12 @@ void TaskGenerateExpr::visitTypeExprBin(vsc::dm::ITypeExprBin *e) {
 
 void TaskGenerateExpr::visitTypeExprMethodCallContext(
     arl::dm::ITypeExprMethodCallContext *e) {
-    DEBUG_ENTER("visitTypeExprMethodCallContext");
+    DEBUG_ENTER("visitTypeExprMethodCallContext %s", e->getTarget()->name().c_str());
     arl::dm::IDataTypeFunction *f = e->getTarget();
     ICustomGen *custom_g = dynamic_cast<ICustomGen *>(f->getAssociatedData());
 
     if (custom_g) {
+        DEBUG("-- %s calling custom generator", f->name().c_str());
         custom_g->genExprMethodCallContext(
             m_gen,
             m_out,

@@ -86,6 +86,8 @@ public:
 
 	virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override { }
 
+    virtual void visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) override;
+
     virtual void visitTypeExprMethodCallContext(arl::dm:: ITypeExprMethodCallContext *e) override;
 
     virtual void visitTypeExprMethodCallStatic(arl::dm::ITypeExprMethodCallStatic *e) override;

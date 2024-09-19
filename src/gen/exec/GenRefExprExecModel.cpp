@@ -132,6 +132,55 @@ void GenRefExprExecModel::visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *
     DEBUG_LEAVE("visitDataTypeAddrHandle");
 }
 
+void GenRefExprExecModel::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) {
+    DEBUG_ENTER("visitTypeExprArrIndex");
+    switch (m_kind) {
+        case KindE::Lval:
+        case KindE::Rval:
+            m_depth++;
+            e->getRootExpr()->accept(m_this);
+            m_depth--;
+            m_ret.append("[");
+            e->getIndexExpr()->accept(m_this);
+            m_ret.append("]");
+            break;
+        case KindE::RegAddr:
+            // Capture subscripts
+            m_depth++;
+            e->getRootExpr()->accept(m_this);
+            m_depth--;
+            // if (m_regRef) {
+            //     if (currRegRef) {
+            //         m_ret.append("`zsp_reg_type_offset(");
+            //         m_ret.append(m_gen->getNameMap()->getName(m_type));
+            //         m_ret.append(", ");
+            //         m_ret.append(field->name());
+            //         m_ret.append(")");
+            //     } else {
+            //         m_ret.append(field->name());
+            //         m_ret.append(".offset");
+            //     }
+
+            //     if (m_depth) {
+            //         m_ret.append(" + ");
+            //     }
+            // } else {
+            //     m_ret.append(field->name());
+            //     if (m_depth) {
+            //         // TODO: should determine based on field type
+            //         m_ret.append((m_isRef)?"->":".");
+            //     }
+            // }
+            break;
+    }
+
+
+    m_type = dynamic_cast<vsc::dm::IDataTypeArray *>(m_type)->getElemType();
+
+
+    DEBUG_LEAVE("visitTypeExprArrIndex");
+}
+
 void GenRefExprExecModel::visitTypeExprMethodCallContext(arl::dm:: ITypeExprMethodCallContext *e) {
     DEBUG_ENTER("visitTypeExprMethodCallContext");
     OutputStr out;

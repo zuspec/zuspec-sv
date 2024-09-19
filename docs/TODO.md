@@ -66,6 +66,7 @@
 - activity statements
   - if/else
   - match
+  - parallel
   - repeat
   - replicate
   - select

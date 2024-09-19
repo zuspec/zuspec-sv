@@ -21,6 +21,7 @@
 #include "dmgr/impl/DebugMacros.h"
 #include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateExpr.h"
 #include "TaskGenerateFunction.h"
 #include "TaskGenerateRegGroup.h"
 
@@ -73,6 +74,7 @@ void TaskGenerateRegGroup::generate(vsc::dm::IDataTypeStruct *t) {
         t,
         "this",
         false);
+    m_genref = &genref;
     std::string prefix = t->name() + "::";
     for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
         it=m_gen->getContext()->getDataTypeFunctions().begin();
@@ -103,6 +105,7 @@ void TaskGenerateRegGroup::generate(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateRegGroup::visitTypeFieldReg(arl::dm::ITypeFieldReg *f) {
+    DEBUG_ENTER("visitTypeFieldReg %s", f->name().c_str());
     switch (m_phase) {
         case PhaseE::Decl:
             m_out->println("reg_field_c         %s;", f->name().c_str());
@@ -113,9 +116,11 @@ void TaskGenerateRegGroup::visitTypeFieldReg(arl::dm::ITypeFieldReg *f) {
             m_out->println("fields.push_back(%s);", f->name().c_str());
             break;
     }
+    DEBUG_LEAVE("visitTypeFieldReg");
 }
 
 void TaskGenerateRegGroup::visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) {
+    DEBUG_ENTER("visitTypeFieldRegGroup");
     switch (m_phase) {
         case PhaseE::Decl:
             m_out->println("reg_group_field_c #(%s) %s;",
@@ -128,6 +133,26 @@ void TaskGenerateRegGroup::visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f
             m_out->println("fields.push_back(%s);", f->name().c_str());
             break;
     }
+    DEBUG_LEAVE("visitTypeFieldRegGroup");
+}
+
+void TaskGenerateRegGroup::visitTypeFieldRegGroupArr(arl::dm::ITypeFieldRegGroupArr *f) {
+    DEBUG_ENTER("visitTypeFieldRegGroupArr");
+    switch (m_phase) {
+        case PhaseE::Decl: {
+            vsc::dm::IDataTypeArray *array_t = f->getDataTypeT<vsc::dm::IDataTypeArray>();
+            m_out->println("reg_group_field_c #(%s) %s;",
+                m_gen->getNameMap()->getName(array_t->getElemType()).c_str(),
+                f->name().c_str());
+        } break;
+        case PhaseE::Ctor: {
+            vsc::dm::IDataTypeArray *arr_t = f->getDataTypeT<vsc::dm::IDataTypeArray>();
+            m_out->println("%s = new(\"%s\", exec_b);", 
+                f->name().c_str(), f->name().c_str());
+            m_out->println("fields.push_back(%s);", f->name().c_str());
+        } break;
+    }
+    DEBUG_LEAVE("visitTypeFieldRegGroupArr");
 }
 
 dmgr::IDebug *TaskGenerateRegGroup::m_dbg = 0;

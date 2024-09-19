@@ -44,6 +44,8 @@ public:
     virtual void visitTypeFieldReg(arl::dm::ITypeFieldReg *f) override;
 
     virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override;
+
+    virtual void visitTypeFieldRegGroupArr(arl::dm::ITypeFieldRegGroupArr *f) override;
     
 private:
     enum PhaseE {
@@ -54,6 +56,7 @@ private:
 private:
     static dmgr::IDebug         *m_dbg;
     TaskGenerate                *m_gen;
+    IGenRefExpr                 *m_genref;
     IOutput                     *m_out;
     PhaseE                      m_phase;
 

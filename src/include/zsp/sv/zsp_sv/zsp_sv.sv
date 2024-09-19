@@ -249,10 +249,12 @@ endclass
 
 class reg_field_arr_c extends reg_field_c;
     int             dim;
+    bit[63:0]       offsets[];
 
     function new(string name, int dim);
         super.new(name);
         this.dim = dim;
+        this.offsets = new[dim];
     endfunction
 endclass
 

@@ -100,6 +100,18 @@ void NameMap::visitDataTypeAddrSpaceTransparentC(arl::dm::IDataTypeAddrSpaceTran
     m_name = t->name();
 }
 
+void NameMap::visitDataTypeArray(vsc::dm::IDataTypeArray *t) {
+    char tmp[64];
+    std::string name = "array_t #(";
+    t->getElemType()->accept(m_this);
+    name += m_name;
+    name += ", ";
+    snprintf(tmp, sizeof(tmp), "%d", t->getSize());
+    name += tmp;
+    name += ")";
+    m_name = name;
+}
+
 void NameMap::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
     m_name = t->name();
 }

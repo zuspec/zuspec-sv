@@ -172,9 +172,14 @@ void TaskGenerate::attach_custom_gen() {
                         {"zsp_rt_addr_space_t *", "zsp_rt_addr_region_t *"}));
 #endif
             } else if (name.find("::reg_c") != -1) {
+                DEBUG("Reg method: %s", name.c_str());
                 if (name.find("::get_handle") != -1) {
                     (*it)->setAssociatedData(new CustomGenRegGetHandle(m_dmgr));
+                } else if (name.find("::write") != -1 || name.find("::read") != -1) {
+                    DEBUG("Attach reg read-write custom generator");
+                    (*it)->setAssociatedData(new CustomGenRegAccessCall(m_dmgr));
                 }
+                // TODO: handle get_handle()
             } else if (name.find("::reg_group_c") != -1) {
                 (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Solve);
                 if (name.find("set_handle") != -1) {
@@ -190,12 +195,6 @@ void TaskGenerate::attach_custom_gen() {
                 std::string rt_name = (name.find("add_region") != -1)?
                     "zsp_rt_addr_space_add_region":
                     "zsp_rt_addr_space_add_nonallocatable_region";
-            } else if (name.find("::reg_c") != -1) {
-                DEBUG("Attach reg-access generator");
-                if (name.find("::write") != -1 || name.find("::read") != -1) {
-                    (*it)->setAssociatedData(new CustomGenRegAccessCall(m_dmgr));
-                }
-                // TODO: handle get_handle()
             }
         } else if (name.find("std_pkg::") == 0) {
             if (name.find("urandom_range") != -1) {

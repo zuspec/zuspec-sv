@@ -88,6 +88,12 @@ void TaskGenerateActivity::generate(ActivityVariant *variant) {
     DEBUG_LEAVE("generate");
 }
 
+void TaskGenerateActivity::visitDataTypeActivityParallel(arl::dm::IDataTypeActivityParallel *t) {
+    DEBUG_ENTER("visitDataTypeActivityParallel");
+    // TODO: must detect and handle replicate inside
+    DEBUG_LEAVE("visitDataTypeActivityParallel");
+}
+
 void TaskGenerateActivity::visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) {
     DEBUG_ENTER("visitDataTypeActivitySequence %p", t);
     bool new_scope = (m_depth > 1);
