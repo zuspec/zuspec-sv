@@ -238,86 +238,13 @@ class addr_space_c extends component;
     endfunction
 endclass
 
-class reg_field_c;
-    string          name;
-    bit[63:0]       offset;
+    typedef class reg_group_c;
+    `include "reg_field_c.svh"
+    `include "reg_group_c.svh"
+    `include "reg_group_field_base_c.svh"
+    `include "reg_group_field_arr_c.svh"
+    `include "reg_group_field_c.svh"
 
-    function new(string name);
-        this.name = name;
-    endfunction
-endclass
-
-class reg_field_arr_c extends reg_field_c;
-    int             dim;
-    bit[63:0]       offsets[];
-
-    function new(string name, int dim);
-        super.new(name);
-        this.dim = dim;
-        this.offsets = new[dim];
-    endfunction
-endclass
-
-class reg_group_c;
-    reg_field_c     fields[$];
-
-    function new();
-    endfunction
-
-
-    function void map_registers(executor_base exec_b);
-        $display("map_registers");
-        foreach (fields[i]) begin
-            reg_field_arr_c arr;
-
-            if ($cast(arr, fields[i])) begin
-                // TODO: handle arrayed registers
-                $display("TODO: handle arrayed registers");
-            end else begin
-                fields[i].offset = get_offset_of_instance(exec_b, fields[i].name);
-            end
-            $display("reg: %0s %0d", fields[i].name, fields[i].offset);
-        end
-    endfunction
-
-    virtual function bit[63:0] get_offset_of_instance(executor_base exec_b, string name);
-        return {64{1'b1}};
-    endfunction
-
-    virtual function bit[63:0] get_offset_of_instance_array(executor_base exec_b, string name, int index);
-        return {64{1'b1}};
-    endfunction
-
-endclass
-
-class reg_group_field_base_c extends reg_field_c;
-
-    function new(string name);
-        super.new(name);
-    endfunction
-
-    function void set_handle(addr_handle_t hndl);
-        offset = hndl.addr_value();
-    endfunction
-
-    virtual function reg_group_c get_type();
-        return null;
-    endfunction
-
-endclass
-
-class reg_group_field_c #(type group_t=reg_group_c) extends reg_group_field_base_c;
-    group_t     group;
-
-    function new(string name, executor_base exec_b);
-        super.new(name);
-        group = group_t::inst(exec_b);
-    endfunction
-
-    virtual function reg_group_c get_type();
-        return group;
-    endfunction
-endclass
 
 class backend_api #(type BaseT=empty_t) extends BaseT;
     virtual task write64(bit[63:0] addr, bit[63:0] data);

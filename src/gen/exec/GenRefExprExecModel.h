@@ -118,8 +118,14 @@ private:
     enum KindE {
         Lval,
         Rval,
-        RegAddr
+        RegAddr,
+        Check
     };
+
+private:
+    void init(KindE kind);
+
+    std::string strval();
 
 
 private:
@@ -131,9 +137,11 @@ private:
     bool                                            m_ctxtPtr;
     std::string                                     m_bupRef;
     bool                                            m_bupPtr;
-    std::string                                     m_ret;
-    vsc::dm::IDataType                              *m_type;
+    std::vector<std::string>                        m_out_l;
+    std::vector<vsc::dm::IDataType *>               m_type_l;
+    vsc::dm::ITypeField                             *m_field;
     int32_t                                         m_depth;
+    int32_t                                         m_depth_ss;
     bool                                            m_regRef;
     bool                                            m_isRef;
     bool                                            m_isFieldRef;

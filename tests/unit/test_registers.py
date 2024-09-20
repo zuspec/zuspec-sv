@@ -128,6 +128,19 @@ def test_group_array(dirconfig):
         }
         pure component simple_regs : reg_group_c {
             subgroup              sub[2];
+
+            function bit[64] get_offset_of_instance(string name) {
+                if (name == "sub") {
+                    return 0x100;
+                }
+            }
+
+            function bit[64] get_offset_of_instance_array(string name, int index) {
+                if (name == "sub") {
+                    return (0x100 * index);
+                }
+                return 0;
+            }
         }
         component pss_top {
             simple_regs                     regs;
@@ -146,7 +159,7 @@ def test_group_array(dirconfig):
             action Entry {
                 exec body {
                     comp.regs.sub[0].R1.write_val(1);
-    //                comp.regs.sub[1].R2.write_val(2);
+                    comp.regs.sub[1].R2.write_val(2);
                 }
             }
         }
@@ -154,6 +167,6 @@ def test_group_array(dirconfig):
     expect = """
     RES: init_down
     RES: write32 0x80000000 0x00000001
-    RES: write32 0x80000004 0x00000002
+    RES: write32 0x80000104 0x00000002
     """
     run_unit_test(dirconfig, content, expect)

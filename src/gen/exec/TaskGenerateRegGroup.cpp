@@ -128,8 +128,9 @@ void TaskGenerateRegGroup::visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f
                 f->name().c_str());
             break;
         case PhaseE::Ctor:
-            m_out->println("%s = new(\"%s\");", 
-                f->name().c_str(), f->name().c_str());
+            m_out->println("%s = new(\"%s\", %s::inst(exec_b));", 
+                f->name().c_str(), f->name().c_str(),
+                m_gen->getNameMap()->getName(f->getDataType()).c_str());
             m_out->println("fields.push_back(%s);", f->name().c_str());
             break;
     }
@@ -141,14 +142,17 @@ void TaskGenerateRegGroup::visitTypeFieldRegGroupArr(arl::dm::ITypeFieldRegGroup
     switch (m_phase) {
         case PhaseE::Decl: {
             vsc::dm::IDataTypeArray *array_t = f->getDataTypeT<vsc::dm::IDataTypeArray>();
-            m_out->println("reg_group_field_c #(%s) %s;",
+            m_out->println("reg_group_field_arr_c #(%s) %s;",
                 m_gen->getNameMap()->getName(array_t->getElemType()).c_str(),
                 f->name().c_str());
         } break;
         case PhaseE::Ctor: {
             vsc::dm::IDataTypeArray *arr_t = f->getDataTypeT<vsc::dm::IDataTypeArray>();
-            m_out->println("%s = new(\"%s\", exec_b);", 
-                f->name().c_str(), f->name().c_str());
+            m_out->println("%s = new(\"%s\", %d, %s::inst(exec_b));", 
+                f->name().c_str(), 
+                f->name().c_str(),
+                arr_t->getSize(),
+                m_gen->getNameMap()->getName(arr_t->getElemType()).c_str());
             m_out->println("fields.push_back(%s);", f->name().c_str());
         } break;
     }
