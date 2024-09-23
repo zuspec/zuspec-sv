@@ -1,5 +1,5 @@
 /**
- * TaskGenerateComp.h
+ * TaskGenerateFieldInit.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,38 +19,39 @@
  *     Author: 
  */
 #pragma once
-#include "TaskGenerateStruct.h"
+#include "zsp/arl/dm/impl/VisitorBase.h"
+#include "IGenRefExpr.h"
+#include "gen/IOutput.h"
 
 namespace zsp {
 namespace sv {
 namespace gen {
 namespace exec {
 
+class TaskGenerate;
 
-
-class TaskGenerateComp :
-    public virtual TaskGenerateStruct {
+class TaskGenerateFieldInit :
+    public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateComp(
-        TaskGenerate        *gen,
-        IOutput             *out);
+    TaskGenerateFieldInit(
+        TaskGenerate            *gen,
+        IGenRefExpr             *genref,
+        IOutput                 *out
+    );
 
-    virtual ~TaskGenerateComp();
+    virtual ~TaskGenerateFieldInit();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
+    virtual void generate(vsc::dm::ITypeField *field);
 
-    virtual void generate(vsc::dm::IDataTypeStruct *t) override;
+    virtual void visitDataTypeInt(vsc::dm::IDataTypeInt *t) override;
 
-    virtual void generate_check(vsc::dm::IDataTypeStruct *t);
+    virtual void visitTypeFieldPhy(vsc::dm::ITypeFieldPhy *f) override;
 
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_create_default(vsc::dm::IDataTypeStruct *t) override { };
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void generate_execs(vsc::dm::IDataTypeStruct *t) override;
-
+protected:
+    static dmgr::IDebug         *m_dbg;
+    TaskGenerate                *m_gen;
+    IGenRefExpr                 *m_genref;
+    IOutput                     *m_out;
 };
 
 }

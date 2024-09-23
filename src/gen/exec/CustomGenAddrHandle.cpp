@@ -18,6 +18,7 @@
  * Created on:
  *     Author:
  */
+#include "dmgr/impl/DebugMacros.h"
 #include "TaskGenerate.h"
 #include "CustomGenAddrHandle.h"
 
@@ -30,7 +31,8 @@ namespace exec {
 
 CustomGenAddrHandle::CustomGenAddrHandle(dmgr::IDebugMgr *dmgr) :
     CustomGenBase(dmgr) {
-
+    m_dbg = 0;
+    DEBUG_INIT("zsp::sv::gen::exec::CustomGenAddrHandle", dmgr);
 }
 
 CustomGenAddrHandle::~CustomGenAddrHandle() {
@@ -42,6 +44,16 @@ void CustomGenAddrHandle::genDefinition(
         IOutput                             *out,
         vsc::dm::IDataType                  *type) {
     // Do nothing
+}
+
+void CustomGenAddrHandle::genVarDeclInit(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        arl::dm::ITypeProcStmtVarDecl       *var) {
+    DEBUG_ENTER("genVarDeclInit");
+    out->println("%s = null;", var->name().c_str());
+    DEBUG_LEAVE("genVarDeclInit");
 }
 
 }

@@ -55,11 +55,23 @@ public:
         IOutput                             *out,
         vsc::dm::IDataType                  *type) override;
 
+    virtual void genFieldInit(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        vsc::dm::ITypeField                 *field) override;
+
     virtual void genFunctionDefinition(
         TaskGenerate                        *gen,
         IOutput                             *out,
         IGenRefExpr                         *refgen,
         arl::dm::IDataTypeFunction          *func) override;
+
+    virtual void genVarDeclInit(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        arl::dm::ITypeProcStmtVarDecl       *var) override;
 
 protected:
     dmgr::IDebug                *m_dbg;

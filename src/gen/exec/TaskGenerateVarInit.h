@@ -1,5 +1,5 @@
 /**
- * TaskGenerateStruct.h
+ * TaskGenerateVarInit.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -21,6 +21,7 @@
 #pragma once
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
+#include "IGenRefExpr.h"
 #include "gen/IOutput.h"
 
 namespace zsp {
@@ -30,37 +31,33 @@ namespace exec {
 
 class TaskGenerate;
 
-class TaskGenerateStruct : 
+class TaskGenerateVarInit :
     public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateStruct(
-        TaskGenerate        *gen,
-        IOutput             *out
+    TaskGenerateVarInit(
+        TaskGenerate            *gen,
+        IGenRefExpr             *genref,
+        IOutput                 *out
     );
 
-    virtual ~TaskGenerateStruct();
+    virtual ~TaskGenerateVarInit();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t);
+    virtual void generate(arl::dm::ITypeProcStmtVarDecl *var);
 
-    virtual void generate(vsc::dm::IDataTypeStruct *t);
+    virtual void visitDataTypeBool(vsc::dm::IDataTypeBool *t) override;
 
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t);
+    virtual void visitDataTypeInt(vsc::dm::IDataTypeInt *t) override;
 
-    virtual void generate_create_default(vsc::dm::IDataTypeStruct *t);
+    virtual void visitDataTypeString(vsc::dm::IDataTypeString *t) override;
 
-    virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_constraints(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_execs(vsc::dm::IDataTypeStruct *t);
+    virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
 
 protected:
-    dmgr::IDebug                *m_dbg;
-    TaskGenerate                *m_gen;
-    IOutput                     *m_out;
-
+    static dmgr::IDebug             *m_dbg;
+    TaskGenerate                    *m_gen;
+    IGenRefExpr                     *m_genref;
+    IOutput                         *m_out;
+    arl::dm::ITypeProcStmtVarDecl   *m_var;
 };
 
 }

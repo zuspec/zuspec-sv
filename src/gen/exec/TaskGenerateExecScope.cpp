@@ -20,10 +20,12 @@
  */
 #include "dmgr/impl/DebugMacros.h"
 #include "vsc/dm/impl/TaskIsDataTypeStruct.h"
+#include "ICustomGen.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateDataType.h"
 #include "TaskGenerateExecScope.h"
 #include "TaskGenerateExpr.h"
+#include "TaskGenerateVarInit.h"
 
 
 namespace zsp {
@@ -263,21 +265,31 @@ void TaskGenerateExecScope::visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDe
     DEBUG_ENTER("visitTypeProcStmtVarDecl");
     m_exec->decl()->indent();
     TaskGenerateDataType(m_gen, m_exec->decl()).generate(t->getDataType());
-    // TODO: must 'new' if an aggregate type
-    if (vsc::dm::TaskIsDataTypeStruct().check(t->getDataType())) {
-        m_exec->decl()->write(" %s = new();\n", t->name().c_str());
-        // TODO: handle initialization?
+    m_exec->decl()->write(" %s;\n", t->name().c_str());
+
+    ICustomGen *cgen = dynamic_cast<ICustomGen *>(t->getDataType()->getAssociatedData());
+
+    if (cgen) {
+        cgen->genVarDeclInit(m_gen, m_exec->init(), m_genref, t);
     } else {
-        m_exec->decl()->write(" %s", t->name().c_str());
-        if (t->getInit()) {
-            m_exec->decl()->write(" = ");
-            TaskGenerateExpr(
-                m_gen, 
-                m_genref, 
-                m_exec->decl()).generate(t->getInit());
-        }
-        m_exec->decl()->write(";\n");
+        TaskGenerateVarInit(m_gen, m_genref, m_exec->init()).generate(t);
     }
+
+    // // TODO: must 'new' if an aggregate type
+    // if (vsc::dm::TaskIsDataTypeStruct().check(t->getDataType())) {
+    //     m_exec->decl()->write(" %s = new();\n", t->name().c_str());
+    //     // TODO: handle initialization?
+    // } else {
+    //     m_exec->decl()->write(" %s", t->name().c_str());
+    //     if (t->getInit()) {
+    //         m_exec->decl()->write(" = ");
+    //         TaskGenerateExpr(
+    //             m_gen, 
+    //             m_genref, 
+    //             m_exec->decl()).generate(t->getInit());
+    //     }
+    //     m_exec->decl()->write(";\n");
+    // }
     DEBUG_LEAVE("visitTypeProcStmtVarDecl");
 }
 

@@ -109,6 +109,11 @@ def test_group_array(dirconfig):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
+        package pkg {
+        struct MyS { 
+        int a;
+        }
+        }
         pure component subgroup : reg_group_c {
             reg_c<bit[32]>        R1;
             reg_c<bit[32]>        R2;

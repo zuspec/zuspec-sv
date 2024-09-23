@@ -56,8 +56,10 @@ void TaskGenerateStruct::generate_head(vsc::dm::IDataTypeStruct *t) {
 void TaskGenerateStruct::generate(vsc::dm::IDataTypeStruct *t) {
     generate_head(t);
     generate_fields(t);
-
+    m_out->println("");
     generate_ctor(t);
+    m_out->println("");
+    generate_create_default(t);
 
     generate_constraints(t);
     generate_execs(t);
@@ -66,6 +68,17 @@ void TaskGenerateStruct::generate(vsc::dm::IDataTypeStruct *t) {
 
 void TaskGenerateStruct::generate_ctor(vsc::dm::IDataTypeStruct *t) {
     TaskGenerateStructCtor(m_gen, m_out).generate(t);
+}
+
+void TaskGenerateStruct::generate_create_default(vsc::dm::IDataTypeStruct *t) {
+    m_out->println("static function %s create_default();",
+        m_gen->getNameMap()->getName(t).c_str());
+    m_out->inc_ind();
+    m_out->println("%s ret = new();",
+        m_gen->getNameMap()->getName(t).c_str());
+    m_out->println("return ret;");
+    m_out->dec_ind();
+    m_out->println("endfunction");
 }
 
 void TaskGenerateStruct::generate_tail(vsc::dm::IDataTypeStruct *t) {

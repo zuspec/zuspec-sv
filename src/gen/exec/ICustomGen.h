@@ -55,11 +55,23 @@ public:
         IOutput                             *out,
         vsc::dm::IDataType                  *type) = 0;
 
+    virtual void genFieldInit(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        vsc::dm::ITypeField                 *field) = 0;
+
     virtual void genFunctionDefinition(
         TaskGenerate                        *gen,
         IOutput                             *out,
         IGenRefExpr                         *refgen,
         arl::dm::IDataTypeFunction          *func) = 0;
+
+    virtual void genVarDeclInit(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        arl::dm::ITypeProcStmtVarDecl       *var) = 0;
 
 };
 

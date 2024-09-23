@@ -40,6 +40,12 @@ public:
         IOutput                             *out,
         vsc::dm::IDataType                  *type) override;
 
+    virtual void genVarDeclInit(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        IGenRefExpr                         *refgen,
+        arl::dm::ITypeProcStmtVarDecl       *var) override;
+
 };
 
 }
