@@ -1,5 +1,5 @@
 /**
- * TaskGenerateStructCtor.h
+ * TaskGenerateStructDtor.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -22,6 +22,9 @@
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
 #include "gen/IOutput.h"
+#include "gen/IOutput.h"
+#include "gen/IOutput.h"
+#include "gen/IOutput.h"
 
 namespace zsp {
 namespace sv {
@@ -30,26 +33,22 @@ namespace exec {
 
 class TaskGenerate;
 
-class TaskGenerateStructCtor :
-    virtual public arl::dm::VisitorBase {
+class TaskGenerateStructDtor :
+    public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateStructCtor(
+    TaskGenerateStructDtor(
         TaskGenerate        *gen,
         IOutput             *out);
 
-    virtual ~TaskGenerateStructCtor();
-
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t);
+    virtual ~TaskGenerateStructDtor();
 
     virtual void generate(vsc::dm::IDataTypeStruct *t);
 
-    virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
-
-    virtual void visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) override { }
+    virtual void visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) override;
 
     virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
 
-    virtual void visitTypeField(vsc::dm::ITypeField *f) override;
+    virtual void visitTypeFieldPhy(vsc::dm::ITypeFieldPhy *f) override;
 
     virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
 

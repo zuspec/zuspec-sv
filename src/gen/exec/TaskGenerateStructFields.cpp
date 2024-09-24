@@ -59,6 +59,12 @@ void TaskGenerateStructFields::generate(vsc::dm::IDataTypeStruct *t) {
     DEBUG_LEAVE("generate");
 }
 
+void TaskGenerateStructFields::visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) {
+    DEBUG_ENTER("visitDataTypeAddrHandle");
+    m_out->println("addr_handle_t %s;", m_field->name().c_str());
+    DEBUG_LEAVE("visitDataTypeAddrHandle");
+}
+
 void TaskGenerateStructFields::visitDataTypeBool(vsc::dm::IDataTypeBool *t) {
     DEBUG_ENTER("visitDataTypeBool");
     m_out->println("%sbit %s;", 

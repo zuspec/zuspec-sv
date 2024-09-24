@@ -48,6 +48,8 @@ public:
         bool                        executor,
         std::string                 &kind);
 
+    virtual void visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) override;
+
     virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
 
     virtual void visitTypeFieldPhy(vsc::dm::ITypeFieldPhy *f) override;

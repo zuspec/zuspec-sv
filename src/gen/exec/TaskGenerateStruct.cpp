@@ -24,8 +24,11 @@
 #include "TaskGenerate.h"
 #include "TaskGenerateExecBlock.h"
 #include "TaskGenerateStruct.h"
+#include "TaskGenerateStructAssign.h"
 #include "TaskGenerateStructConstraints.h"
+#include "TaskGenerateStructCreateInit.h"
 #include "TaskGenerateStructCtor.h"
+#include "TaskGenerateStructDtor.h"
 #include "TaskGenerateStructDoSolveExec.h"
 #include "TaskGenerateStructFields.h"
 
@@ -59,7 +62,13 @@ void TaskGenerateStruct::generate(vsc::dm::IDataTypeStruct *t) {
     m_out->println("");
     generate_ctor(t);
     m_out->println("");
+    generate_dtor(t);
+    m_out->println("");
+    generate_create_assign(t);
+    m_out->println("");
     generate_create_default(t);
+    m_out->println("");
+    generate_create_init(t);
 
     generate_constraints(t);
     generate_execs(t);
@@ -68,6 +77,14 @@ void TaskGenerateStruct::generate(vsc::dm::IDataTypeStruct *t) {
 
 void TaskGenerateStruct::generate_ctor(vsc::dm::IDataTypeStruct *t) {
     TaskGenerateStructCtor(m_gen, m_out).generate(t);
+}
+
+void TaskGenerateStruct::generate_dtor(vsc::dm::IDataTypeStruct *t) {
+    TaskGenerateStructDtor(m_gen, m_out).generate(t);
+}
+
+void TaskGenerateStruct::generate_create_assign(vsc::dm::IDataTypeStruct *t) {
+    TaskGenerateStructAssign(m_gen, m_out).generate(t);
 }
 
 void TaskGenerateStruct::generate_create_default(vsc::dm::IDataTypeStruct *t) {
@@ -79,6 +96,10 @@ void TaskGenerateStruct::generate_create_default(vsc::dm::IDataTypeStruct *t) {
     m_out->println("return ret;");
     m_out->dec_ind();
     m_out->println("endfunction");
+}
+
+void TaskGenerateStruct::generate_create_init(vsc::dm::IDataTypeStruct *t) {
+    TaskGenerateStructCreateInit(m_gen, m_out).generate(t);
 }
 
 void TaskGenerateStruct::generate_tail(vsc::dm::IDataTypeStruct *t) {

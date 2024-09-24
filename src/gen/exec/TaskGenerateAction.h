@@ -45,6 +45,14 @@ public:
 
     virtual void generate_ctor(vsc::dm::IDataTypeStruct *t) override;
 
+    virtual void generate_dtor(vsc::dm::IDataTypeStruct *t) override { }
+
+    virtual void generate_create_assign(vsc::dm::IDataTypeStruct *t) override { }
+
+    virtual void generate_create_default(vsc::dm::IDataTypeStruct *t) override { }
+
+    virtual void generate_create_init(vsc::dm::IDataTypeStruct *t) override { }
+
     virtual void generate_execs(vsc::dm::IDataTypeStruct *t) override;
 
     virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;

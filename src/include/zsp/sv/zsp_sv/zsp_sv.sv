@@ -10,8 +10,31 @@ typedef class executor_base;
 class empty_t;
 endclass
 
-class object;
-    object_pool_base    obj_pool;
+class object_pool_base;
+    int     count;
+
+    virtual function void inc();
+        count += 1;
+    endfunction
+
+    virtual function void dec();
+        if (count) begin
+            count -= 1;
+            if (!count) begin
+                // Object is no longer referenced
+                drop();
+            end
+        end
+    endfunction
+
+    virtual function void drop();
+    endfunction
+
+//    virtual function void release(object obj);
+//    endfunction
+endclass
+
+class object extends object_pool_base;
 
     virtual function void init();
     endfunction
@@ -41,29 +64,7 @@ interface class packed_s;
 
 endclass
 
-class object_pool_base;
-    int     count;
 
-    virtual function void inc();
-        count += 1;
-    endfunction
-
-    virtual function void dec();
-        if (count) begin
-            count -= 1;
-            if (!count) begin
-                // Object is no longer referenced
-                drop();
-            end
-        end
-    endfunction
-
-    virtual function void drop();
-    endfunction
-
-//    virtual function void release(object obj);
-//    endfunction
-endclass
 
     `include "storage_handle_s.svh"
     `include "addr_handle_t.svh"
@@ -210,7 +211,7 @@ class addr_space_c extends component;
 
     virtual function addr_handle_t add_nonallocatable_region(addr_region_base_s region);
         addr_handle_t ret = new(get_actor(), null, region.addr);
-        $display("add_nonallocatable_region: 0x%08h", region.addr);
+        $display("add_nonallocatable_region: 0x%08h %0d", region.addr, ret.count);
         return ret;
     endfunction
 endclass

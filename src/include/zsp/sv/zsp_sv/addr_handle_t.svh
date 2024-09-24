@@ -17,6 +17,7 @@ class addr_handle_t extends object_pool_base;
     endfunction
 
     virtual function void drop();
+        $display("addr_handle_t::drop");
         actor.addr_handle_drop(this);
         if (base != null) begin
             base.dec();

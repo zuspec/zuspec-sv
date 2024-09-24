@@ -56,6 +56,8 @@ public:
 
     virtual bool isRefFieldRefExpr(vsc::dm::ITypeExpr *ref) override;
 
+    virtual bool isAggregateFieldRefExpr(vsc::dm::ITypeExpr *ref) override;
+
     virtual ResT isRefCountedField(vsc::dm::IAccept *ref) override;
 
     virtual void pushInline(vsc::dm::IDataTypeStruct *t) override {
@@ -80,11 +82,13 @@ public:
 
 	virtual void visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) override;
 
+    virtual void visitDataTypeArray(vsc::dm::IDataTypeArray *t) override;
+
 	virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent *t) override { }
 
-	virtual void visitDataTypeFlowObj(arl::dm::IDataTypeFlowObj *t) override { }
+	virtual void visitDataTypeFlowObj(arl::dm::IDataTypeFlowObj *t) override;
 
-	virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override { }
+	virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
 
     virtual void visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) override;
 
@@ -147,6 +151,7 @@ private:
     bool                                            m_isFieldRef;
     bool                                            m_isRefFieldRef;
     bool                                            m_isRefCountedField;
+    bool                                            m_isAggregateFieldRef;
     std::vector<vsc::dm::IDataTypeStruct *>         m_inline_s;
     std::vector<arl::dm::ITypeProcStmtDeclScope *>  m_scope_s;
 

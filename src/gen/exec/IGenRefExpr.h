@@ -46,6 +46,8 @@ public:
 
     virtual bool isRefFieldRefExpr(vsc::dm::ITypeExpr *ref) = 0;
 
+    virtual bool isAggregateFieldRefExpr(vsc::dm::ITypeExpr *ref) = 0;
+
     virtual ResT isRefCountedField(vsc::dm::IAccept *ref) = 0;
 
     virtual void pushInline(vsc::dm::IDataTypeStruct *t) = 0;

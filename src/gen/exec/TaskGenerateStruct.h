@@ -46,7 +46,13 @@ public:
 
     virtual void generate_ctor(vsc::dm::IDataTypeStruct *t);
 
+    virtual void generate_dtor(vsc::dm::IDataTypeStruct *t);
+
+    virtual void generate_create_assign(vsc::dm::IDataTypeStruct *t);
+
     virtual void generate_create_default(vsc::dm::IDataTypeStruct *t);
+
+    virtual void generate_create_init(vsc::dm::IDataTypeStruct *t);
 
     virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
 

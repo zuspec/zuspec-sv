@@ -43,6 +43,8 @@ public:
 
     virtual void generate(vsc::dm::IDataTypeStruct *t);
 
+    virtual void visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) override;
+
     virtual void visitDataTypeBool(vsc::dm::IDataTypeBool *t) override;
 
     virtual void visitDataTypeInt(vsc::dm::IDataTypeInt *t) override;

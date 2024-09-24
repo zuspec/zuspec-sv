@@ -1,5 +1,5 @@
 /**
- * TaskGenerateStructCtor.h
+ * TaskGenerateStructCreateInit.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -30,35 +30,20 @@ namespace exec {
 
 class TaskGenerate;
 
-class TaskGenerateStructCtor :
-    virtual public arl::dm::VisitorBase {
+class TaskGenerateStructCreateInit {
 public:
-    TaskGenerateStructCtor(
-        TaskGenerate        *gen,
-        IOutput             *out);
+    TaskGenerateStructCreateInit(
+        TaskGenerate            *gen,
+        IOutput                 *out);
 
-    virtual ~TaskGenerateStructCtor();
-
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t);
+    virtual ~TaskGenerateStructCreateInit();
 
     virtual void generate(vsc::dm::IDataTypeStruct *t);
 
-    virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
-
-    virtual void visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) override { }
-
-    virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
-
-    virtual void visitTypeField(vsc::dm::ITypeField *f) override;
-
-    virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
-
 protected:
-    dmgr::IDebug                *m_dbg;
+    static dmgr::IDebug         *m_dbg;
     TaskGenerate                *m_gen;
     IOutput                     *m_out;
-    vsc::dm::ITypeField         *m_field;
-
 };
 
 }

@@ -26,6 +26,8 @@
 #include "TaskGenerateExecScope.h"
 #include "TaskGenerateExpr.h"
 #include "TaskGenerateVarInit.h"
+#include "TaskHasRefCountFields.h"
+#include "TaskIsRefCountField.h"
 
 
 namespace zsp {
@@ -113,26 +115,58 @@ void TaskGenerateExecScope::generate(
 
 void TaskGenerateExecScope::visitTypeProcStmtAssign(arl::dm::ITypeProcStmtAssign *s) {
     DEBUG_ENTER("visitTypeProcStmtAssign");
-    const char *op = 0;
-    m_exec->exec()->indent();
-    m_exec->exec()->write("%s", m_genref->genLval(s->getLhs()).c_str());
-    switch (s->op()) {
-        case arl::dm::TypeProcStmtAssignOp::Eq: op = "="; break;
-        case arl::dm::TypeProcStmtAssignOp::PlusEq: op = "+="; break;
-        case arl::dm::TypeProcStmtAssignOp::MinusEq: op = "-="; break;
-        case arl::dm::TypeProcStmtAssignOp::ShlEq: op = "<<="; break;
-        case arl::dm::TypeProcStmtAssignOp::ShrEq: op = ">>="; break;
-        case arl::dm::TypeProcStmtAssignOp::OrEq: op = "|="; break;
-        case arl::dm::TypeProcStmtAssignOp::AndEq: op = "&="; break;
+    if (s->op() == arl::dm::TypeProcStmtAssignOp::Eq) {
+        if (m_genref->isRefCountedField(s->getLhs()).first) {
+            m_exec->exec()->indent();
+            m_exec->exec()->write("`zsp_dec(");
+            TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getLhs());
+            m_exec->exec()->write(");\n");
+            m_exec->exec()->indent();
+            TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getLhs());
+            m_exec->exec()->write(" = ");
+            TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getRhs());
+            m_exec->exec()->write(";\n");
+            m_exec->exec()->indent();
+            m_exec->exec()->write("`zsp_inc(");
+            TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getLhs());
+            m_exec->exec()->write(");\n");
+        } else if (m_genref->isAggregateFieldRefExpr(s->getLhs())) {
+            m_exec->exec()->indent();
+            TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getLhs());
+            m_exec->exec()->write(".__assign__(");
+            TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getRhs());
+            m_exec->exec()->write(");\n");
+        } else {
+            m_exec->exec()->indent();
+            TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getLhs());
+            m_exec->exec()->write(" = ");
+            TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getRhs());
+            m_exec->exec()->write(";\n");
+        }
+    } else {
+        const char *op = 0;
+
+        // Other operators only work on numeric types
+        m_exec->exec()->indent();
+        m_exec->exec()->write("%s", m_genref->genLval(s->getLhs()).c_str());
+        switch (s->op()) {
+            case arl::dm::TypeProcStmtAssignOp::Eq: op = "="; break;
+            case arl::dm::TypeProcStmtAssignOp::PlusEq: op = "+="; break;
+            case arl::dm::TypeProcStmtAssignOp::MinusEq: op = "-="; break;
+            case arl::dm::TypeProcStmtAssignOp::ShlEq: op = "<<="; break;
+            case arl::dm::TypeProcStmtAssignOp::ShrEq: op = ">>="; break;
+            case arl::dm::TypeProcStmtAssignOp::OrEq: op = "|="; break;
+            case arl::dm::TypeProcStmtAssignOp::AndEq: op = "&="; break;
+        }
+        DEBUG("op: %s (%d)", op, s->op());
+        m_exec->exec()->write(" ");
+        m_exec->exec()->write(op);
+        m_exec->exec()->write(" ");
+
+        TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getRhs());
+        m_exec->exec()->write(";\n");
     }
-    DEBUG("op: %s (%d)", op, s->op());
 
-    m_exec->exec()->write(" ");
-    m_exec->exec()->write(op);
-    m_exec->exec()->write(" ");
-
-    TaskGenerateExpr(m_gen, m_genref, m_exec->exec()).generate(s->getRhs());
-    m_exec->exec()->write(";\n");
     DEBUG_LEAVE("visitTypeProcStmtAssign");
 }
 
@@ -275,21 +309,10 @@ void TaskGenerateExecScope::visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDe
         TaskGenerateVarInit(m_gen, m_genref, m_exec->init()).generate(t);
     }
 
-    // // TODO: must 'new' if an aggregate type
-    // if (vsc::dm::TaskIsDataTypeStruct().check(t->getDataType())) {
-    //     m_exec->decl()->write(" %s = new();\n", t->name().c_str());
-    //     // TODO: handle initialization?
-    // } else {
-    //     m_exec->decl()->write(" %s", t->name().c_str());
-    //     if (t->getInit()) {
-    //         m_exec->decl()->write(" = ");
-    //         TaskGenerateExpr(
-    //             m_gen, 
-    //             m_genref, 
-    //             m_exec->decl()).generate(t->getInit());
-    //     }
-    //     m_exec->decl()->write(";\n");
-    // }
+    if (TaskHasRefCountFields().check(t)) {
+        m_exec->dtor()->println("`zsp_dec(%s);", t->name().c_str());
+    }
+
     DEBUG_LEAVE("visitTypeProcStmtVarDecl");
 }
 

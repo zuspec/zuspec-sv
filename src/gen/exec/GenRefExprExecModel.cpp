@@ -94,6 +94,14 @@ bool GenRefExprExecModel::isRefFieldRefExpr(vsc::dm::ITypeExpr *ref) {
     return m_isRefFieldRef;
 }
 
+bool GenRefExprExecModel::isAggregateFieldRefExpr(vsc::dm::ITypeExpr *ref) {
+    DEBUG_ENTER("isAggregateFieldRefExpr");
+    init(KindE::Check);
+    ref->accept(m_this);
+    DEBUG_LEAVE("isAggregateFieldRefExpr");
+    return m_isAggregateFieldRef;
+}
+
 IGenRefExpr::ResT GenRefExprExecModel::isRefCountedField(vsc::dm::IAccept *ref) {
     DEBUG_ENTER("isRefCountedField");
     init(KindE::Check);
@@ -112,6 +120,24 @@ void GenRefExprExecModel::visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *
     DEBUG_ENTER("visitDataTypeAddrHandle");
     m_isRefCountedField = true;
     DEBUG_LEAVE("visitDataTypeAddrHandle");
+}
+
+void GenRefExprExecModel::visitDataTypeArray(vsc::dm::IDataTypeArray *t) {
+    DEBUG_ENTER("visitDataTypeArray");
+    m_isAggregateFieldRef = true;
+    DEBUG_LEAVE("visitDataTypeArray");
+}
+
+void GenRefExprExecModel::visitDataTypeFlowObj(arl::dm::IDataTypeFlowObj *t) {
+    DEBUG_ENTER("visitDataTYpeFlowObj");
+    m_isRefCountedField = true;
+    DEBUG_LEAVE("visitDataTYpeFlowObj");
+}
+
+void GenRefExprExecModel::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("visitDataTypeStruct");
+    m_isAggregateFieldRef = true;
+    DEBUG_LEAVE("visitDataTypeStruct");
 }
 
 void GenRefExprExecModel::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) {
@@ -198,7 +224,7 @@ void GenRefExprExecModel::visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp
         case KindE::Rval:
             if (m_bupRef.size()) {
                 ret.append(m_bupRef);
-                ret.append(m_bupPtr?"->":".");
+                ret.append(".");
             }
             ret.append(var->name());
 
@@ -216,7 +242,7 @@ void GenRefExprExecModel::visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp
             } else {
                 if (m_bupRef.size()) {
                     ret.append(m_bupRef);
-                    ret.append(m_bupPtr?"->":".");
+                    ret.append(".");
                 }
                 ret.append(var->name());
 
@@ -262,14 +288,14 @@ void GenRefExprExecModel::visitTypeExprRefTopDown(vsc::dm::ITypeExprRefTopDown *
         case KindE::Rval:
             ret.append(m_ctxtRef);
             if (m_depth) {
-                ret.append(m_ctxtPtr?"->":".");
+                ret.append(".");
             }
             m_out_l.push_back(ret);
             break;
         case KindE::RegAddr:
             ret.append(m_ctxtRef);
             if (m_depth) {
-                ret.append(m_ctxtPtr?"->":".");
+                ret.append(".");
             }
             m_out_l.push_back(ret);
             break;
@@ -298,6 +324,7 @@ void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) {
 
     DEBUG("field: %s", m_field->name().c_str());
     bool currRegRef = m_regRef;
+    m_isAggregateFieldRef = false;
     m_field->accept(m_this);
 
     switch (m_kind) {
@@ -306,7 +333,7 @@ void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) {
             ret.append(m_field->name());
             if (m_depth) {
                 // TODO: should determine based on field type
-                ret.append((m_isRef)?"->":".");
+                ret.append(".");
             }
             m_out_l.push_back(ret);
             break;
@@ -330,7 +357,7 @@ void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) {
                 ret.append(m_field->name());
                 if (m_depth) {
                     // TODO: should determine based on field type
-                    ret.append((m_isRef)?"->":".");
+                    ret.append(".");
                 }
             }
             m_out_l.push_back(ret);
@@ -391,6 +418,7 @@ void GenRefExprExecModel::init(KindE kind) {
     m_isFieldRef = false;
     m_isRefCountedField = false;
     m_isRefFieldRef = false;
+    m_isAggregateFieldRef = false;
     m_regRef = false;
 }
 

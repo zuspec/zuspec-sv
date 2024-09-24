@@ -63,6 +63,10 @@ void TaskGenerateStructDoSolveExec::generate(
     m_out->println("endfunction");
 }
 
+void TaskGenerateStructDoSolveExec::visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) {
+    // Address handles don't participate in randomization
+}
+
 void TaskGenerateStructDoSolveExec::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
     m_out->println("%s.do_%s(%s);", 
         m_field->name().c_str(),
