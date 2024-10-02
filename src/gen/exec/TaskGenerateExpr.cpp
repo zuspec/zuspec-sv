@@ -49,6 +49,15 @@ void TaskGenerateExpr::generate(vsc::dm::ITypeExpr *e) {
     DEBUG_LEAVE("generate");
 }
 
+void TaskGenerateExpr::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) {
+    DEBUG_ENTER("visitTypeExprArrIndex");
+    e->getRootExpr()->accept(m_this);
+    m_out->write(".store[");
+    e->getIndexExpr()->accept(m_this);
+    m_out->write("]");
+    DEBUG_LEAVE("visitTypeExprArrIndex");
+}
+
 static std::map<vsc::dm::BinOp, std::string> binOpMap = {
 	{ vsc::dm::BinOp::Eq, "==" },
 	{ vsc::dm::BinOp::Ne, "!=" },

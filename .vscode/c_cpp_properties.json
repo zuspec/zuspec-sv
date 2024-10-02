@@ -15,7 +15,8 @@
                 "packages/zuspec-parser/build/include",
                 "packages/zuspec-parser/src",
                 "packages/zuspec-parser/build/src/antlr4cpp_generated_src/PSSParser",
-                "packages/zuspec-parser/build/src/antlr4cpp_generated_src/PSSLexer"
+                "packages/zuspec-parser/build/src/antlr4cpp_generated_src/PSSLexer",
+                "packages/antlr4-cpp-runtime/runtime/src"
             ],
             "defines": [
                 "${default}"

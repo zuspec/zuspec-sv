@@ -22,7 +22,8 @@
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
 #include "gen/IOutput.h"
-#include "gen/OutputStr.h"
+#include "IGenRefExpr.h"
+#include "TaskGenerateStructInit.h"
 
 namespace zsp {
 namespace sv {
@@ -32,33 +33,19 @@ namespace exec {
 class TaskGenerate;
 
 class TaskGenerateCompInit :
-    public virtual arl::dm::VisitorBase {
+    public virtual TaskGenerateStructInit {
 public:
     TaskGenerateCompInit(
         TaskGenerate        *gen,
+        IGenRefExpr         *genref,
         IOutput             *out
     );
 
     virtual ~TaskGenerateCompInit();
 
-    virtual void generate_head(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
-
     virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent *t) override;
 
-    virtual void visitTypeField(vsc::dm::ITypeField *f) override;
-
-    virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override { }
-
 protected:
-    dmgr::IDebug            *m_dbg;
-    TaskGenerate            *m_gen;
-    IOutput                 *m_out;
-    bool                    m_init_down;
-    vsc::dm::ITypeField     *m_field;
 
 };
 

@@ -1,37 +1,37 @@
 
 class list_c #(type T=int);
-    T       m_store[$];
+    rand T       store[$];
 
     function T __at__(int idx);
-        return m_store[idx];
+        return store[idx];
     endfunction
 
     function T __getitem__(int idx);
-        return m_store[idx];
+        return store[idx];
     endfunction
 
     function void __setitem__(int idx, T item);
-        m_store[idx] = item;
+        store[idx] = item;
     endfunction
 
     function int size();
-        return m_store.size();
+        return store.size();
     endfunction
 
     function void clear();
-        m_store = {};
+        store = {};
     endfunction
 
     function void delete(int idx);
-        m_store.delete(idx);
+        store.delete(idx);
     endfunction
 
     function void insert(int idx, T elem);
-        m_store.insert(idx, elem);
+        store.insert(idx, elem);
     endfunction
 
     function void push_back(T item);
-        m_store.push_back(item);
+        store.push_back(item);
     endfunction
 
 endclass

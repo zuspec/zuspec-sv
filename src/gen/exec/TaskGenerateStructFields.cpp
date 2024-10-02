@@ -22,6 +22,7 @@
 #include "vsc/dm/impl/TaskIsDataTypeStruct.h"
 #include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateDataType.h"
 #include "TaskGenerateExpr.h"
 #include "TaskGenerateStructFields.h"
 
@@ -63,6 +64,18 @@ void TaskGenerateStructFields::visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHan
     DEBUG_ENTER("visitDataTypeAddrHandle");
     m_out->println("addr_handle_t %s;", m_field->name().c_str());
     DEBUG_LEAVE("visitDataTypeAddrHandle");
+}
+
+void TaskGenerateStructFields::visitDataTypeArray(vsc::dm::IDataTypeArray *t) {
+    DEBUG_ENTER("visitDataTypeArray");
+    m_out->indent();
+    m_out->write("%sarray_c #(",
+        qualifiers(m_field->getAttr()).c_str());
+    TaskGenerateDataType(m_gen, m_out).generate(t->getElemType());
+    m_out->write(", %d) %s;\n", 
+        t->getSize(),
+        m_field->name().c_str());
+    DEBUG_LEAVE("visitDataTypeArray");
 }
 
 void TaskGenerateStructFields::visitDataTypeBool(vsc::dm::IDataTypeBool *t) {

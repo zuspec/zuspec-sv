@@ -28,6 +28,7 @@
 #include "CustomGenAddrRegion.h"
 #include "CustomGenAddrRegionTransparent.h"
 #include "CustomGenMemRwCall.h"
+#include "CustomGenMessageCall.h"
 #include "CustomGenPrintCall.h"
 #include "CustomGenRegAccessCall.h"
 #include "CustomGenRegGetHandle.h"
@@ -213,6 +214,11 @@ void TaskGenerate::attach_custom_gen() {
                         "zsp_rt_urandom",
                         -1, {}));
 #endif
+            } else if (name.find("message") != -1) {
+                DEBUG("Attach custom generator to 'message'");
+                (*it)->setAssociatedData(
+                    new CustomGenMessageCall(m_dmgr)
+                );
             } else if (name.find("print") != -1) {
                 DEBUG("Attach custom generator to 'print'");
                 (*it)->setAssociatedData(

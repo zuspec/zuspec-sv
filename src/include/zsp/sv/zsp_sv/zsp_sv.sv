@@ -7,6 +7,10 @@ typedef class actor_c;
 typedef class component;
 typedef class executor_base;
 
+    `include "array_c.svh"
+
+    typedef enum {NONE, LOW, MEDIUM, HIGH, FULL} message_verbosity_e;
+
 class empty_t;
 endclass
 
@@ -36,7 +40,7 @@ endclass
 
 class object extends object_pool_base;
 
-    virtual function void init();
+    virtual function void init(executor_base exec_b);
     endfunction
 
     virtual function void dtor();

@@ -1,5 +1,5 @@
 /*
- * TaskGenerateStructCtor.cpp
+ * TaskGenerateCompDoInit.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -20,7 +20,7 @@
  */
 #include "dmgr/impl/DebugMacros.h"
 #include "TaskGenerate.h"
-#include "TaskGenerateStructCtor.h"
+#include "TaskGenerateCompDoInit.h"
 
 
 namespace zsp {
@@ -29,50 +29,45 @@ namespace gen {
 namespace exec {
 
 
-TaskGenerateStructCtor::TaskGenerateStructCtor(
+TaskGenerateCompDoInit::TaskGenerateCompDoInit(
     TaskGenerate        *gen,
     IOutput             *out) : m_dbg(0), m_gen(gen), m_out(out) {
-    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateStructCtor", gen->getDebugMgr());
+    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateCompDoInit", gen->getDebugMgr());
 }
 
-TaskGenerateStructCtor::~TaskGenerateStructCtor() {
+TaskGenerateCompDoInit::~TaskGenerateCompDoInit() {
 
 }
 
-void TaskGenerateStructCtor::generate_head(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("function new();");
+void TaskGenerateCompDoInit::generate_head(vsc::dm::IDataTypeStruct *t) {
+    m_out->println("function void do_init(executor_base exec_b);");
     m_out->inc_ind();
 }
 
-void TaskGenerateStructCtor::generate(vsc::dm::IDataTypeStruct *t) {
+void TaskGenerateCompDoInit::generate(vsc::dm::IDataTypeStruct *t) {
     generate_head(t);
+
+    m_out->println("init_down(exec_b);");
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
         it=t->getFields().begin();
         it!=t->getFields().end(); it++) {
         (*it)->accept(m_this);
     }
+    m_out->println("init_up(exec_b);");
+
     generate_tail(t);
 }
 
-void TaskGenerateStructCtor::generate_tail(vsc::dm::IDataTypeStruct *t) {
+void TaskGenerateCompDoInit::generate_tail(vsc::dm::IDataTypeStruct *t) {
     m_out->dec_ind();
     m_out->println("endfunction");
-} 
-
-void TaskGenerateStructCtor::visitDataTypeArray(vsc::dm::IDataTypeArray *t) {
-    m_out->println("%s = new();", m_field->name().c_str());
 }
 
-void TaskGenerateStructCtor::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("%s = new();", m_field->name().c_str());
+void TaskGenerateCompDoInit::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
+    m_out->println("%s.do_init(exec_b);", m_field->name().c_str());
 }
 
-void TaskGenerateStructCtor::visitTypeField(vsc::dm::ITypeField *f) {
-    m_field = f;
-    f->getDataType()->accept(m_this);
-}
-
-void TaskGenerateStructCtor::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
+void TaskGenerateCompDoInit::visitTypeField(vsc::dm::ITypeField *f) {
     m_field = f;
     f->getDataType()->accept(m_this);
 }

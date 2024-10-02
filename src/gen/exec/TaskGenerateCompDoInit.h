@@ -1,5 +1,5 @@
 /**
- * TaskGenerateStruct.h
+ * TaskGenerateCompDoInit.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -22,6 +22,7 @@
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
 #include "gen/IOutput.h"
+#include "gen/OutputStr.h"
 
 namespace zsp {
 namespace sv {
@@ -30,44 +31,34 @@ namespace exec {
 
 class TaskGenerate;
 
-class TaskGenerateStruct : 
+class TaskGenerateCompDoInit :
     public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateStruct(
+    TaskGenerateCompDoInit(
         TaskGenerate        *gen,
         IOutput             *out
     );
 
-    virtual ~TaskGenerateStruct();
+    virtual ~TaskGenerateCompDoInit();
 
     virtual void generate_head(vsc::dm::IDataTypeStruct *t);
 
     virtual void generate(vsc::dm::IDataTypeStruct *t);
 
-    virtual void generate_ctor(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_dtor(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_init(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_create_assign(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_create_default(vsc::dm::IDataTypeStruct *t);
-
-    virtual void generate_create_init(vsc::dm::IDataTypeStruct *t);
-
     virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
 
-    virtual void generate_fields(vsc::dm::IDataTypeStruct *t);
+    virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent *t) override;
 
-    virtual void generate_constraints(vsc::dm::IDataTypeStruct *t);
+    virtual void visitTypeField(vsc::dm::ITypeField *f) override;
 
-    virtual void generate_execs(vsc::dm::IDataTypeStruct *t);
+    virtual void visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) override { }
 
 protected:
-    dmgr::IDebug                *m_dbg;
-    TaskGenerate                *m_gen;
-    IOutput                     *m_out;
+    dmgr::IDebug            *m_dbg;
+    TaskGenerate            *m_gen;
+    IOutput                 *m_out;
+    bool                    m_init_down;
+    vsc::dm::ITypeField     *m_field;
 
 };
 

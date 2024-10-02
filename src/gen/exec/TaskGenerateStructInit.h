@@ -19,19 +19,49 @@
  *     Author: 
  */
 #pragma once
+#include "dmgr/IDebugMgr.h"
+#include "zsp/arl/dm/impl/VisitorBase.h"
+#include "gen/IOutput.h"
+#include "IGenRefExpr.h"
 
 namespace zsp {
 namespace sv {
 namespace gen {
 namespace exec {
 
+class TaskGenerate;
 
-
-class TaskGenerateStructInit {
+class TaskGenerateStructInit :
+    public virtual arl::dm::VisitorBase {
 public:
-    TaskGenerateStructInit();
+    TaskGenerateStructInit(
+        TaskGenerate        *gen,
+        IGenRefExpr         *genref,
+        IOutput             *out
+    );
 
     virtual ~TaskGenerateStructInit();
+
+    virtual void generate_head(vsc::dm::IDataTypeStruct *t);
+
+    virtual void generate(vsc::dm::IDataTypeStruct *t);
+
+    virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
+
+    virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
+
+    virtual void visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) override { }
+
+    virtual void visitTypeFieldPhy(vsc::dm::ITypeFieldPhy *f) override;
+
+    virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
+
+protected:
+    dmgr::IDebug            *m_dbg;
+    TaskGenerate            *m_gen;
+    IGenRefExpr             *m_genref;
+    IOutput                 *m_out;
+    vsc::dm::ITypeFieldPhy  *m_field;
 
 };
 

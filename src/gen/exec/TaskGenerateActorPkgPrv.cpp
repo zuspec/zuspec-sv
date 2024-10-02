@@ -166,6 +166,7 @@ bool TaskGenerateActorPkgPrv::generate() {
     out->println("activity_%p root_activity = new(this);", root_activity.get());
     out->println("");
     out->println("comp_tree.init(this.default_executor);");
+    out->println("comp_tree.do_init(this.default_executor);");
     out->println("");
     out->println("if (comp_tree.check()) begin");
     out->inc_ind();

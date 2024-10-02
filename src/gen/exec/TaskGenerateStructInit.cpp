@@ -27,11 +27,51 @@ namespace gen {
 namespace exec {
 
 
-TaskGenerateStructInit::TaskGenerateStructInit() {
+TaskGenerateStructInit::TaskGenerateStructInit(
+    TaskGenerate        *gen,
+    IGenRefExpr         *genref,
+    IOutput             *out) : 
+        m_dbg(0), m_gen(gen), m_genref(genref), m_out(out) {
 
 }
 
 TaskGenerateStructInit::~TaskGenerateStructInit() {
+
+}
+
+
+void TaskGenerateStructInit::generate_head(vsc::dm::IDataTypeStruct *t) {
+    m_out->println("virtual function void init(executor_base exec_b);");
+}
+
+void TaskGenerateStructInit::generate(vsc::dm::IDataTypeStruct *t) {
+    generate_head(t);
+    for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
+        it=t->getFields().begin();
+        it!=t->getFields().end(); it++) {
+        (*it)->accept(m_this);
+    }
+    generate_tail(t);
+}
+
+void TaskGenerateStructInit::generate_tail(vsc::dm::IDataTypeStruct *t) {
+    m_out->println("endfunction");
+}
+
+void TaskGenerateStructInit::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
+    if (m_field->getInit()) {
+        m_out->println("%s = %s::create_init()");
+    } else {
+        m_out->println("%s = %s::create_default();");
+    }
+}
+
+void TaskGenerateStructInit::visitTypeFieldPhy(vsc::dm::ITypeFieldPhy *f) {
+    m_field = f;
+    f->getDataType()->accept(m_this);
+}
+
+void TaskGenerateStructInit::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
 
 }
 

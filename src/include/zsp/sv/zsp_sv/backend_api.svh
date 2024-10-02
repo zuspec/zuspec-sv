@@ -32,4 +32,7 @@ class backend_api #(type BaseT=empty_t) extends BaseT;
         $display("Fatal: read8 not implemented");
         $finish;
     endtask
+    virtual function void message(string msg);
+        $display(msg);
+    endfunction
 endclass

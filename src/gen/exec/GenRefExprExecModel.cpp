@@ -183,6 +183,9 @@ void GenRefExprExecModel::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) {
             }
             m_out_l.push_back(ret);
             break;
+        default:
+            e->getRootExpr()->accept(m_this);
+            break;
     }
 
 

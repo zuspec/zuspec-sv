@@ -1,13 +1,13 @@
 
 class array_c #(type T=int, int SZ);
-    T           m_store[SZ];
+    rand T           store[SZ];
     
     function T __getitem__(int idx);
-        return m_store[idx];
+        return store[idx];
     endfunction
 
     function void __setitem__(int idx, T item);
-        m_store[idx] = item;
+        store[idx] = item;
     endfunction
 
     function int size();

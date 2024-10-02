@@ -286,6 +286,8 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
         run->write(") begin\n");
     }
     run->inc_ind();
+    run->println("$display(\"Error: failed to randomize action\");");
+    run->println("$finish;");
     run->dec_ind();
     run->println("end");
 //    run->println("$display(\"parent_comp_id=%%0d ; comp_id=%%0d\", %s.parent_comp_id, %s.comp_id);",
@@ -294,6 +296,11 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
         varname, varname);
     run->inc_ind();
     run->println("$display(\"Failed to cast component\");");
+    run->dec_ind();
+    run->println("end");
+    run->println("if (%s.comp == null) begin", varname);
+    run->inc_ind();
+    run->println("$display(\"Component @ %%0d is null\", %s.comp_id);", varname);
     run->dec_ind();
     run->println("end");
     run->println("$cast(executor, %s.comp.get_default_executor());", varname);

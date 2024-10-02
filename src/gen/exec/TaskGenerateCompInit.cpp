@@ -31,7 +31,9 @@ namespace exec {
 
 TaskGenerateCompInit::TaskGenerateCompInit(
     TaskGenerate        *gen,
-    IOutput             *out) : m_dbg(0), m_gen(gen), m_out(out) {
+    IGenRefExpr         *genref,
+    IOutput             *out) : TaskGenerateStructInit(gen, genref, out) {
+    m_dbg = 0;
     DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateCompInit", gen->getDebugMgr());
 }
 
@@ -39,37 +41,10 @@ TaskGenerateCompInit::~TaskGenerateCompInit() {
 
 }
 
-void TaskGenerateCompInit::generate_head(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("function void init(executor_base exec_b);");
-    m_out->inc_ind();
-}
-
-void TaskGenerateCompInit::generate(vsc::dm::IDataTypeStruct *t) {
-    generate_head(t);
-
-    m_out->println("init_down(exec_b);");
-    for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
-        it=t->getFields().begin();
-        it!=t->getFields().end(); it++) {
-        (*it)->accept(m_this);
-    }
-    m_out->println("init_up(exec_b);");
-
-    generate_tail(t);
-}
-
-void TaskGenerateCompInit::generate_tail(vsc::dm::IDataTypeStruct *t) {
-    m_out->dec_ind();
-    m_out->println("endfunction");
-}
-
 void TaskGenerateCompInit::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
+    DEBUG_ENTER("visitDataTypeComponent");
     m_out->println("%s.init(exec_b);", m_field->name().c_str());
-}
-
-void TaskGenerateCompInit::visitTypeField(vsc::dm::ITypeField *f) {
-    m_field = f;
-    f->getDataType()->accept(m_this);
+    DEBUG_LEAVE("visitDataTypeComponent");
 }
 
 }

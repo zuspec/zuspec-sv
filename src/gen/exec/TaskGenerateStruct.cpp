@@ -31,6 +31,7 @@
 #include "TaskGenerateStructDtor.h"
 #include "TaskGenerateStructDoSolveExec.h"
 #include "TaskGenerateStructFields.h"
+#include "TaskGenerateStructInit.h"
 
 
 namespace zsp {
@@ -64,6 +65,7 @@ void TaskGenerateStruct::generate(vsc::dm::IDataTypeStruct *t) {
     m_out->println("");
     generate_dtor(t);
     m_out->println("");
+    generate_init(t);
     generate_create_assign(t);
     m_out->println("");
     generate_create_default(t);
@@ -81,6 +83,10 @@ void TaskGenerateStruct::generate_ctor(vsc::dm::IDataTypeStruct *t) {
 
 void TaskGenerateStruct::generate_dtor(vsc::dm::IDataTypeStruct *t) {
     TaskGenerateStructDtor(m_gen, m_out).generate(t);
+}
+
+void TaskGenerateStruct::generate_init(vsc::dm::IDataTypeStruct *t) {
+    TaskGenerateStructInit(m_gen, 0, m_out).generate(t);
 }
 
 void TaskGenerateStruct::generate_create_assign(vsc::dm::IDataTypeStruct *t) {

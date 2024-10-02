@@ -43,6 +43,8 @@ public:
 
     virtual void generate(vsc::dm::ITypeExpr *e);
 
+    virtual void visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) override;
+
 	virtual void visitTypeExprBin(vsc::dm::ITypeExprBin *e) override;
 
     virtual void visitTypeExprMethodCallContext(arl::dm::ITypeExprMethodCallContext *e) override;

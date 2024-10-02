@@ -25,9 +25,11 @@
 #include "TaskGenerateComp.h"
 #include "TaskGenerateCompCheck.h"
 #include "TaskGenerateCompCtor.h"
-#include "TaskGenerateCompFields.h"
+#include "TaskGenerateCompDoInit.h"
 #include "TaskGenerateCompInit.h"
+#include "TaskGenerateCompFields.h"
 #include "TaskGenerateExecBlock.h"
+#include "TaskGenerateStructInit.h"
 
 
 namespace zsp {
@@ -63,14 +65,18 @@ void TaskGenerateComp::generate_check(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateComp::generate_ctor(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("");
     TaskGenerateCompCtor(m_gen, m_out).generate(t);
-
     m_out->println("");
+}
 
+void TaskGenerateComp::generate_init(vsc::dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("generate_init");
     // Generate the 'init' at the same time
-    TaskGenerateCompInit(m_gen, m_out).generate(t);
+    TaskGenerateCompDoInit(m_gen, m_out).generate(t);
     m_out->println("");
+    TaskGenerateCompInit(m_gen, 0, m_out).generate(t);
+    m_out->println("");
+    DEBUG_LEAVE("generate_init");
 }
 
 void TaskGenerateComp::generate_fields(vsc::dm::IDataTypeStruct *t) {
