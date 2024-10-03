@@ -59,6 +59,7 @@ void TaskGenerateStructCreateInit::generate(vsc::dm::IDataTypeStruct *t) {
     } else {
         m_out->println("static function %s create_init();",
             m_gen->getNameMap()->getName(t).c_str());
+        m_out->inc_ind();
     }
 
     m_out->println("%s ret = new();",

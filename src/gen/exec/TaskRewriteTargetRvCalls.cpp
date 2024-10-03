@@ -50,6 +50,17 @@ void TaskRewriteTargetRvCalls::rewrite(arl::dm::ITypeProcStmtScope *scope) {
     DEBUG_LEAVE("rewrite");
 }
 
+void TaskRewriteTargetRvCalls::visitTypeProcStmtScope(arl::dm::ITypeProcStmtScope *s) {
+    DEBUG_ENTER("visitTypeProcStmtScope");
+    m_scope_s.push_back({s, 0});
+    for (; m_scope_s.back().second < s->getStatements().size(); 
+        m_scope_s.back().second++) {
+        s->getStatements().at(m_scope_s.back().second)->accept(m_this);
+    }
+    m_scope_s.pop_back();
+    DEBUG_LEAVE("visitTypeProcStmtScope");
+}
+
 void TaskRewriteTargetRvCalls::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) { }
 
 void TaskRewriteTargetRvCalls::visitTypeExprBin(vsc::dm::ITypeExprBin *e) {

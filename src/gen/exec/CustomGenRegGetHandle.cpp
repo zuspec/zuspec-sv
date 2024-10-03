@@ -44,7 +44,7 @@ void CustomGenRegGetHandle::genExprMethodCallContext(
         IGenRefExpr                         *refgen,
         arl::dm::ITypeExprMethodCallContext *call) {
     DEBUG_ENTER("genExprMethodCallContext");
-    out->write("make_handle_from_handle(null, ");
+    out->write("make_handle_from_handle(exec_b.get_actor(), null, ");
     out->write(")");
     DEBUG_LEAVE("genExprMethodCallContext");
 }

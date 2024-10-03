@@ -67,6 +67,14 @@ bool TaskGenerateTypesPkg::generate() {
     for (std::vector<int32_t>::const_iterator
         it=sorted.begin();
         it!=sorted.end(); it++) {
+        vsc::dm::IDataType *t = types->getType(*it);
+        out->println("typedef class %s;", getNameMap()->getName(t).c_str());
+    }
+    out->println("");
+
+    for (std::vector<int32_t>::const_iterator
+        it=sorted.begin();
+        it!=sorted.end(); it++) {
         if (it != sorted.begin()) {
             out->println("");
         }

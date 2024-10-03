@@ -18,6 +18,7 @@
  * Created on:
  *     Author:
  */
+#include "TaskGenerate.h"
 #include "TaskGenerateStructInit.h"
 
 
@@ -58,11 +59,21 @@ void TaskGenerateStructInit::generate_tail(vsc::dm::IDataTypeStruct *t) {
     m_out->println("endfunction");
 }
 
+void TaskGenerateStructInit::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
+    m_out->println("%s = new(this, \"%s\");",
+        m_field->name().c_str(),
+        m_field->name().c_str());
+}
+
 void TaskGenerateStructInit::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
     if (m_field->getInit()) {
-        m_out->println("%s = %s::create_init()");
+        m_out->println("%s = %s::create_init();",
+            m_field->name().c_str(),
+            m_gen->getNameMap()->getName(t).c_str());
     } else {
-        m_out->println("%s = %s::create_default();");
+        m_out->println("%s = %s::create_default();",
+            m_field->name().c_str(),
+            m_gen->getNameMap()->getName(t).c_str());
     }
 }
 

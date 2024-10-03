@@ -8,6 +8,7 @@ typedef class component;
 typedef class executor_base;
 
     `include "array_c.svh"
+    `include "list_c.svh"
 
     typedef enum {NONE, LOW, MEDIUM, HIGH, FULL} message_verbosity_e;
 
@@ -80,27 +81,27 @@ class addr_claim_t;
 endclass
 
 function automatic addr_handle_t make_handle_from_claim(
-        actor_c         actor,
+        executor_base   exec_b,
         addr_claim_t    claim, 
         bit[63:0]       offset);
     addr_handle_t ret;
-    ret = new(actor, claim.storage, offset);    
+    ret = new(exec_b, claim.storage, offset);    
     return ret;
 endfunction
 
 function automatic addr_handle_t make_handle_from_handle(
-        actor_c         actor,
-        addr_handle_t   hndl,
-        bit[63:0]       offset);
+    executor_base       exec_b,
+    addr_handle_t       hndl,
+    bit[63:0]           offset);
     addr_handle_t ret;
     if (hndl != null) begin
         if (hndl.base != null) begin
-            ret = new(actor, hndl.base, hndl.offset+offset); 
+            ret = new(exec_b, hndl.base, hndl.offset+offset); 
         end else begin
-            ret = new(actor, null, hndl.offset+offset); 
+            ret = new(exec_b, null, hndl.offset+offset); 
         end
     end else begin
-        ret = new(actor, null, offset); 
+        ret = new(exec_b, null, offset); 
     end
     return ret;
 endfunction
@@ -214,7 +215,7 @@ class addr_space_c extends component;
     endfunction
 
     virtual function addr_handle_t add_nonallocatable_region(addr_region_base_s region);
-        addr_handle_t ret = new(get_actor(), null, region.addr);
+        addr_handle_t ret = new(null, null, region.addr);
         $display("add_nonallocatable_region: 0x%08h %0d", region.addr, ret.count);
         return ret;
     endfunction

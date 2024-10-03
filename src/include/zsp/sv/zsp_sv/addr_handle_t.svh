@@ -1,14 +1,15 @@
+typedef class executor_base;
 
 class addr_handle_t extends object_pool_base;
-    actor_c             actor;
+    executor_base       exec_b;
     storage_handle_s    base;
     bit[63:0]           offset;
     
     function new(
-        actor_c          actor,
-        storage_handle_s base=null, 
-        bit[63:0] offset=0);
-        this.actor = actor;
+        executor_base       exec_b,
+        storage_handle_s    base=null, 
+        bit[63:0]           offset=0);
+        this.exec_b = exec_b;
         this.base = base;
         this.offset = offset;
         if (base != null) begin
@@ -17,6 +18,7 @@ class addr_handle_t extends object_pool_base;
     endfunction
 
     virtual function void drop();
+        actor_c actor = exec_b.get_actor();
         $display("addr_handle_t::drop");
         actor.addr_handle_drop(this);
         if (base != null) begin
@@ -27,9 +29,9 @@ class addr_handle_t extends object_pool_base;
     function addr_handle_t make_handle(bit[63:0] offset);
         addr_handle_t ret;
         if (this.base != null) begin
-            ret = new(actor, this.base, this.offset+offset);
+            ret = new(exec_b, this.base, this.offset+offset);
         end else begin
-            ret = new(actor, null, this.offset+offset);
+            ret = new(exec_b, null, this.offset+offset);
         end
         return ret;
     endfunction

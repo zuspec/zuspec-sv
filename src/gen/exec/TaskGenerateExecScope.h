@@ -80,8 +80,9 @@ protected:
     IGenRefExpr                     *m_genref;
     IOutput                         *m_out_top;
     IOutput                         *m_out;
-    OutputExecScope                 *m_exec;
+    std::vector<OutputExecScope *>  m_exec_s;
     bool                            m_istask;
+    int32_t                         m_depth;
 
 };
 
