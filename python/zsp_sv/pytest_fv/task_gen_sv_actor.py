@@ -19,8 +19,9 @@
 #*     Author: 
 #*
 #****************************************************************************
+from pytest_fv import Task
 
-class TaskGenSvActor(object):
+class TaskGenSvActor(Task):
 
     def __init__(self,
             root_comp,
@@ -28,6 +29,7 @@ class TaskGenSvActor(object):
             outpath,
             filesets=None,
             debug=False):
+        super().__init__("TaskGenSvActor")
         self.root_comp = root_comp
         self.root_action = root_action
         self.outpath = outpath

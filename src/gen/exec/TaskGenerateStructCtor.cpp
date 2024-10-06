@@ -63,6 +63,10 @@ void TaskGenerateStructCtor::visitDataTypeArray(vsc::dm::IDataTypeArray *t) {
     m_out->println("%s = new();", m_field->name().c_str());
 }
 
+void TaskGenerateStructCtor::visitDataTypeList(vsc::dm::IDataTypeList *t) {
+    m_out->println("%s = new();", m_field->name().c_str());
+}
+
 void TaskGenerateStructCtor::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
     m_out->println("%s = new();", m_field->name().c_str());
 }

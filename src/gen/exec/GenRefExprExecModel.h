@@ -68,7 +68,7 @@ public:
         m_inline_s.pop_back();
     }
     
-    virtual void pushScope(arl::dm::ITypeProcStmtDeclScope *s) override {
+    virtual void pushScope(vsc::dm::ITypeVarScope *s) override {
         m_scope_s.push_back(s);
     }
 
@@ -153,7 +153,7 @@ private:
     bool                                            m_isRefCountedField;
     bool                                            m_isAggregateFieldRef;
     std::vector<vsc::dm::IDataTypeStruct *>         m_inline_s;
-    std::vector<arl::dm::ITypeProcStmtDeclScope *>  m_scope_s;
+    std::vector<vsc::dm::ITypeVarScope *>           m_scope_s;
 
 };
 

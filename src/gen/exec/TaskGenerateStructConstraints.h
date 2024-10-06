@@ -53,6 +53,8 @@ public:
 
 	virtual void visitTypeConstraintImplies(vsc::dm::ITypeConstraintImplies *c) override;
 
+	virtual void visitTypeConstraintScope(vsc::dm::ITypeConstraintScope *c) override;
+
 	virtual void visitTypeConstraintSoft(vsc::dm::ITypeConstraintSoft *c) override;
 
 	virtual void visitTypeConstraintUnique(vsc::dm::ITypeConstraintUnique *c) override;

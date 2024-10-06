@@ -79,7 +79,27 @@ void TaskGenerateStructConstraints::visitTypeConstraintExpr(vsc::dm::ITypeConstr
     m_out->write(";\n");
 }
 
-void TaskGenerateStructConstraints::visitTypeConstraintForeach(vsc::dm::ITypeConstraintForeach *c) { }
+void TaskGenerateStructConstraints::visitTypeConstraintForeach(vsc::dm::ITypeConstraintForeach *c) { 
+    DEBUG_ENTER("visitTypeConstraintForeach");
+
+    m_out->indent();
+    m_out->write("foreach (%s",
+        m_genref->genRval(c->getTarget()).c_str());
+    if (c->getVariables().at(0).get()) {
+        m_out->write(".store[%s]", c->getVariables().at(0)->name().c_str());
+    } else {
+        m_out->write(".store[__xyz]");
+    }
+    m_out->write(") {\n");
+    m_out->inc_ind();
+    m_genref->pushScope(c);
+    c->getBody()->accept(m_this);
+    m_genref->popScope();
+    m_out->dec_ind();
+    m_out->println("}");
+
+    DEBUG_LEAVE("visitTypeConstraintForeach");
+}
 
 void TaskGenerateStructConstraints::visitTypeConstraintIfElse(vsc::dm::ITypeConstraintIfElse *c) { 
     m_out->indent();
@@ -107,6 +127,12 @@ void TaskGenerateStructConstraints::visitTypeConstraintImplies(vsc::dm::ITypeCon
     c->getBody()->accept(m_this);
     m_out->dec_ind();
     m_out->println("}");
+}
+
+void TaskGenerateStructConstraints::visitTypeConstraintScope(vsc::dm::ITypeConstraintScope *c) {
+    m_genref->pushScope(c);
+    VisitorBase::visitTypeConstraintScope(c);
+    m_genref->popScope();
 }
 
 void TaskGenerateStructConstraints::visitTypeConstraintSoft(vsc::dm::ITypeConstraintSoft *c) { }

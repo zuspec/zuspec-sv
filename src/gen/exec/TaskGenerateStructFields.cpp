@@ -104,6 +104,16 @@ void TaskGenerateStructFields::visitDataTypeInt(vsc::dm::IDataTypeInt *t) {
     DEBUG_LEAVE("visitDataTypeInt");
 }
 
+void TaskGenerateStructFields::visitDataTypeList(vsc::dm::IDataTypeList *t) {
+    DEBUG_ENTER("visitDataTypeList");
+    m_out->indent();
+    m_out->write("%slist_c #(",
+        qualifiers(m_field->getAttr()).c_str());
+    TaskGenerateDataType(m_gen, m_out).generate(t->getElemType());
+    m_out->write(") %s;\n", m_field->name().c_str());
+    DEBUG_LEAVE("visitDataTypeList");
+}
+
 void TaskGenerateStructFields::visitDataTypeString(vsc::dm::IDataTypeString *t) {
 
 }

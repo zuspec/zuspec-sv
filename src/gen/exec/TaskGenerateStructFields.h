@@ -51,6 +51,8 @@ public:
 
     virtual void visitDataTypeInt(vsc::dm::IDataTypeInt *t) override;
 
+    virtual void visitDataTypeList(vsc::dm::IDataTypeList *t) override;
+
     virtual void visitDataTypeString(vsc::dm::IDataTypeString *t) override;
 
     virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent*t) override;

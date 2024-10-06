@@ -54,7 +54,7 @@ public:
 
     virtual void popInline() = 0;
 
-    virtual void pushScope(arl::dm::ITypeProcStmtDeclScope *s) = 0;
+    virtual void pushScope(vsc::dm::ITypeVarScope *s) = 0;
 
     virtual void popScope() = 0;
 

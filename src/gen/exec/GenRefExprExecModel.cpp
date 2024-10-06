@@ -215,11 +215,14 @@ void GenRefExprExecModel::visitTypeExprMethodCallStatic(arl::dm::ITypeExprMethod
 
 void GenRefExprExecModel::visitTypeExprRefBottomUp(vsc::dm::ITypeExprRefBottomUp *e) {
     std::string ret;
-    DEBUG_ENTER("visitTypeExprRefBottomUp (%d)", m_depth);
-    arl::dm::ITypeProcStmtDeclScope *scope = m_scope_s.at(
+    DEBUG_ENTER("visitTypeExprRefBottomUp (%d) scopeOff=%d varOffset=%d", 
+        m_depth,
+        e->getScopeOffset(),
+        e->getSubFieldIndex());
+    vsc::dm::ITypeVarScope *scope = m_scope_s.at(
         m_scope_s.size()-e->getScopeOffset()-1
     );
-    arl::dm::ITypeProcStmtVarDecl *var = scope->getVariables().at(e->getSubFieldIndex()).get();
+    vsc::dm::ITypeVar *var = scope->getVariables().at(e->getSubFieldIndex()).get();
     DEBUG("var: %s", var->name().c_str());
 
     switch (m_kind) {

@@ -49,6 +49,8 @@ public:
 
     virtual void visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) override { }
 
+    virtual void visitDataTypeList(vsc::dm::IDataTypeList *t) override;
+
     virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
 
     virtual void visitTypeField(vsc::dm::ITypeField *f) override;
