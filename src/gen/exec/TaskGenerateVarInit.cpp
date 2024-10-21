@@ -53,7 +53,7 @@ void TaskGenerateVarInit::visitDataTypeBool(vsc::dm::IDataTypeBool *t) {
     DEBUG_ENTER("visitDataTypeBool");
     if (m_var->getInit()) {
         m_out->indent();
-        m_out->write("%s = ");
+        m_out->write("%s = ", m_var->name().c_str());
         TaskGenerateExpr(m_gen, m_genref, m_out).generate(m_var->getInit());
         m_out->write(";\n");
     }
@@ -64,7 +64,7 @@ void TaskGenerateVarInit::visitDataTypeInt(vsc::dm::IDataTypeInt *t) {
     DEBUG_ENTER("visitDataTypeInt");
     if (m_var->getInit()) {
         m_out->indent();
-        m_out->write("%s = ");
+        m_out->write("%s = ", m_var->name().c_str());
         TaskGenerateExpr(m_gen, m_genref, m_out).generate(m_var->getInit());
         m_out->write(";\n");
     }
@@ -75,7 +75,7 @@ void TaskGenerateVarInit::visitDataTypeString(vsc::dm::IDataTypeString *t) {
     DEBUG_ENTER("visitDataTypeString");
     if (m_var->getInit()) {
         m_out->indent();
-        m_out->write("%s = ");
+        m_out->write("%s = ", m_var->name().c_str());
         TaskGenerateExpr(m_gen, m_genref, m_out).generate(m_var->getInit());
         m_out->write(";\n");
     }

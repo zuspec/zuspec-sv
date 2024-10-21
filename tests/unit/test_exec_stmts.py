@@ -24,24 +24,24 @@ def test_repeat_count(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
-def test_repeat_count(dirconfig):
-    content = """
-        import std_pkg::*;
-        component pss_top {
-            action Entry {
-                exec post_solve {
-                    repeat (2) {
-                        print("RES: Hello");
-                    }
-                }
-            }
-        }
-    """
-    expect = """
-    RES: Hello
-    RES: Hello
-    """
-    run_unit_test(dirconfig, content, expect, debug=True)
+# def test_repeat_count(dirconfig):
+#     content = """
+#         import std_pkg::*;
+#         component pss_top {
+#             action Entry {
+#                 exec post_solve {
+#                     repeat (2) {
+#                         print("RES: Hello");
+#                     }
+#                 }
+#             }
+#         }
+#     """
+#     expect = """
+#     RES: Hello
+#     RES: Hello
+#     """
+#     run_unit_test(dirconfig, content, expect, debug=True)
 
 def test_repeat_count_var(dirconfig):
     content = """
@@ -59,6 +59,46 @@ def test_repeat_count_var(dirconfig):
     expect = """
     RES: Hello 0
     RES: Hello 1
+    """
+    run_unit_test(dirconfig, content, expect, debug=True)
+
+def test_repeat_local_var(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                exec post_solve {
+                    repeat (i : 2) {
+                        int x = 1;
+                        print("RES: Hello %d", x);
+                    }
+                }
+            }
+        }
+    """
+    expect = """
+    RES: Hello 1
+    RES: Hello 1
+    """
+    run_unit_test(dirconfig, content, expect, debug=True)
+
+def test_repeat_count_local_var(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+            action Entry {
+                exec post_solve {
+                    repeat (i : 2) {
+                        int x = i+1;
+                        print("RES: Hello %d %d", i, x);
+                    }
+                }
+            }
+        }
+    """
+    expect = """
+    RES: Hello 0 1
+    RES: Hello 1 2
     """
     run_unit_test(dirconfig, content, expect, debug=True)
 

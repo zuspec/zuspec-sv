@@ -91,10 +91,10 @@ package:
     - name: sphinx-jsonschema
       src: pypi
   
-  envs:
-  - name: default
-    env: 
-    - var: PYTEST_FV_OUTDIR
-      val: ${PROJECT_ROOT}/out
+  env:
+  - name: PYTEST_FV_OUTDIR
+    value: ${PROJECT_ROOT}/out
+  - name: PATH
+    path-prepend: ${PROJECT_ROOT}/verilator-5.028/bin
 
 
