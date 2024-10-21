@@ -74,6 +74,8 @@ package:
     - name: simplesat
       version: 0.8.2
       src: pypi
+    - name: verilator
+      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.028/verilator-ubuntu-x64-5.028.tar.gz
     - name: cython
       src: pypi
     - name: Sphinx
@@ -92,9 +94,9 @@ package:
       src: pypi
   
   env:
-  - name: PYTEST_FV_OUTDIR
-    value: ${PROJECT_ROOT}/out
+  - name: PYTHONPATH
+    path-prepend: ${IVPM_PROJECT}/python
   - name: PATH
-    path-prepend: ${PROJECT_ROOT}/verilator-5.028/bin
+    path-prepend: ${IVPM_PACKAGES}/verilator/bin
 
 
