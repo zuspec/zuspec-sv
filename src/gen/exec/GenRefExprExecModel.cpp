@@ -319,7 +319,9 @@ void GenRefExprExecModel::visitTypeExprRefTopDown(vsc::dm::ITypeExprRefTopDown *
 
 void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) { 
     std::string ret;
-    DEBUG_ENTER("visitTypeExprSubField (%d)", m_depth);
+    DEBUG_ENTER("visitTypeExprSubField (%d) field=%p", m_depth, m_field);
+
+    // Note that this method may be called when `m_field` is not set
     m_depth++;
     e->getRootExpr()->accept(m_this);
     m_depth--;
@@ -328,15 +330,23 @@ void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) {
         m_type_l.back(),
         e->getSubFieldIndex());
 
-    DEBUG("field: %s", m_field->name().c_str());
+    if (!m_field) {
+        DEBUG("m_field is null");
+    }
+
+    DEBUG("field: %s", (m_field)?m_field->name().c_str():"<unknown>");
     bool currRegRef = m_regRef;
     m_isAggregateFieldRef = false;
-    m_field->accept(m_this);
+    if (m_field) {
+        m_field->accept(m_this);
+    }
 
     switch (m_kind) {
         case KindE::Lval:
         case KindE::Rval:
-            ret.append(m_field->name());
+            if (m_field) {
+                ret.append(m_field->name());
+            }
             if (m_depth) {
                 // TODO: should determine based on field type
                 ret.append(".");
@@ -370,10 +380,14 @@ void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) {
             break;
     }
 
-    m_type_l.push_back(m_field->getDataType());
+    if (m_field) {
+        m_type_l.push_back(m_field->getDataType());
 
-    // Track whether the next deref will be a pointer
-    m_isRef = vsc::dm::TaskIsTypeFieldRef().eval(m_field);
+        // Track whether the next deref will be a pointer
+        m_isRef = vsc::dm::TaskIsTypeFieldRef().eval(m_field);
+    } else {
+        ret.append("<unknown>");
+    }
 
     DEBUG_LEAVE("visitTypeExprSubField");
 }
