@@ -47,6 +47,8 @@ package:
 
   - name: default-dev
     deps:
+    - name: debug-mgr
+      url: https://github.com/mballance-utils/debug-mgr.git
     - name: pytypeworks
       url: https://github.com/fvutils/pytypeworks.git
     - name: pyvsc-dataclasses
