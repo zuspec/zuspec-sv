@@ -16,8 +16,8 @@ jobs:
             python3 -m pip install ivpm
             python3 -m ivpm update -a
             ./packages/python/bin/python3 setup.py build_ext --inplace
-            ./packages/python/bin/python3 -m pip uninstall debug-mgr
-            ./packages/python/bin/python3 -m pip install -e $(pwd)/packages/debug-mgr
+            #./packages/python/bin/python3 -m pip uninstall debug-mgr
+            ./packages/python/bin/python3 -m pip install --force-reinstall -e $(pwd)/packages/debug-mgr
         - name: Run tests
           run: |
             export PATH=$(pwd)/packages/verilator/bin:${PATH}
