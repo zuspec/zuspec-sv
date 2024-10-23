@@ -16,7 +16,8 @@ jobs:
             python3 -m ivpm update -a
         - name: Run tests
           run: |
-            python3 -m ivpm activate ./scripts/run_tests.sh 
+            export PATH=$(pwd)/packages/verilator/bin:${PATH}
+            ./packages/python/bin/python3 -m pytest -s ./tests/test_exec_stmts.py
     linux:
         runs-on: ubuntu-latest
         needs: linux-pretest
