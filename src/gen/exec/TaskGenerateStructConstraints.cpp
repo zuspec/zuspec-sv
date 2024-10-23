@@ -122,11 +122,17 @@ void TaskGenerateStructConstraints::visitTypeConstraintImplies(vsc::dm::ITypeCon
     m_out->indent();
     m_out->write("(");
     TaskGenerateExpr(m_gen, m_genref, m_out).generate(c->getCond());
-    m_out->write(") -> {\n");
-    m_out->inc_ind();
-    c->getBody()->accept(m_this);
-    m_out->dec_ind();
-    m_out->println("}");
+    m_out->write(") -> ");
+    
+    if (dynamic_cast<vsc::dm::ITypeConstraintScope *>(c->getBody())) {
+        m_out->write("{\n");
+        m_out->inc_ind();
+        c->getBody()->accept(m_this);
+        m_out->dec_ind();
+        m_out->println("}");
+    } else {
+        c->getBody()->accept(m_this);
+    }
 }
 
 void TaskGenerateStructConstraints::visitTypeConstraintScope(vsc::dm::ITypeConstraintScope *c) {
