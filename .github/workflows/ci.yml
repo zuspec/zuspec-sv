@@ -16,7 +16,7 @@ jobs:
             python3 -m ivpm update -a
         - name: Run tests
           run: |
-            python3 ivpm activate python3 -m pytest tests/test_exec_stmts.py
+            python3 -m ivpm activate python3 -m pytest tests/test_exec_stmts.py
     linux:
         runs-on: ubuntu-latest
         needs: linux-pretest
