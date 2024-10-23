@@ -12,7 +12,7 @@ jobs:
           uses: actions/checkout@v4
         - name: Test build
           run: |
-            apt-get install valgrind
+            sudo apt-get install valgrind
             python3 -m pip install ivpm
             python3 -m ivpm update -a
             ./packages/python/bin/python3 setup.py build_ext --inplace
