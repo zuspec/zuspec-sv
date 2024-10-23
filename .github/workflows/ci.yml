@@ -14,9 +14,11 @@ jobs:
           run: |
             python3 -m pip install ivpm
             python3 -m ivpm update -a
+            ./packages/python/bin/python3 setup.py build_ext --inplace
         - name: Run tests
           run: |
             export PATH=$(pwd)/packages/verilator/bin:${PATH}
+            export PYTHONPATH=$(pwd)/python
             ./packages/python/bin/python3 -m pytest -s ./tests/unit/test_exec_stmts.py
     linux:
         runs-on: ubuntu-latest
