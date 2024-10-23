@@ -41,12 +41,14 @@ TaskGenerateActionFields::~TaskGenerateActionFields() {
 }
 
 void TaskGenerateActionFields::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
+    DEBUG_ENTER("visitTypeFieldRef %s", f->name().c_str());
     if (f->name() != "comp") {
         TaskGenerateStructFields::visitTypeFieldRef(f);
     } else {
         m_out->println("%s comp;", 
             m_gen->getNameMap()->getName(f->getDataType()).c_str());
     }
+    DEBUG_LEAVE("visitTypeFieldRef %s", f->name().c_str());
 }
 
 }

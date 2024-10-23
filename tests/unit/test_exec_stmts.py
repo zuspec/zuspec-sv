@@ -202,6 +202,29 @@ def test_if_elsif(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
+def test_exec_hier_ref(dirconfig):
+    content = """
+    import addr_reg_pkg::*;
+    import std_pkg::*;
+
+    component pss_top {
+        exec init_down {
+            transparent_addr_region_s<> region;
+            
+            region.addr = 5;
+
+            print("RES: region.addr=%d\\n", region.addr);
+        }
+
+        action Entry {
+        }
+    }
+    """
+    expect = """
+    RES: region.addr=5
+    """
+    run_unit_test(dirconfig, content, expect)
+
 def test_assign(dirconfig):
     content = """
         import std_pkg::*;

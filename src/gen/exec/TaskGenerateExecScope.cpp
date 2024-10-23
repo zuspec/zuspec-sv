@@ -86,6 +86,7 @@ void TaskGenerateExecScope::generate(
         bool                        istask) {
     DEBUG_ENTER("generate");
     OutputExecScope out(false, m_out_top);
+    m_exec_s.push_back(&out);
     m_istask = istask;
 
     arl::dm::ITypeProcStmtScope *scope = dynamic_cast<arl::dm::ITypeProcStmtScope *>(stmt);
@@ -104,13 +105,9 @@ void TaskGenerateExecScope::generate(
 
     m_exec_s.back()->apply(m_out_top);
 
+    m_exec_s.pop_back();
 
     DEBUG_LEAVE("generate");
-    if (dynamic_cast<arl::dm::ITypeProcStmtScope *>(stmt)) {
-
-    } else {
-
-    }
 }
 
 void TaskGenerateExecScope::visitTypeProcStmtAssign(arl::dm::ITypeProcStmtAssign *s) {
@@ -216,17 +213,21 @@ void TaskGenerateExecScope::visitTypeProcStmtRepeat(arl::dm::ITypeProcStmtRepeat
 
     // TODO: handle index variable
 
-    if (s->getNumVariables()) {
+    vsc::dm::ITypeVar *idx_v = 0;
+
+    // Null field indicates that the index isn't used
+    if (s->getNumVariables() && s->getVariables().at(0)) {
+        idx_v = s->getVariables().at(0).get();
+    }
+
+    if (idx_v) {
         m_exec_s.back()->exec()->indent();
         m_exec_s.back()->exec()->write("for (");
-        TaskGenerateDataType(m_gen, m_exec_s.back()->exec()).generate(
-            s->getVariables().front()->getDataType());
-        m_exec_s.back()->exec()->write(" %s=0; %s<",
-            s->getVariables().front()->name().c_str(),
-            s->getVariables().front()->name().c_str());
+        TaskGenerateDataType(m_gen, m_exec_s.back()->exec()).generate(idx_v->getDataType());
+        m_exec_s.back()->exec()->write(" %s=0; %s<", 
+            idx_v->name().c_str(), idx_v->name().c_str());
         TaskGenerateExpr(m_gen, m_genref, m_exec_s.back()->exec()).generate(s->getExpr());
-        m_exec_s.back()->exec()->write("; %s+=1) begin\n",
-            s->getVariables().front()->name().c_str());
+        m_exec_s.back()->exec()->write("; %s+=1) begin\n", idx_v->name().c_str());
         m_exec_s.back()->exec()->inc_ind();
         /*
         for (std::vector<arl::dm::ITypeProcStmtVarDeclUP>::const_iterator
