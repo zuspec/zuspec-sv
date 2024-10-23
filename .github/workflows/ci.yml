@@ -18,6 +18,13 @@ jobs:
         steps:
         - name: checkout
           uses: actions/checkout@v4
+        - name: Test build
+          run: |
+            python3 -m pip install ivpm
+            python3 -m ivpm update -a
+        - name: Run tests
+          run: |
+            python3 ivpm activate python3 -m pytest tests/test_exec_stmts.py
         - name: Build packages
           env:
             IVPM_PYTHON: /opt/python/${{ matrix.spec }}/bin/python
