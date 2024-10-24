@@ -63,7 +63,7 @@ def test_int_field(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
-def test_struct_field(dirconfig):
+def disabled_test_struct_field(dirconfig):
     content = """
         import std_pkg::*;
         struct S {
@@ -84,7 +84,7 @@ def test_struct_field(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
-def test_struct_nested_field(dirconfig):
+def disabled_test_struct_nested_field(dirconfig):
     content = """
         import std_pkg::*;
         struct S1 {

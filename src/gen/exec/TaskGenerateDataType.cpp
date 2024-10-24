@@ -66,7 +66,7 @@ void TaskGenerateDataType::visitDataTypeInt(vsc::dm::IDataTypeInt *t) {
         }
     } else {
         // Use sized types
-        m_out->write("bit%s[%d:0]", (w-1), t->isSigned()?" signed":"");
+        m_out->write("bit%s[%d:0]", t->isSigned()?" signed":"", (w-1));
     }
 }
 

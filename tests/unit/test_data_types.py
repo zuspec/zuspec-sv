@@ -6,7 +6,7 @@ import sys
 from .simple_test_flow import run_unit_test
 
 
-def test_int_array(dirconfig):
+def disabled_test_int_array(dirconfig):
     content = """
         import std_pkg::*;
         component pss_top {

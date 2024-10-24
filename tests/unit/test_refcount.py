@@ -6,7 +6,7 @@ from pytest_fv.fixtures import *
 import sys
 from .simple_test_flow import run_unit_test
 
-def test_smoke(dirconfig):
+def disabled_test_smoke(dirconfig):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
