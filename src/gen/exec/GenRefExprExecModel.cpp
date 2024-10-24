@@ -45,6 +45,8 @@ GenRefExprExecModel::GenRefExprExecModel(
         m_gen(gen), m_ctxt(ctxt), m_ctxtRef(ctxtRef), m_ctxtPtr(ctxtPtr),
         m_bupRef(bupRef), m_bupPtr(bupPtr) {
     DEBUG_INIT("zsp::be::sw::GenRefExprExecModel", gen->getDebugMgr());
+    m_depth = 0;
+    m_field = 0;
 }
 
 GenRefExprExecModel::~GenRefExprExecModel() {
