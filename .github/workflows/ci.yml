@@ -14,8 +14,8 @@ jobs:
           run: |
             sudo apt-get install valgrind
             python3 -m pip install ivpm
-            python3 -m ivpm update -a
-            ./packages/python/bin/python3 setup.py build_ext --inplace
+            DEBUG=1 python3 -m ivpm update -a
+            DEBUG=1 ./packages/python/bin/python3 setup.py build_ext --inplace
             #./packages/python/bin/python3 -m pip uninstall debug-mgr
             ./packages/python/bin/python3 -m pip install --force-reinstall -e $(pwd)/packages/debug-mgr
             ls packages/python/lib/python*/site-packages
@@ -23,7 +23,7 @@ jobs:
           run: |
             export PATH=$(pwd)/packages/verilator/bin:${PATH}
             export PYTHONPATH=$(pwd)/python
-            ./packages/python/bin/python3 -m pytest -s ./tests/unit/test_exec_stmts.py::test_repeat_local_var
+            ./packages/python/bin/python3 -m pytest -s ./tests/unit/test_exec_stmts.py
     linux:
         runs-on: ubuntu-latest
         needs: linux-pretest
