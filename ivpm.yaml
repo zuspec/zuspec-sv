@@ -77,8 +77,8 @@ package:
       version: 0.8.2
       src: pypi
     - name: verilator
-      #      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.028/verilator-ubuntu-x64-5.028.tar.gz
-      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.028/verilator-ubuntu-x64-5.030.tar.gz
+      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.028/verilator-ubuntu-x64-5.028.tar.gz
+      #      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.028/verilator-ubuntu-x64-5.030.tar.gz
     - name: cython
       src: pypi
     - name: Sphinx
