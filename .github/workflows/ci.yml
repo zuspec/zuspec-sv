@@ -23,7 +23,7 @@ jobs:
           run: |
             export PATH=$(pwd)/packages/verilator/bin:${PATH}
             export PYTHONPATH=$(pwd)/python
-            ./packages/python/bin/python3 -m pytest -s ./tests/unit/test_exec_stmts.py
+            ./packages/python/bin/python3 -m pytest -s ./tests/unit/
     linux:
         runs-on: ubuntu-latest
         needs: linux-pretest
