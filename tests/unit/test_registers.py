@@ -101,7 +101,8 @@ def test_reg_get_handle(dirconfig):
     """
     expect = """
     RES: init_down
-    RES: init_up
+    RES: write32 0x80000000 0x00000001
+    RES: write32 0x80000104 0x00000002
     """
     run_unit_test(dirconfig, content, expect)
 

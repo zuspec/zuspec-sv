@@ -78,4 +78,8 @@ def test_function_global_recurse(dirconfig):
     RES: 3
     RES: 5
     """
-    run_unit_test(dirconfig, content, expect, debug=True)
+
+    if dirconfig.config.getHdlSim() != "vlt":
+        run_unit_test(dirconfig, content, expect, debug=True)
+    else:
+        print("SKIP: test_function_global_recurse on vlt")

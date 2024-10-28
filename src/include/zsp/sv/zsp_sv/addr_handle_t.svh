@@ -18,11 +18,13 @@ class addr_handle_t extends object_pool_base;
     endfunction
 
     virtual function void drop();
-        actor_c actor = exec_b.get_actor();
-        $display("addr_handle_t::drop");
-        actor.addr_handle_drop(this);
-        if (base != null) begin
-            base.dec();
+        if (exec_b != null) begin
+            actor_c actor = exec_b.get_actor();
+            $display("addr_handle_t::drop");
+            actor.addr_handle_drop(this);
+            if (base != null) begin
+               base.dec();
+            end
         end
     endfunction
 
