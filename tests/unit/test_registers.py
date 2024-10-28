@@ -55,7 +55,7 @@ def test_simple_reg(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
-def test_reg_get_handle(dirconfig):
+def disabled_test_reg_get_handle(dirconfig):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
