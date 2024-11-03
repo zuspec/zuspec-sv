@@ -60,13 +60,11 @@ void TaskGenerateStructInit::generate_tail(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateStructInit::visitDataTypeArray(vsc::dm::IDataTypeArray *t) {
-    DEBUG_ENTER("visitDataTypeArray");
     if (m_field->getInit()) {
         for (uint32_t i=0; i<t->getSize(); i++) {
 
         }
     }
-    DEBUG_LEAVE("visitDataTypeArray");
 }
 
 void TaskGenerateStructInit::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
