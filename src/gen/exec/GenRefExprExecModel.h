@@ -21,6 +21,7 @@
 #pragma once
 #include "dmgr/IDebugMgr.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
+#include "gen/IOutput.h"
 #include "IGenRefExpr.h"
 
 namespace zsp {
@@ -130,6 +131,12 @@ private:
     void init(KindE kind);
 
     std::string strval();
+
+    void GenExpr(IOutput *out, vsc::dm::ITypeExpr *e);
+
+    void GenExpr(IOutput *out, vsc::dm::ITypeExpr *e, KindE kind);
+
+    void GenExprStandalone(IOutput *out, vsc::dm::ITypeExpr *e);
 
 
 private:

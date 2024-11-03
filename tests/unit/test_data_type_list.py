@@ -32,6 +32,7 @@ def test_decl_int_list_comp(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
+@pytest.mark.skip("exec foreach not yet supported")
 def test_decl_int_list_comp_foreach(dirconfig):
     content = """
         import std_pkg::*;
@@ -61,6 +62,7 @@ def test_decl_int_list_comp_foreach(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
+@pytest.mark.skip("composite initializers not supported yet")
 def test_decl_int_array_action(dirconfig):
     content = """
         import std_pkg::*;
@@ -110,9 +112,12 @@ def test_decl_rand_int_list_action(dirconfig):
     expect = """
     RES: arr=1,2,3,4
     """
-    run_unit_test(dirconfig, content, expect)
+    if dirconfig.config.getHdlSim() == "vlt":
+        pytest.skip("vlt doesn't support nested randomization as of 5.028")
+    else:
+        run_unit_test(dirconfig, content, expect)
 
-def test_decl_rand_int_list_action_foreach(dirconfig):
+def test_decl_rand_int_list_action_foreach(dirconfig : pfv.DirConfig):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -141,5 +146,8 @@ def test_decl_rand_int_list_action_foreach(dirconfig):
     expect = """
     RES: arr=1,2,3,4
     """
-    run_unit_test(dirconfig, content, expect)
+    if dirconfig.config.getHdlSim() == "vlt":
+        pytest.skip("vlt as of 5.028 does not support foreach")
+    else:
+        run_unit_test(dirconfig, content, expect)
 

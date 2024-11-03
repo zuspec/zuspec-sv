@@ -206,6 +206,14 @@ void TaskGenerateExecScope::visitTypeProcStmtExpr(arl::dm::ITypeProcStmtExpr *s)
     DEBUG_LEAVE("visitTypeProcStmtExpr");
 }
 
+void TaskGenerateExecScope::visitTypeProcStmtForeach(arl::dm::ITypeProcStmtForeach *s) {
+    DEBUG_ENTER("visitTypeProcStmtForeach");
+    m_genref->pushScope(s);
+
+    m_genref->popScope();
+    DEBUG_LEAVE("visitTypeProcStmtForeach");
+}
+
 void TaskGenerateExecScope::visitTypeProcStmtRepeat(arl::dm::ITypeProcStmtRepeat *s) {
     DEBUG_ENTER("visitTypeProcStmtRepeat");
 
@@ -221,13 +229,17 @@ void TaskGenerateExecScope::visitTypeProcStmtRepeat(arl::dm::ITypeProcStmtRepeat
     }
 
     if (idx_v) {
+        std::string ivname = idx_v->name();
+
+        if (ivname == "_") {
+            ivname = "__xyz";
+        }
         m_exec_s.back()->exec()->indent();
         m_exec_s.back()->exec()->write("for (");
         TaskGenerateDataType(m_gen, m_exec_s.back()->exec()).generate(idx_v->getDataType());
-        m_exec_s.back()->exec()->write(" %s=0; %s<", 
-            idx_v->name().c_str(), idx_v->name().c_str());
+        m_exec_s.back()->exec()->write(" %s=0; %s<", ivname.c_str(), ivname.c_str());
         TaskGenerateExpr(m_gen, m_genref, m_exec_s.back()->exec()).generate(s->getExpr());
-        m_exec_s.back()->exec()->write("; %s+=1) begin\n", idx_v->name().c_str());
+        m_exec_s.back()->exec()->write("; %s+=1) begin\n", ivname.c_str());
         m_exec_s.back()->exec()->inc_ind();
         /*
         for (std::vector<arl::dm::ITypeProcStmtVarDeclUP>::const_iterator

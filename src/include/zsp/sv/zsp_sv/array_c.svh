@@ -1,5 +1,5 @@
 
-class array_c #(type T=int, int SZ);
+class array_c #(type T=int, int SZ=0);
     rand T           store[SZ];
     
     function T __getitem__(int idx);

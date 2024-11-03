@@ -56,6 +56,8 @@ public:
 
 	virtual void visitTypeProcStmtExpr(arl::dm::ITypeProcStmtExpr *s) override;
 
+    virtual void visitTypeProcStmtForeach(arl::dm::ITypeProcStmtForeach *s) override;
+
     virtual void visitTypeProcStmtIfClause(arl::dm::ITypeProcStmtIfClause *s) override;
 
     virtual void visitTypeProcStmtIfElse(arl::dm::ITypeProcStmtIfElse *s) override;

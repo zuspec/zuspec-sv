@@ -64,11 +64,16 @@ bool TaskGenerateTypesPkg::generate() {
     TypeCollectionUP types(TaskBuildTypeCollection(m_dmgr).build(m_ctxt));
     std::vector<int32_t> sorted = types->sort();
 
+    std::set<std::string> omitted = {
+        "addr_handle_t"
+    };
     for (std::vector<int32_t>::const_iterator
         it=sorted.begin();
         it!=sorted.end(); it++) {
         vsc::dm::IDataType *t = types->getType(*it);
-        out->println("typedef class %s;", getNameMap()->getName(t).c_str());
+        if (omitted.find(getNameMap()->getName(t)) == omitted.end()) {
+            out->println("typedef class %s;", getNameMap()->getName(t).c_str());
+        }
     }
     out->println("");
 

@@ -143,8 +143,9 @@ void GenRefExprExecModel::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
 }
 
 void GenRefExprExecModel::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) {
-    DEBUG_ENTER("visitTypeExprArrIndex");
+    DEBUG_ENTER("visitTypeExprArrIndex kind=%d", (int)m_kind);
     std::string ret;
+    vsc::dm::IDataTypeArray *arr_t = 0;
     m_depth_ss++;
     switch (m_kind) {
         case KindE::Lval:
@@ -152,6 +153,9 @@ void GenRefExprExecModel::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) {
             m_depth++;
             e->getRootExpr()->accept(m_this);
             m_depth--;
+
+            arr_t = dynamic_cast<vsc::dm::IDataTypeArray *>(m_type_l.back());
+
             ret.append("[");
             e->getIndexExpr()->accept(m_this);
             ret.append("]");
@@ -159,9 +163,15 @@ void GenRefExprExecModel::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) {
             break;
         case KindE::RegAddr:
             // Capture subscripts
+            DEBUG("pre-root: %s", strval().c_str());
             m_depth++;
             e->getRootExpr()->accept(m_this);
             m_depth--;
+            DEBUG("post-root: %s", strval().c_str());
+
+            // The result of traversing the array reference is the
+            // array type. Save that for later
+            arr_t = dynamic_cast<vsc::dm::IDataTypeArray *>(m_type_l.back());
 
             if (m_regRef) {
                 vsc::dm::IDataType *base_t = m_type_l.at(m_type_l.size()-2);
@@ -172,7 +182,7 @@ void GenRefExprExecModel::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) {
                 ret.append(m_field->name());
                 ret.append(", ");
                 OutputStr out;
-                TaskGenerateExpr(m_gen, this, &out).generate(e->getIndexExpr());
+                GenExprStandalone(&out, e->getIndexExpr());
                 ret.append(out.getValue());
                 ret.append(")");
                 if (m_depth) {
@@ -183,15 +193,20 @@ void GenRefExprExecModel::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) {
                 e->getIndexExpr()->accept(m_this);
                 ret.append("]");
             }
+            DEBUG("post-index(1): %s", strval().c_str());
             m_out_l.push_back(ret);
+            DEBUG("post-index(2): %s", strval().c_str());
             break;
         default:
             e->getRootExpr()->accept(m_this);
+            arr_t = dynamic_cast<vsc::dm::IDataTypeArray *>(m_type_l.back());
             break;
     }
 
+    if (!arr_t) {
+        DEBUG_ERROR("Failed to identify array type");
+    }
 
-    vsc::dm::IDataTypeArray *arr_t = dynamic_cast<vsc::dm::IDataTypeArray *>(m_type_l.back());
     m_type_l.pop_back();
     m_type_l.push_back(arr_t->getElemType());
     m_depth_ss--;
@@ -202,7 +217,7 @@ void GenRefExprExecModel::visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) {
 void GenRefExprExecModel::visitTypeExprMethodCallContext(arl::dm:: ITypeExprMethodCallContext *e) {
     DEBUG_ENTER("visitTypeExprMethodCallContext");
     OutputStr out;
-    TaskGenerateExpr(m_gen, this, &out).generate(e);
+    GenExpr(&out, e);
     m_out_l.push_back(out.getValue());
     DEBUG_LEAVE("visitTypeExprMethodCallContext");
 }
@@ -210,7 +225,7 @@ void GenRefExprExecModel::visitTypeExprMethodCallContext(arl::dm:: ITypeExprMeth
 void GenRefExprExecModel::visitTypeExprMethodCallStatic(arl::dm::ITypeExprMethodCallStatic *e) {
     DEBUG_ENTER("visitTypeExprMethodCallStatic");
     OutputStr out;
-    TaskGenerateExpr(m_gen, this, &out).generate(e);
+    GenExpr(&out, e);
     m_out_l.push_back(out.getValue());
     DEBUG_LEAVE("visitTypeExprMethodCallStatic");
 }
@@ -321,7 +336,7 @@ void GenRefExprExecModel::visitTypeExprRefTopDown(vsc::dm::ITypeExprRefTopDown *
 
 void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) { 
     std::string ret;
-    DEBUG_ENTER("visitTypeExprSubField (%d) field=%p", m_depth, m_field);
+    DEBUG_ENTER("visitTypeExprSubField (%d) kind=%d field=%p", m_depth, (int)m_kind, m_field);
 
     // Note that this method may be called when `m_field` is not set
     m_depth++;
@@ -397,7 +412,7 @@ void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) {
 void GenRefExprExecModel::visitTypeExprVal(vsc::dm::ITypeExprVal *e) {
     DEBUG_ENTER("visitTypeExprVal");
     OutputStr out;
-    TaskGenerateExprVal(m_gen, &out).generate(e);
+    GenExpr(&out, e);
     m_out_l.push_back(out.getValue());
     DEBUG_LEAVE("visitTypeExprVal");
 }
@@ -452,6 +467,30 @@ std::string GenRefExprExecModel::strval() {
         ret.append(*it);
     }
     return ret;
+}
+void GenRefExprExecModel::GenExpr(IOutput *out, vsc::dm::ITypeExpr *e) {
+    GenExpr(out, e, m_kind);
+}
+
+void GenRefExprExecModel::GenExpr(IOutput *out, vsc::dm::ITypeExpr *e, KindE kind) {
+    DEBUG_ENTER("GenExpr");
+    KindE kind_sav = m_kind;
+    int32_t depth_sav = m_depth;
+    bool regRef_sav = m_regRef;
+    m_kind = kind;
+    m_depth = 0;
+    TaskGenerateExpr(m_gen, this, out).generate(e);
+    m_kind = kind_sav;
+    m_depth = depth_sav;
+    m_regRef = regRef_sav;
+    DEBUG_LEAVE("GenExpr");
+}
+
+void GenRefExprExecModel::GenExprStandalone(IOutput *out, vsc::dm::ITypeExpr *e) {
+    DEBUG_ENTER("GenExprStandalone");
+    GenRefExprExecModel genref(m_gen, m_ctxt, m_ctxtRef, m_ctxtPtr, m_bupRef, m_bupPtr);
+    TaskGenerateExpr(m_gen, &genref, out).generate(e);
+    DEBUG_LEAVE("GenExprStandalone");
 }
 
 

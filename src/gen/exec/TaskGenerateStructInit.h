@@ -48,6 +48,8 @@ public:
 
     virtual void generate_tail(vsc::dm::IDataTypeStruct *t);
 
+    virtual void visitDataTypeArray(vsc::dm::IDataTypeArray *t) override;
+
     virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent *t) override;
 
     virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;
