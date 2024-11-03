@@ -208,9 +208,9 @@ void TaskGenerateExecScope::visitTypeProcStmtExpr(arl::dm::ITypeProcStmtExpr *s)
 
 void TaskGenerateExecScope::visitTypeProcStmtForeach(arl::dm::ITypeProcStmtForeach *s) {
     DEBUG_ENTER("visitTypeProcStmtForeach");
-    m_genref->pushScope(s);
+//    m_genref->pushScope(s);
 
-    m_genref->popScope();
+//    m_genref->popScope();
     DEBUG_LEAVE("visitTypeProcStmtForeach");
 }
 
