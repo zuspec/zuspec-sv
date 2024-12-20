@@ -61,6 +61,9 @@ class object extends object_pool_base;
 
 endclass
 
+`include "flow_obj_c.svh"
+`include "pool_c.svh"
+
 interface class packed_s;
 
     pure virtual function bit[1023:0] pack();
@@ -106,23 +109,8 @@ function automatic addr_handle_t make_handle_from_handle(
     return ret;
 endfunction
 
-class activity_c extends object;
-    virtual task run();
-    endtask
-endclass
-
-class action extends object;
-    rand bit[15:0]        parent_comp_id;
-    rand bit[15:0]        comp_id;
-
-    virtual task body(executor_base exec_b);
-    endtask
-
-    virtual function executor_base get_executor();
-        return null;
-    endfunction
-
-endclass
+    `include "activity_c.svh"
+    `include "action_c.svh"
 
     `include "activity_listener_c.svh"
 
@@ -141,63 +129,8 @@ class component_ctor_ctxt;
 
 endclass
 
-class component;
-    int         comp_id;
-    string      name;
-    component   parent;
-
-    executor_base  executor_m[];
-
-    // aspace_t_map
-    // executor_t_map
-
-    function new(string name, component_ctor_ctxt ctxt, component parent=null);
-        if (ctxt != null) begin
-            this.comp_id = ctxt.actor.comp_l.size();
-            ctxt.actor.comp_l.push_back(this);
-        end else begin
-            this.comp_id = -1;
-        end
-        this.name = name;
-        this.parent = parent;
-    endfunction
-
-    virtual function void init_down(executor_base exec_b);
-    endfunction
-
-    virtual function void init(executor_base exec_b);
-    endfunction
-
-    virtual function void init_up(executor_base exec_b);
-    endfunction
-
-    virtual function bit check();
-        return 1;
-    endfunction
-
-    virtual function actor_c get_actor();
-        component c = parent;
-        actor_c actor;
-
-        while (c.parent != null) begin
-            c = c.parent;
-        end
-        $cast(actor, c);
-        return actor;
-    endfunction
-
-    virtual function executor_base get_default_executor();
-        component c = parent;
-        actor_c actor;
-
-        while (c.parent != null) begin
-            c = c.parent;
-        end
-        $cast(actor, c);
-        return actor.get_default_executor();
-    endfunction
-
-endclass
+`include "component_c.svh"
+`include "actor_t_c.svh"
 
 class addr_region_base_s extends object;
     bit[63:0]           size;

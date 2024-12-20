@@ -11,7 +11,15 @@ class actor_c extends component;
     endfunction
 
     virtual task run();
+        executor_base exec_b = get_default_executor();
+        foreach (comp_l[i]) begin
+            comp_l[i].start(exec_b);
+        end
     endtask
+
+    virtual function void start(executor_base exec_b);
+        // The root actor's behavior is solely controlled from 'run'
+    endfunction
 
     virtual function void add_listener(activity_listener_c listener);
         listeners.push_back(listener);

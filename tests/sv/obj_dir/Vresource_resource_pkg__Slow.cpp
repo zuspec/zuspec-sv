@@ -1,0 +1,24 @@
+// Verilated -*- C++ -*-
+// DESCRIPTION: Verilator output: Design implementation internals
+// See Vresource.h for the primary calling header
+
+#include "Vresource__pch.h"
+#include "Vresource__Syms.h"
+#include "Vresource_resource_pkg.h"
+
+void Vresource_resource_pkg___ctor_var_reset(Vresource_resource_pkg* vlSelf);
+
+Vresource_resource_pkg::Vresource_resource_pkg(Vresource__Syms* symsp, const char* v__name)
+    : VerilatedModule{v__name}
+    , vlSymsp{symsp}
+ {
+    // Reset structure values
+    Vresource_resource_pkg___ctor_var_reset(this);
+}
+
+void Vresource_resource_pkg::__Vconfigure(bool first) {
+    (void)first;  // Prevent unused variable warning
+}
+
+Vresource_resource_pkg::~Vresource_resource_pkg() {
+}

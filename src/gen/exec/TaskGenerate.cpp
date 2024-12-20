@@ -27,6 +27,7 @@
 #include "CustomGenAddrHandle.h"
 #include "CustomGenAddrRegion.h"
 #include "CustomGenAddrRegionTransparent.h"
+#include "CustomGenCoreMethodCall.h"
 #include "CustomGenMemRwCall.h"
 #include "CustomGenMessageCall.h"
 #include "CustomGenPrintCall.h"
@@ -72,6 +73,7 @@ void TaskGenerate::attach_custom_gen() {
 
     arl::dm::IDataTypeFunction *f_t;
     f_t = m_ctxt->findDataTypeFunction("addr_reg_pkg::make_handle_from_handle");
+    f_t->setAssociatedData(new CustomGenCoreMethodCall(m_dmgr));
 #ifdef UNDEFINED
     m_name_m->setName(f_t, "zsp_rt_make_handle_from_handle");
     // f_t->setAssociatedData(
@@ -83,6 +85,10 @@ void TaskGenerate::attach_custom_gen() {
 #endif
 
     f_t = m_ctxt->findDataTypeFunction("addr_reg_pkg::make_handle_from_claim");
+    f_t->setAssociatedData(new CustomGenCoreMethodCall(m_dmgr));
+
+    f_t = m_ctxt->findDataTypeFunction("addr_reg_pkg::addr_value");
+    f_t->setAssociatedData(new CustomGenCoreMethodCall(m_dmgr));
 #ifdef UNDEFINED
     m_name_m->setName(f_t, "zsp_rt_make_handle_from_claim");
     f_t->setAssociatedData(
@@ -197,7 +203,15 @@ void TaskGenerate::attach_custom_gen() {
                     "zsp_rt_addr_space_add_region":
                     "zsp_rt_addr_space_add_nonallocatable_region";
             }
+        } else if (name.find("executor_pkg::") == 0) {
+            (*it)->setAssociatedData(
+                new CustomGenCoreMethodCall(m_dmgr));
+                /*
+                    "zsp_rt_urandom_range",
+                    -1, {}));
+                 */
         } else if (name.find("std_pkg::") == 0) {
+            (*it)->setAssociatedData(new CustomGenCoreMethodCall(m_dmgr));
             if (name.find("urandom_range") != -1) {
 #ifdef UNDEFINED
                 (*it)->setAssociatedData(

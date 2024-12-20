@@ -1,0 +1,96 @@
+
+package resource_pkg;
+  class A_data;
+    rand bit[7:0]  comp_id;
+    rand bit[7:0]  pcomp_id;
+    rand bit[7:0]  r_pool_id;
+    rand bit[7:0]  r_inst_id;
+
+    constraint comp_c {
+        (pcomp_id == 0) -> comp_id inside {[1:2]};
+        (comp_id == 1) -> r_pool_id == 0;
+        (comp_id == 2) -> r_pool_id == 1;
+        r_inst_id inside {[0:1]};
+    }
+
+    function void print();
+        $display("A: comp_id=%0d pcomp_id=%0d r_pool_id=%0d r_inst_id=%0d",
+            comp_id, pcomp_id, r_pool_id, r_inst_id);
+    endfunction
+  endclass
+
+  class B_data;
+    rand bit[7:0]  comp_id;
+    rand bit[7:0]  pcomp_id;
+    rand bit[7:0]  r_pool_id;
+    rand bit[7:0]  r_inst_id;
+
+    constraint comp_c {
+        (pcomp_id == 0) -> comp_id inside {[1:2]};
+        (comp_id == 1) -> r_pool_id == 0;
+        (comp_id == 2) -> r_pool_id == 1;
+        r_inst_id inside {[0:1]};
+    }
+    function void print();
+        $display("B: comp_id=%0d pcomp_id=%0d r_pool_id=%0d r_inst_id=%0d",
+            comp_id, pcomp_id, r_pool_id, r_inst_id);
+    endfunction
+  endclass
+
+  class C_data;
+    rand bit[7:0]  comp_id;
+    rand bit[7:0]  pcomp_id;
+    rand bit[7:0]  r_pool_id;
+    rand bit[7:0]  r_inst_id;
+
+    constraint comp_c {
+        (pcomp_id == 0) -> comp_id inside {[1:2]};
+        (comp_id == 1) -> r_pool_id == 0;
+        (comp_id == 2) -> r_pool_id == 1;
+        r_inst_id inside {[0:1]};
+    }
+    function void print();
+        $display("C: comp_id=%0d pcomp_id=%0d r_pool_id=%0d r_inst_id=%0d",
+            comp_id, pcomp_id, r_pool_id, r_inst_id);
+    endfunction
+  endclass
+
+  class resource;
+    rand A_data A = new;
+    rand B_data B = new;
+    rand C_data C = new;
+
+    constraint rsrc_c {
+        A.pcomp_id == 0;
+        B.pcomp_id == 0;
+        C.pcomp_id == 0;
+
+        // A.r != B.r ; A.r != C.r
+        !(A.r_inst_id == B.r_inst_id && A.r_pool_id == B.r_pool_id);
+        !(A.r_inst_id == C.r_inst_id && A.r_pool_id == C.r_pool_id);
+
+    }
+
+    function void print();
+        A.print();
+        B.print();
+        C.print();
+    endfunction
+    
+  endclass
+
+endpackage
+
+module top;
+  import resource_pkg::*;
+
+  initial begin
+    automatic resource r = new();
+    if (!r.randomize()) begin
+        $display("FAIL");
+    end else begin
+        r.print();
+    end
+    $finish;
+  end
+endmodule

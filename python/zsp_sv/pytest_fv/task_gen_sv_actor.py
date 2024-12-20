@@ -63,12 +63,13 @@ class TaskGenSvActor(Task):
 
         ast_l = []
         if load_stdlib:
-            core_lib = zsp_f.getAstFactory().mkGlobalScope(0)
+            core_lib = zsp_f.getAstFactory().mkGlobalScope(len(ast_l))
             zsp_f.loadStandardLibrary(ast_builder, core_lib)
+            print("Children: %d" % core_lib.numChildren())
             ast_l.append(core_lib)
 
         for file in files:
-            ast_root = zsp_f.getAstFactory().mkGlobalScope(1)
+            ast_root = zsp_f.getAstFactory().mkGlobalScope(len(ast_l))
             with open(file, "r") as fp:
                 ast_builder.build(ast_root, fp)
             ast_l.append(ast_root)
@@ -95,7 +96,9 @@ class TaskGenSvActor(Task):
 
         pss_top = arl_ctxt.findDataTypeStruct(self.root_comp)
         if pss_top is None:
-            raise Exception("pss_top %s could not be located" % self.root_comp)
+            raise Exception("pss_top %s could not be located (available: %s)" % (
+                self.root_comp,
+                ",".join([t.name() for t in arl_ctxt.getDataTypeStructs()])))
 
         pss_top_Entry = arl_ctxt.findDataTypeStruct(self.root_action)
         if pss_top_Entry is None:

@@ -1,0 +1,71 @@
+m255
+K4
+z2
+!s11f MIXED_VERSIONS
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/mballance/projects/zuspec/zuspec-sv/tests/sv
+T_opt
+!s110 1726615796
+VW2>nK<PILjnKHkU=<dROf0
+04 3 4 work top fast 0
+=1-000ae431a4f1-66ea10f4-d7e8-4a1f9
+o-quiet -auto_acc_if_foreign -work work
+Z1 tCvgOpt 0
+n@_opt
+OL;O;2020.3_2;71
+Xresource_pkg
+Z2 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
+Z3 !s110 1726615794
+!i10b 1
+!s100 13BMLRKW]`28URe1mj>UM0
+Z4 !s11b Dg1SIo80bB@j0V0VzS_@n1
+IOn0FFTT2gbn<8zGS]hQ6:0
+S1
+R0
+Z5 w1726615791
+Z6 8resource.sv
+Z7 Fresource.sv
+!i122 3
+L0 2 0
+VOn0FFTT2gbn<8zGS]hQ6:0
+Z8 OL;L;2020.3_2;71
+r1
+!s85 0
+31
+Z9 !s108 1726615794.000000
+Z10 !s107 resource.sv|
+Z11 !s90 -sv|resource.sv|
+!i113 0
+Z12 o-sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R1
+vtop
+R2
+DXx4 work 12 resource_pkg 0 22 On0FFTT2gbn<8zGS]hQ6:0
+R3
+!i10b 1
+!s100 _fRRHVa9HG]7D70l3[==G3
+R4
+I>ead49EN9i1WAKTdllXjB0
+S1
+R0
+R5
+R6
+R7
+!i122 3
+L0 84 12
+VDg1SIo80bB@j0V0VzS_@n1
+R8
+r1
+!s85 0
+31
+R9
+R10
+R11
+!i113 0
+R12
+R1

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/usr/bin/tee tmp.in | /tools/verilator/5.029/bin/bitwuzla "$@" | /usr/bin/tee tmp.out
+

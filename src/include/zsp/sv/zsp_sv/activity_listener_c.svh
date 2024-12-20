@@ -14,12 +14,12 @@ class activity_listener_c;
     endfunction
 
     virtual function void enter_traverse(
-        action          action_h
+        action_c          action_h
     );
     endfunction
 
     virtual function void leave_traverse(
-        action          action_h
+        action_c          action_h
     );
     endfunction
 

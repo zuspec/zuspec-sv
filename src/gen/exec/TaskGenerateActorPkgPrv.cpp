@@ -176,6 +176,8 @@ bool TaskGenerateActorPkgPrv::generate() {
     out->dec_ind();
     out->println("end");
     out->println("");
+    out->println("comp_tree.start(this.default_executor);");
+    out->println("");
     out->println("foreach(listeners[i]) begin");
     out->inc_ind();
     out->println("listeners[i].enter_actor(this);");

@@ -64,6 +64,7 @@ void TaskGenerateActivity::generate(ActivityVariant *variant) {
             m_gen->getActorName().c_str());
     }
     m_out->inc_ind();
+    m_out->println("super.new(actor);");
     m_out->println("this.actor = actor;");
     if (variant->info()->action()) {
         m_out->println("this.self = self;");

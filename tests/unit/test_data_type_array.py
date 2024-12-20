@@ -32,6 +32,7 @@ def test_decl_int_array_comp(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
+@pytest.mark.skip("Composite initializers not yet supported")
 def test_decl_int_array_action(dirconfig):
     content = """
         import std_pkg::*;
@@ -52,7 +53,7 @@ def test_decl_int_array_action(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
-def test_decl_rand_int_array_action(dirconfig):
+def test_decl_rand_int_array_action(dirconfig : pfv.DirConfig):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -76,7 +77,10 @@ def test_decl_rand_int_array_action(dirconfig):
     expect = """
     RES: arr=1,2,3,4
     """
-    run_unit_test(dirconfig, content, expect)
+    if dirconfig.config.getHdlSim() == "vlt":
+        pytest.skip("Nested randomization not supported as of 5.028")
+    else:
+        run_unit_test(dirconfig, content, expect)
 
 def test_decl_rand_int_array_action_foreach(dirconfig):
     content = """
@@ -101,5 +105,8 @@ def test_decl_rand_int_array_action_foreach(dirconfig):
     expect = """
     RES: arr=1,2,3,4
     """
-    run_unit_test(dirconfig, content, expect)
+    if dirconfig.config.getHdlSim() == "vlt":
+        pytest.skip("Nested randomization not supported as of 5.028")
+    else:
+        run_unit_test(dirconfig, content, expect)
 

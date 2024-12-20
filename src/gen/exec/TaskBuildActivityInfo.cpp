@@ -146,7 +146,7 @@ std::pair<ActivityVariant *, bool> TaskBuildActivityInfo::getVariant(arl::dm::ID
             // Didn't find this particular variant
             const std::string &name = m_name_m->getName(t);
             char *tmp = (char *)alloca(name.size()+64);
-            sprintf(tmp, "%s_%d", name.c_str(), it->second->variants().size());
+            sprintf(tmp, "%s_%d", name.c_str(), (int)it->second->variants().size());
             ret.first = new ActivityVariant(tmp, it->second, m_ctxt);
             it->second->addVariant(ret.first);
             ret.second = true;

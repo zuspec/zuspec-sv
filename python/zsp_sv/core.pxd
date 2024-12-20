@@ -14,6 +14,8 @@ cdef class Factory(object):
 
     cpdef void init(self, dm_core.Factory dmgr)
 
+    cpdef void sayHello(self)
+
     cpdef void prepContextExec(
         self,
         arl_dm.Context             ctxt)

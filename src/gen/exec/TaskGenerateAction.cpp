@@ -51,7 +51,7 @@ void TaskGenerateAction::generate_head(vsc::dm::IDataTypeStruct *t) {
     arl::dm::IDataTypeAction *action_t = dynamic_cast<arl::dm::IDataTypeAction *>(t);
     m_out->println("typedef class %s;", 
         m_gen->getNameMap()->getName(action_t->getComponentType()).c_str());
-    m_out->println("class %s extends action;", m_gen->getNameMap()->getName(t).c_str());
+    m_out->println("class %s extends action_c;", m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
 }
 

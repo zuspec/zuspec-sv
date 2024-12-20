@@ -20,13 +20,18 @@ cdef class Factory(object):
     cpdef void init(self, dm_core.Factory dmgr):
         self._hndl.init(dmgr._hndl.getDebugMgr())
 
+    cpdef void sayHello(self):
+        print("Hello from Factory")
+
     cpdef void prepContextExec(
         self,
         arl_dm.Context             ctxt):
-        cdef arl_eval.Factory eval_f = arl_eval.Factory.inst()
-        self._hndl.prepContextExec(
-            ctxt.asContext(),
-            eval_f._hndl)
+        print("Hello from prepContextExec")
+#        cdef arl_eval.Factory eval_f = arl_eval.Factory.inst()
+#        self._hndl.prepContextExec(
+#            ctxt.asContext(),
+#            eval_f._hndl)
+        pass
 
     cpdef TaskGenerate mkGenerateActorPkg(
         self,

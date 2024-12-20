@@ -1,0 +1,106 @@
+sat
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000000)
+  (r_pool_id #b11111111)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000000)
+  (r_pool_id #b11111111)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000000)
+  (r_pool_id #b11111111)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000001)
+  (r_pool_id #b11111111)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000001)
+  (r_pool_id #b11111111)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000000)
+  (r_pool_id #b11111111)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000000)
+  (r_pool_id #b11111111)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000000)
+  (r_pool_id #b11111110)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000001)
+  (r_pool_id #b11111101)
+)
+sat
+(
+  (comp_id #b10001111)
+  (pcomp_id #b00100000)
+  (r_inst_id #b00000000)
+  (r_pool_id #b10010000)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000000)
+  (r_pool_id #b11111111)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000000)
+  (r_pool_id #b11111101)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000000)
+  (r_pool_id #b11111101)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000001)
+  (r_pool_id #b11111101)
+)
+sat
+(
+  (comp_id #b11111111)
+  (pcomp_id #b11111111)
+  (r_inst_id #b00000001)
+  (r_pool_id #b11111101)
+)
