@@ -42,7 +42,7 @@ TaskGenerateAddrSpace::~TaskGenerateAddrSpace() {
 void TaskGenerateAddrSpace::generate(vsc::dm::IDataTypeStruct *t) {
     m_out->println("class %s extends addr_space_c;", m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
-    m_out->println("function new(string name, component_ctor_ctxt ctxt, component parent);");
+    m_out->println("function new(string name, component_ctor_ctxt ctxt, component_c parent);");
     m_out->inc_ind();
     m_out->println("super.new(name, ctxt, parent);");
     m_out->dec_ind();

@@ -9,6 +9,12 @@
 
 `define zsp_dec(obj) if (obj != null) obj .dec()
 
+`define zsp_typed_obj_util(tname) \
+    static obj_type_c __type = new(`"tname`"); \
+    static function obj_type_c get_type(); \
+        return __type; \
+    endfunction
+
 
 
 `endif /* INCLUDED_ZSP_SV_MACROS_SVH */

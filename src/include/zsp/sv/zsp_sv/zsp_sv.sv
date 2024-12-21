@@ -4,7 +4,7 @@ package zsp_sv;
 
 typedef class object_pool_base;
 typedef class actor_c;
-typedef class component;
+typedef class component_c;
 typedef class executor_base;
 
     `include "array_c.svh"
@@ -61,8 +61,14 @@ class object extends object_pool_base;
 
 endclass
 
-`include "flow_obj_c.svh"
-`include "pool_c.svh"
+    `include "obj_type_c.svh"
+    `include "typed_obj_c.svh"
+
+    `include "flow_obj_c.svh"
+    `include "pool_c.svh"
+    `include "pool_resource_c.svh"
+    `include "resource_c.svh"
+    `include "resource_claim_c.svh"
 
 interface class packed_s;
 
@@ -142,8 +148,8 @@ class addr_region_base_s extends object;
     endfunction
 endclass
 
-class addr_space_c extends component;
-    function new(string name, component_ctor_ctxt ctxt, component parent);
+class addr_space_c extends component_c;
+    function new(string name, component_ctor_ctxt ctxt, component_c parent);
         super.new(name, ctxt, parent);
     endfunction
 

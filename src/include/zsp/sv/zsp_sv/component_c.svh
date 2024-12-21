@@ -1,15 +1,17 @@
 
-class component;
+class component_c;
     int         comp_id;
     string      name;
-    component   parent;
+    component_c   parent;
+
+    // Each component needs a map of action-claim refs to pool
 
     executor_base  executor_m[];
 
     // aspace_t_map
     // executor_t_map
 
-    function new(string name, component_ctor_ctxt ctxt, component parent=null);
+    function new(string name, component_ctor_ctxt ctxt, component_c parent=null);
         if (ctxt != null) begin
             this.comp_id = ctxt.actor.comp_l.size();
             ctxt.actor.comp_l.push_back(this);
@@ -37,7 +39,7 @@ class component;
     endfunction
 
     virtual function actor_c get_actor();
-        component c = parent;
+        component_c c = parent;
         actor_c actor;
 
         while (c.parent != null) begin
@@ -48,7 +50,7 @@ class component;
     endfunction
 
     virtual function executor_base get_default_executor();
-        component c = parent;
+        component_c c = parent;
         actor_c actor;
 
         while (c.parent != null) begin

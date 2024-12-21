@@ -51,7 +51,7 @@ TaskGenerateComp::~TaskGenerateComp() {
 }
 
 void TaskGenerateComp::generate_head(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("class %s extends component;", 
+    m_out->println("class %s extends component_c;", 
         m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
 }

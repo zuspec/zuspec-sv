@@ -3,8 +3,8 @@
  * An actor is a special type of component that autonomously 
  * runs behavior
  */
-class actor_t_c #(type Tc=component, type Ta=int) extends Tc;
-    function new(string name, component_ctor_ctxt ctxt, component parent=null);
+class actor_t_c #(type Tc=component_c, type Ta=int) extends Tc;
+    function new(string name, component_ctor_ctxt ctxt, component_c parent=null);
         super.new(name, ctxt, parent);
     endfunction
 

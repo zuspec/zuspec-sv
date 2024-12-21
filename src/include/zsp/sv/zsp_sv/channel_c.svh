@@ -1,8 +1,8 @@
 
-class channel_c #(type Te=int, int DEPTH=1) extends component;
+class channel_c #(type Te=int, int DEPTH=1) extends component_c;
     mailbox #(Te)       m_imp;
 
-    function new(string name, component_ctor_ctxt ctxt, component parent=null);
+    function new(string name, component_ctor_ctxt ctxt, component_c parent=null);
         super.new(name, ctxt, parent);
         m_imp = new(DEPTH);
     endfunction

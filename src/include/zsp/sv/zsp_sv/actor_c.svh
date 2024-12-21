@@ -1,12 +1,12 @@
 
-class actor_c extends component;
-    component                               comp_l[$];
+class actor_c extends component_c;
+    component_c                               comp_l[$];
     activity_listener_c                     listeners[$];
     hndl_drop_listener #(addr_handle_t)     addr_handle_drop_listeners[$];
     message_verbosity_e                     verbosity = MEDIUM;
     // TODO: address-space
 
-    function new(string name, component_ctor_ctxt ctxt, component parent=null);
+    function new(string name, component_ctor_ctxt ctxt, component_c parent=null);
         super.new(name, ctxt, null);
     endfunction
 

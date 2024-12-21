@@ -1,21 +1,21 @@
 
-class executor_base extends component;
+class executor_base extends component_c;
     actor_c            actor;
     backend_api        api;
 
-    function new(string name, component parent);
+    function new(string name, component_c parent);
         super.new(name, null, parent);
     endfunction
 
     function backend_api get_api();
         if (api == null) begin
-            component c = this;
+            component_c c = this;
             actor_c actor;
             while (c.parent != null) begin
                 c = c.parent;
             end
             if (!$cast(actor, c)) begin
-                $display("Error: failed to cast root component to actor_c");
+                $display("Error: failed to cast root component_c to actor_c");
             end
             if (!$cast(api, actor.get_backend())) begin
                 $display("Error: failed to cast api to api_t");
@@ -26,12 +26,12 @@ class executor_base extends component;
 
     function actor_c get_actor();
         if (actor == null) begin
-            component c = this;
+            component_c c = this;
             while (c.parent != null) begin
                 c = c.parent;
             end
             if (!$cast(actor, c)) begin
-                $display("Error: failed to cast root component to actor_c");
+                $display("Error: failed to cast root component_c to actor_c");
             end
         end
         return actor;
