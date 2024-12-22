@@ -13,6 +13,9 @@
     static obj_type_c __type = new(`"tname`"); \
     static function obj_type_c get_type(); \
         return __type; \
+    endfunction \
+    virtual function obj_type_c get_obj_type(); \
+        return __type; \
     endfunction
 
 

@@ -17,9 +17,7 @@ class executor_base extends component_c;
             if (!$cast(actor, c)) begin
                 $display("Error: failed to cast root component_c to actor_c");
             end
-            if (!$cast(api, actor.get_backend())) begin
-                $display("Error: failed to cast api to api_t");
-            end
+            $cast(api, actor.get_backend());
         end
         return api;
     endfunction

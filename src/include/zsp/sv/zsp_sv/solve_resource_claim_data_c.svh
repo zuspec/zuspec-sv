@@ -27,11 +27,12 @@ class resource_claim_solve_data_c;
     endfunction
 
     function void add_claim(resource_claim_base_c claim);
+        resource_pool_ref_t data;
         if (claim.lock) begin
-            lock.push_back('{0,0});
+            lock.push_back(data);
             lock_claim.push_back(claim);
         end else begin
-            share.push_back('{0,0});
+            share.push_back(data);
             share_claim.push_back(claim);
         end
     endfunction

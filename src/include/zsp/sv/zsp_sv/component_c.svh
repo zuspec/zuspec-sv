@@ -1,11 +1,23 @@
 
-class component_c;
-    int         comp_id;
-    string      name;
-    component_c   parent;
+typedef component_c component_queue_h[$];
+typedef class pool_c;
+
+class component_c extends typed_obj_c;
+    int                     comp_id;
+    string                  name;
+    component_c             parent;
+    
+    pool_c                pool_m;
+
+
+    /**
+     * Map of component type to list of component instances
+     * at this level and below.
+     */
+    component_queue_h       comp_t_inst_m[obj_type_c];
+
 
     // Each component needs a map of action-claim refs to pool
-
     executor_base  executor_m[];
 
     // aspace_t_map
@@ -15,11 +27,25 @@ class component_c;
         if (ctxt != null) begin
             this.comp_id = ctxt.actor.comp_l.size();
             ctxt.actor.comp_l.push_back(this);
+            ctxt.enter(this);
         end else begin
             this.comp_id = -1;
         end
         this.name = name;
         this.parent = parent;
+    endfunction
+
+    /**
+     * Adds a component instance to the map of comp_t -> [comp_inst] map
+     */
+    function void add_comp_inst(component_c comp);
+        if (comp_t_inst_m.exists(comp.get_obj_type())) begin
+            comp_t_inst_m[comp.get_obj_type()].push_back(comp);
+        end else begin
+            component_queue_h l;
+            l.push_back(comp);
+            comp_t_inst_m[comp.get_obj_type()] = l;
+        end
     endfunction
 
     virtual function void init_down(executor_base exec_b);

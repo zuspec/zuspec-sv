@@ -46,13 +46,13 @@ module top;
         endfunction
 
         virtual function void enter_traverse(
-            zsp_sv::action          action_h
+            zsp_sv::action_c        action_h
         );
             $display("RES: enter_traverse");
         endfunction
 
         virtual function void leave_traverse(
-            zsp_sv::action          action_h
+            zsp_sv::action_c        action_h
         );
             $display("RES: leave_traverse");
         endfunction

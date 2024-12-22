@@ -70,6 +70,9 @@ endclass
     `include "resource_c.svh"
     `include "resource_claim_c.svh"
 
+    `include "solve_action_context_c.svh"
+    `include "solve_resource_claim_data_c.svh"
+
 interface class packed_s;
 
     pure virtual function bit[1023:0] pack();
@@ -120,21 +123,8 @@ endfunction
 
     `include "activity_listener_c.svh"
 
-class component_ctor_ctxt;
-    actor_c        actor;
-    executor_base  executor_m[];
 
-    function new(actor_c actor, int n_executor_types);
-        this.actor = actor;
-        executor_m = new[n_executor_types+1];
-    endfunction
-
-    function executor_base get_default_executor();
-        return actor.get_default_executor();
-    endfunction
-
-endclass
-
+`include "component_ctor_ctxt_c.svh"
 `include "component_c.svh"
 `include "actor_t_c.svh"
 

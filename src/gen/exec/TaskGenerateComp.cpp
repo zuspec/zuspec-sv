@@ -54,6 +54,8 @@ void TaskGenerateComp::generate_head(vsc::dm::IDataTypeStruct *t) {
     m_out->println("class %s extends component_c;", 
         m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
+    m_out->println("`zsp_typed_obj_util(%s)",
+        m_gen->getNameMap()->getName(t).c_str());
 }
 
 void TaskGenerateComp::generate(vsc::dm::IDataTypeStruct *t) {

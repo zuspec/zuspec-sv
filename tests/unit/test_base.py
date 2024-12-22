@@ -46,13 +46,14 @@ class TestBase(TestCase):
             content,
             comp_t,
             action_t,
-            load_stdlib=True):
+            load_stdlib=True,
+            debug=False):
         import zsp_fe_parser.core as zsp_fe
         import zsp_arl_dm.core as zsp_arl
         import zsp_parser.core as zspp
 
         factory = zsp_fe.Factory.inst()
-        factory.getDebugMgr().enable(True)
+        factory.getDebugMgr().enable(debug)
 
         arl_f = zsp_arl.Factory.inst()
         arl_ctxt = arl_f.mkContext()

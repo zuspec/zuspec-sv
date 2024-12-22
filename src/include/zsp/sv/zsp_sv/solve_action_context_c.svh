@@ -1,4 +1,6 @@
 
+typedef class resource_claim_solve_data_c;
+
 class solve_action_context_c;
     component_c                         parent_comp;
     resource_claim_solve_data_c         resource_data_m[obj_type_c];

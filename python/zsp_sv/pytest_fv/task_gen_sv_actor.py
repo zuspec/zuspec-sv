@@ -47,8 +47,8 @@ class TaskGenSvActor(Task):
         import zsp_sv.core as zsp_sv
 
         factory = zsp_fe.Factory.inst()
-#        if self.debug:
-        factory.getDebugMgr().enable(True)
+        if self.debug:
+            factory.getDebugMgr().enable(True)
 
         arl_f = zsp_arl.Factory.inst()
         arl_ctxt = arl_f.mkContext()
