@@ -118,10 +118,14 @@ function automatic addr_handle_t make_handle_from_handle(
     return ret;
 endfunction
 
+
     `include "activity_c.svh"
+    `include "activity_traverse_c.svh"
     `include "action_c.svh"
+    `include "action_constraint_c.svh"
 
     `include "activity_listener_c.svh"
+
 
 
 `include "component_ctor_ctxt_c.svh"

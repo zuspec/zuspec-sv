@@ -74,6 +74,7 @@ void TaskGenerateStruct::generate(vsc::dm::IDataTypeStruct *t) {
 
     generate_constraints(t);
     generate_execs(t);
+    generate_methods(t);
     generate_tail(t);
 }
 
@@ -158,6 +159,11 @@ void TaskGenerateStruct::generate_execs(vsc::dm::IDataTypeStruct *t) {
         }
 
     }
+}
+
+void TaskGenerateStruct::generate_methods(vsc::dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("generate_methods");
+    DEBUG_LEAVE("generate_methods");
 }
 
 

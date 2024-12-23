@@ -10,12 +10,25 @@
 `define zsp_dec(obj) if (obj != null) obj .dec()
 
 `define zsp_typed_obj_util(tname) \
-    static obj_type_c __type = new(`"tname`"); \
+    static obj_type_c __type; \
     static function obj_type_c get_type(); \
+        $display("Macros::get_type: %0s", `"tname`"); \
+        if (__type == null) begin \
+            __type = new(`"tname`"); \
+        end \
         return __type; \
     endfunction \
     virtual function obj_type_c get_obj_type(); \
-        return __type; \
+        $display("Macro::get_obj_type: %0s", `"tname`"); \
+        return get_type(); \
+    endfunction
+
+`define zsp_action_comp_type(comp_t) \
+    static function obj_type_c get_comp_type(); \
+        return comp_t::get_type(); \
+    endfunction \
+    virtual function obj_type_c get_obj_comp_type(); \
+        return get_comp_type(); \
     endfunction
 
 

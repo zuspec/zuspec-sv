@@ -163,7 +163,7 @@ bool TaskGenerateActorPkgPrv::generate() {
     out->println("");
     out->println("virtual task run();");
     out->inc_ind();
-    out->println("activity_%p root_activity = new(this);", root_activity.get());
+    out->println("activity_%p root_activity = new(this, comp_tree);", root_activity.get());
     out->println("");
     out->println("comp_tree.init(this.default_executor);");
     out->println("comp_tree.do_init(this.default_executor);");

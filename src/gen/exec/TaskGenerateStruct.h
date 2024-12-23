@@ -64,6 +64,8 @@ public:
 
     virtual void generate_execs(vsc::dm::IDataTypeStruct *t);
 
+    virtual void generate_methods(vsc::dm::IDataTypeStruct *t);
+
 protected:
     dmgr::IDebug                *m_dbg;
     TaskGenerate                *m_gen;

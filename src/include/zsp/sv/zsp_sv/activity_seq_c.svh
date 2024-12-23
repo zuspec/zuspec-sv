@@ -4,8 +4,8 @@
 class activity_seq_c : public activity_c;
     activity_c      sub_activities[$];
 
-    function new(actor_c actor);
-        super.new(actor);
+    function new(actor_c actor, component_c parent_comp);
+        super.new(actor, parent_comp);
     endfunction
 
     task run();

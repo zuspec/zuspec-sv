@@ -21,6 +21,17 @@ class action_c extends object;
 
     virtual function void set_component(component_c comp);
         $display("FATAL: set_component not implemented");
+        $finish;
+    endfunction
+
+    virtual function component_c get_component();
+        $display("FATAL: get_component not implemented");
+        $finish;
+        return null;
+    endfunction
+
+    virtual function obj_type_c get_obj_comp_type();
+        return null;
     endfunction
 
 endclass

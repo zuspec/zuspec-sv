@@ -24,28 +24,32 @@ class component_c extends typed_obj_c;
     // executor_t_map
 
     function new(string name, component_ctor_ctxt ctxt, component_c parent=null);
+        $display("component_c::new: %0s ctxt=%p", name, ctxt);
+        this.name = name;
+        this.parent = parent;
         if (ctxt != null) begin
             this.comp_id = ctxt.actor.comp_l.size();
             ctxt.actor.comp_l.push_back(this);
-            ctxt.enter(this);
         end else begin
             this.comp_id = -1;
         end
-        this.name = name;
-        this.parent = parent;
     endfunction
 
     /**
      * Adds a component instance to the map of comp_t -> [comp_inst] map
      */
     function void add_comp_inst(component_c comp);
-        if (comp_t_inst_m.exists(comp.get_obj_type())) begin
-            comp_t_inst_m[comp.get_obj_type()].push_back(comp);
+        obj_type_c comp_t = comp.get_obj_type();
+        $display("add_comp_inst: %0s (%0s)", comp.name, this.name);
+        $display("comp_obj_type: %0p", comp_t);
+        if (comp_t_inst_m.exists(comp_t)) begin
+            comp_t_inst_m[comp_t].push_back(comp);
         end else begin
             component_queue_h l;
             l.push_back(comp);
-            comp_t_inst_m[comp.get_obj_type()] = l;
+            comp_t_inst_m[comp_t] = l;
         end
+        $display("Contains: %0d", comp_t_inst_m[comp_t].size);
     endfunction
 
     virtual function void init_down(executor_base exec_b);

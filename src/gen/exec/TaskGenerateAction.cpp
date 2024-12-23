@@ -53,6 +53,9 @@ void TaskGenerateAction::generate_head(vsc::dm::IDataTypeStruct *t) {
         m_gen->getNameMap()->getName(action_t->getComponentType()).c_str());
     m_out->println("class %s extends action_c;", m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
+    m_out->println("`zsp_typed_obj_util(%s)", m_gen->getNameMap()->getName(t).c_str());
+    m_out->println("`zsp_action_comp_type(%s)", 
+        m_gen->getNameMap()->getName(action_t->getComponentType()).c_str());
 }
 
 void TaskGenerateAction::generate_fields(vsc::dm::IDataTypeStruct *t) {
@@ -138,6 +141,25 @@ void TaskGenerateAction::generate_execs(vsc::dm::IDataTypeStruct *t) {
                 get<3>(*it)); // name
         }
     }
+}
+
+void TaskGenerateAction::generate_methods(vsc::dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("generate_methods");
+
+    m_out->println("virtual function void set_component(component_c comp);");
+    m_out->inc_ind();
+    m_out->println("$cast(this.comp, comp);");
+    m_out->dec_ind();
+    m_out->println("endfunction");
+    m_out->println("");
+    m_out->println("virtual function component_c get_component();");
+    m_out->inc_ind();
+    m_out->println("return this.comp;");
+    m_out->dec_ind();
+    m_out->println("endfunction");
+    m_out->println("");
+
+    DEBUG_LEAVE("generate_methods");
 }
 
 void TaskGenerateAction::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
