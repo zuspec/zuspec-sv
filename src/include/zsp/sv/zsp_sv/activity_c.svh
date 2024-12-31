@@ -27,6 +27,11 @@ class activity_c extends object;
         this.parent_comp = parent_comp;
     endfunction
 
+    function void init(actor_c actor, component_c parent_comp);
+        this.actor = actor;
+        this.parent_comp = parent_comp;
+    endfunction
+
     virtual task run();
         $display("FATAL: activity::run not implemented");
         $finish;

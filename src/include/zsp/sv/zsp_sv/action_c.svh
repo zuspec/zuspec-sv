@@ -20,10 +20,12 @@
  */
 typedef class resource_claim_base_c;
 
-class action_c extends object;
-    rand bit[15:0]          parent_comp_id;
-    rand bit[15:0]          comp_id;
+class action_c extends activity_c;
     resource_claim_base_c   rsrc_claims[$];
+
+    function new();
+        super.new(null, null);
+    endfunction
 
     virtual task body(executor_base exec_b);
     endtask

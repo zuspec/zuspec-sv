@@ -50,6 +50,8 @@ class activity_traverse_c #(type Ta, type Tact=activity_c) extends activity_c;
     task run();
         executor_base exec_b = actor.get_default_executor();
 
+        action.init(actor, parent_comp);
+
         if (this.action.get_component() == null) begin
             // The context didn't assign component. Need to 
             // perform the context solving here...
@@ -79,7 +81,7 @@ class activity_traverse_c #(type Ta, type Tact=activity_c) extends activity_c;
         // TODO: select the executor
         // Evaluate the action's body. The action decides whether to call
         // an exec body or a sub-activity
-        action.body(exec_b);
+        action.run();
 
         foreach (actor.listeners[i]) begin
             actor.listeners[i].leave_traverse(action);

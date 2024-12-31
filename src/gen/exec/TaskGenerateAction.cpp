@@ -145,6 +145,7 @@ void TaskGenerateAction::generate_execs(vsc::dm::IDataTypeStruct *t) {
 
 void TaskGenerateAction::generate_methods(vsc::dm::IDataTypeStruct *t) {
     DEBUG_ENTER("generate_methods");
+    arl::dm::IDataTypeAction *action_t = dynamic_cast<arl::dm::IDataTypeAction *>(t);
 
     m_out->println("virtual function void set_component(component_c comp);");
     m_out->inc_ind();
@@ -158,6 +159,16 @@ void TaskGenerateAction::generate_methods(vsc::dm::IDataTypeStruct *t) {
     m_out->dec_ind();
     m_out->println("endfunction");
     m_out->println("");
+
+    m_out->println("virtual task run();");
+    m_out->inc_ind();
+    if (action_t->activities().size()) {
+    } else {
+        const std::vector<arl::dm::ITypeExecUP> &execs = 
+            action_t->getExecs(arl::dm::ExecKindT::Body);
+    }
+    m_out->dec_ind();
+    m_out->println("endtask");
 
     DEBUG_LEAVE("generate_methods");
 }
