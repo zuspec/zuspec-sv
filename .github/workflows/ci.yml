@@ -18,7 +18,7 @@ jobs:
             DEBUG=1 ./packages/python/bin/python3 -m ivpm update -a
             DEBUG=1 ./packages/python/bin/python3 setup.py build_ext --inplace
             #./packages/python/bin/python3 -m pip uninstall debug-mgr
-            ./packages/python/bin/python3 -m pip install --force-reinstall -e $(pwd)/packages/debug-mgr
+            #./packages/python/bin/python3 -m pip install --force-reinstall -e $(pwd)/packages/debug-mgr
             ls packages/python/lib/python*/site-packages
         - name: Run tests
           run: |
