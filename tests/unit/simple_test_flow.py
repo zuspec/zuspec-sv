@@ -57,15 +57,15 @@ def run_unit_test(
         prefixes = (prefixes,)
 
     print("test_srcdir: %s" % dirconfig.test_srcdir(), flush=True)
-    # flow.addTaskToPhase("generate.main", TaskGenSvActor(
-    #     "pss_top", 
-    #     "pss_top::Entry", 
-    #     actor_sv,
-    #     [pfv.FSPaths(
-    #         os.path.dirname(top_pss),
-    #         [top_pss], 
-    #         "pssSource")],
-    #     debug=debug))
+    flow.addTaskToPhase("generate.main", TaskGenSvActor(
+        "pss_top", 
+        "pss_top::Entry", 
+        actor_sv,
+        [pfv.FSPaths(
+            os.path.dirname(top_pss),
+            [top_pss], 
+            "pssSource")],
+        debug=debug))
     flow.addFileset("sim",
         pfv.FSPaths(
             zsp_sv,
