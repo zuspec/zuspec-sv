@@ -12,7 +12,7 @@ jobs:
           uses: actions/checkout@v4
         - name: Test build
           run: |
-            sudo apt-get install valgrind
+            sudo apt-get install valgrind uuid-dev
             python3 -m venv packages/python
             ./packages/python/bin/pip install ivpm
             DEBUG=1 ./packages/python/bin/python3 -m ivpm update -a
