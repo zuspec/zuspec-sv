@@ -12,7 +12,9 @@ echo "Requirements Files"
 cat packages/*.txt
 
 PYTHON=./packages/python/bin/python
-${PYTHON} -m pip install twine auditwheel ninja wheel cython
+${PYTHON} -m pip install auditwheel ninja wheel cython
+# Workaround for pypa bug
+${PYTHON} -m pip install -U twine packaging
 ${PYTHON} setup.py bdist_wheel
 
 for whl in dist/*.whl; do

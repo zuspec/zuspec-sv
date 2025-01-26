@@ -5,10 +5,14 @@ count=0
 this_py=$(cat $(find python -name '*.p*') | wc -l)
 this_h=$(cat $(find src -name '*.h') | wc -l)
 this_cpp=$(cat $(find src -name '*.cpp') | wc -l)
+this_svh=$(cat $(find src -name '*.svh') | wc -l)
+this_sv=$(cat $(find src -name '*.sv') | wc -l)
 
 count=`expr $count + $this_h`
 count=`expr $count + $this_cpp`
 count=`expr $count + $this_py`
+count=`expr $count + $this_svh`
+count=`expr $count + $this_sv`
 
 pyvsc_py=$(cat $(find packages/pyvsc-dataclasses/src -name '*.py') | wc -l)
 count=`expr $count + $pyvsc_py`
