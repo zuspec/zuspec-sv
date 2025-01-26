@@ -73,7 +73,11 @@ def test_subactivity_with(dirconfig):
     RES: leaf 1
     RES: leaf 2
     """
-    run_unit_test(dirconfig, content, expect)
+
+    if dirconfig.config.getHdlSim() == "vlt":
+        pytest.skip("Nested randomization not supported as of 5.028")
+    else:
+        run_unit_test(dirconfig, content, expect)
 
 def test_subactivity_subcomp(dirconfig):
     content = """
@@ -111,6 +115,10 @@ def test_subactivity_subcomp(dirconfig):
             }
 
             action Entry {
+                exec pre_solve {
+                    print("Entry::pre_solve");
+                }
+
                 activity {
                     do C::Mid;
                 }
@@ -122,7 +130,10 @@ def test_subactivity_subcomp(dirconfig):
     RES: leaf 1
     RES: leaf 2
     """
-    run_unit_test(dirconfig, content, expect)
+    if dirconfig.config.getHdlSim() == "vlt":
+        pytest.skip("Nested randomization not supported as of 5.028")
+    else:
+        run_unit_test(dirconfig, content, expect)
 
 def test_subactivity_listener(dirconfig):
     content = """

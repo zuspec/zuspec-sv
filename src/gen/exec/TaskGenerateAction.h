@@ -47,6 +47,8 @@ public:
 
     virtual void generate_dtor(vsc::dm::IDataTypeStruct *t) override { }
 
+    virtual void generate_init(vsc::dm::IDataTypeStruct *t) override { }
+
     virtual void generate_create_assign(vsc::dm::IDataTypeStruct *t) override { }
 
     virtual void generate_create_default(vsc::dm::IDataTypeStruct *t) override { }

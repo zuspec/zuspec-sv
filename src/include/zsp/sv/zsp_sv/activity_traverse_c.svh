@@ -22,7 +22,7 @@
 
 typedef class action_constraint_base_c;
 
-class activity_traverse_c #(type Ta, type Tact=activity_c) extends activity_c;
+class activity_traverse_c #(type Ta) extends activity_c;
     rand Ta                         action;
 `ifdef VERILATOR
     // As of 5.029, Verilator does not support random queues
@@ -49,6 +49,7 @@ class activity_traverse_c #(type Ta, type Tact=activity_c) extends activity_c;
 
     task run();
         executor_base exec_b = actor.get_default_executor();
+        `ZSP_DEBUG_ENTER("activity_traverse_c", ("run"));
 
         action.init(actor, parent_comp);
 
@@ -57,7 +58,7 @@ class activity_traverse_c #(type Ta, type Tact=activity_c) extends activity_c;
             // perform the context solving here...
             solve_action_context_c ctxt_solver = new(parent_comp);
             ctxt_solver.add_action(action);
-            ctxt_solver.resolve();
+            void'(ctxt_solver.resolve());
         end
 
         action.pre_solve();
@@ -78,10 +79,7 @@ class activity_traverse_c #(type Ta, type Tact=activity_c) extends activity_c;
             actor.listeners[i].enter_traverse(action);
         end
 
-        // TODO: select the executor
-        // Evaluate the action's body. The action decides whether to call
-        // an exec body or a sub-activity
-        action.run();
+        run_body(exec_b);
 
         foreach (actor.listeners[i]) begin
             actor.listeners[i].leave_traverse(action);
@@ -92,6 +90,11 @@ class activity_traverse_c #(type Ta, type Tact=activity_c) extends activity_c;
         //     act.run();
         // end
 
+        `ZSP_DEBUG_LEAVE("activity_traverse_c", ("run"));
+    endtask
+
+    virtual task run_body(executor_base exec_b);
+        action.body(exec_b);
     endtask
 
     function bit do_randomize();

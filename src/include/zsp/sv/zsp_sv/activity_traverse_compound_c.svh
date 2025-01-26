@@ -1,5 +1,5 @@
 /*
- * action_constraint_c.svh
+ * activity_traverse_compound_c.svh
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -18,18 +18,20 @@
  * Created on:
  *     Author:
  */
-class action_constraint_base_c;
-    rand bit        valid;
-endclass
+// Traversal constraints are added via aspects (?)
 
-class action_constraint_c #(type Ta=action_c) extends action_constraint_base_c;
-    rand Ta         action;
+typedef class action_constraint_base_c;
 
-    function new(Ta action);
-        this.action = action;
+class activity_traverse_compound_c #(type Ta, type Tact=activity_c) extends activity_traverse_c #(Ta);
+
+    function new(actor_c actor, component_c parent_comp, Ta action=null);
+        super.new(actor, parent_comp, action);
     endfunction
 
-endclass
+    virtual task run_body(executor_base exec_b);
+        Tact activity = new(actor, parent_comp, action);
+        activity.run();
+    endtask
 
-// Define class between target <action> and parent <this>
+endclass
 

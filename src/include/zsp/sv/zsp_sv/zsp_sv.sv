@@ -18,6 +18,9 @@
  * Created on:
  *     Author:
  */
+
+`include "zsp_sv_macros.svh"
+
 package zsp_sv;
 
 
@@ -60,8 +63,8 @@ endclass
 
 class object extends object_pool_base;
 
-    virtual function void init(executor_base exec_b);
-    endfunction
+//    virtual function void init(executor_base exec_b);
+//    endfunction
 
     virtual function void dtor();
     endfunction
@@ -140,6 +143,7 @@ endfunction
 
     `include "activity_c.svh"
     `include "activity_traverse_c.svh"
+    `include "activity_traverse_compound_c.svh"
     `include "action_c.svh"
     `include "action_constraint_c.svh"
 

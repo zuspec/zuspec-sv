@@ -27,6 +27,7 @@ class executor_base extends component_c;
     endfunction
 
     function backend_api get_api();
+        $display("Error: get_api not implemented");
         if (api == null) begin
             component_c c = this;
             actor_c actor;
@@ -39,6 +40,7 @@ class executor_base extends component_c;
             $cast(api, actor.get_backend());
         end
         return api;
+        // return null;
     endfunction
 
     function actor_c get_actor();

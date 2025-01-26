@@ -43,7 +43,8 @@ class component_c extends typed_obj_c;
     // executor_t_map
 
     function new(string name, component_ctor_ctxt ctxt, component_c parent=null);
-        $display("component_c::new: %0s ctxt=%p", name, ctxt);
+        `ZSP_DEBUG_ENTER("component_c", ("new %0s", name));
+        //$display("component_c::new: %0s ctxt=%p", name, ctxt);
         this.name = name;
         this.parent = parent;
         if (ctxt != null) begin
@@ -52,6 +53,7 @@ class component_c extends typed_obj_c;
         end else begin
             this.comp_id = -1;
         end
+        `ZSP_DEBUG_LEAVE("component_c", ("new %0s", name));
     endfunction
 
     /**
@@ -59,8 +61,6 @@ class component_c extends typed_obj_c;
      */
     function void add_comp_inst(component_c comp);
         obj_type_c comp_t = comp.get_obj_type();
-        $display("add_comp_inst: %0s (%0s)", comp.name, this.name);
-        $display("comp_obj_type: %0p", comp_t);
         if (comp_t_inst_m.exists(comp_t)) begin
             comp_t_inst_m[comp_t].push_back(comp);
         end else begin

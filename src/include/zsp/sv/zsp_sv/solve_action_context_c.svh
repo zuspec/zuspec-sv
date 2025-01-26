@@ -84,12 +84,12 @@ class solve_action_context_c;
         $display("add_action: comp_t=%0s", comp_t.name);
         $display("parent_comp: %0s", parent_comp.name);
         $display("parent_comp.size: %0d", parent_comp.comp_t_inst_m.size());
-        $display("action.comp_obj_type: %0p", action.get_obj_comp_type());
+//        $display("action.comp_obj_type: %0p", action.get_obj_comp_type());
 
         if (parent_comp.comp_t_inst_m.exists(comp_t)) begin
             actions.push_back(action);
             action_comp_s.push_back(parent_comp.comp_t_inst_m[comp_t]);
-            foreach (parent_comp.comp_t_inst_m[comp_t][i]) begin
+            for(int i=0; i<parent_comp.comp_t_inst_m[comp_t].size(); i++) begin
                 $display("comp[%0d] %0s", i, 
                     parent_comp.comp_t_inst_m[comp_t][i].name);
             end

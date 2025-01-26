@@ -1,5 +1,5 @@
-/*
- * action_constraint_c.svh
+/**
+ * TaskGenerateExecModelCoreMethodCall.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -16,20 +16,25 @@
  * limitations under the License.
  *
  * Created on:
- *     Author:
+ *     Author: 
  */
-class action_constraint_base_c;
-    rand bit        valid;
-endclass
+#pragma once
+#include "zsp/sv/impl/TaskGenetate"
 
-class action_constraint_c #(type Ta=action_c) extends action_constraint_base_c;
-    rand Ta         action;
+namespace zsp {
+namespace sv {
 
-    function new(Ta action);
-        this.action = action;
-    endfunction
 
-endclass
 
-// Define class between target <action> and parent <this>
+class TaskGenerateExecModelCoreMethodCall {
+public:
+    TaskGenerateExecModelCoreMethodCall();
+
+    virtual ~TaskGenerateExecModelCoreMethodCall();
+
+};
+
+}
+}
+
 

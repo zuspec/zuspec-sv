@@ -1,5 +1,5 @@
 /*
- * TaskGenerateActivity.cpp
+ * TaskGenerateActionActivity.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,8 +19,8 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
-#include "TaskGenerateActorPkgPrv.h"
-#include "TaskGenerateActivity.h"
+#include "TaskGenerate.h"
+#include "TaskGenerateActionActivity.h"
 #include "TaskGenerateConstraint.h"
 #include "ActivityInfo.h"
 
@@ -31,70 +31,41 @@ namespace gen {
 namespace exec {
 
 
-TaskGenerateActivity::TaskGenerateActivity(
-    TaskGenerateActorPkgPrv *gen,
+TaskGenerateActionActivity::TaskGenerateActionActivity(
+    TaskGenerate            *gen,
     IGenRefExpr             *genref,
     IOutput                 *out) : m_dbg(0), m_gen(gen), m_genref(genref), m_out(out) {
-    DEBUG_INIT("Zsp::sv::gen::exec::TaskGenerateActivity", gen->getDebugMgr());
+    DEBUG_INIT("Zsp::sv::gen::exec::TaskGenerateActionActivity", gen->getDebugMgr());
 }
 
-TaskGenerateActivity::~TaskGenerateActivity() {
+TaskGenerateActionActivity::~TaskGenerateActionActivity() {
 
 }
 
-void TaskGenerateActivity::generate(ActivityVariant *variant) {
-    arl::dm::IDataTypeActivity *activity = variant->info()->activity();
+void TaskGenerateActionActivity::generate(const std::vector<arl::dm::ITypeFieldActivityUP> &activities) {
+//    arl::dm::IDataTypeActionActivity *activity = variant->info()->activity();
     DEBUG_ENTER("generate");
+    OutputActivityScope out_activity(m_out);
+    m_out_activity = &out_activity;
 
-    m_variant_s.clear();
-    m_variant_s.push_back(variant);
-
-    m_out->println("class activity_%p extends activity_c;", activity);
-    m_out->inc_ind();
-
-//    m_out->println("%s actor;", m_gen->getActorName().c_str());
-    if (variant->info()->action()) {
-        m_out->println("%s self;", m_gen->getNameMap()->getName(variant->info()->action()).c_str());
-    }
-    if (variant->info()->action()) {
-        m_out->println("function new(actor_c actor, component_c parent_comp, %s self);",
-            m_gen->getNameMap()->getName(variant->info()->action()).c_str());
+    if (activities.size() > 1) {
+        DEBUG("TODO: handle schedule");
     } else {
-        m_out->println("function new(actor_c actor, component_c parent_comp);");
+        activities.at(0)->accept(m_this);
     }
-    m_out->inc_ind();
-    m_out->println("super.new(actor, parent_comp);");
-//    m_out->println("this.actor = actor;");
-    if (variant->info()->action()) {
-        m_out->println("this.self = self;");
-    }
-    m_out->dec_ind();
-    m_out->println("endfunction");
-    m_out->println("");
-    m_out->println("virtual task run();");
-    m_out->inc_ind();
-    OutputActivityScope out(m_out);
-    m_out_activity = &out;
-    activity->accept(m_this);
-    out.apply(m_out);
-    m_out->dec_ind();
-    m_out->println("endtask");
-    m_out->println("");
-    m_out->dec_ind();
-    m_out->println("endclass");
 
-    m_variant_s.pop_back();
+    out_activity.apply(m_out);
 
     DEBUG_LEAVE("generate");
 }
 
-void TaskGenerateActivity::visitDataTypeActivityParallel(arl::dm::IDataTypeActivityParallel *t) {
+void TaskGenerateActionActivity::visitDataTypeActivityParallel(arl::dm::IDataTypeActivityParallel *t) {
     DEBUG_ENTER("visitDataTypeActivityParallel");
     // TODO: must detect and handle replicate inside
     DEBUG_LEAVE("visitDataTypeActivityParallel");
 }
 
-void TaskGenerateActivity::visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) {
+void TaskGenerateActionActivity::visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) {
     DEBUG_ENTER("visitDataTypeActivitySequence %p", t);
     bool new_scope = (m_depth > 1);
     if (!m_depth) {
@@ -116,7 +87,7 @@ void TaskGenerateActivity::visitDataTypeActivitySequence(arl::dm::IDataTypeActiv
     DEBUG_LEAVE("visitDataTypeActivitySequence");
 }
 
-void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActivityTraverse *t) {
+void TaskGenerateActionActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActivityTraverse *t) {
     DEBUG_ENTER("visitDataTypeActivityTraverse");
     IOutput *run = m_out_activity->run();
     ActivityVariant *variant = m_variant_s.back();
@@ -129,6 +100,8 @@ void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActiv
 
     if (t->getWithC()) {
         run->println("activity_%p activity;", t);
+    } else if (variant->info()->action()->activities().size()) {
+        run->println("activity_traverse_compound_c #(%s,%s) activity;", variant->info()->action());
     } else {
         run->println("activity_traverse_c #(%s) activity;",
             m_gen->getNameMap()->getName(variant->info()->action()).c_str());
@@ -221,7 +194,7 @@ void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActiv
     DEBUG_LEAVE("visitDataTypeActivityTraverse");
 }
 
-void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeActivityTraverseType *t) {
+void TaskGenerateActionActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeActivityTraverseType *t) {
     DEBUG_ENTER("visitDataTypeActivityTraverseType");
 
     // TODO: if this activity has an inline 'with', then we must use 
@@ -238,16 +211,8 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
     run->println("// Traverse action %s", t->getTarget()->name().c_str());
     run->println("begin");
     run->inc_ind();
-//    if (t->getWithC()) {
-//        run->println("activity_%p activity = new(actor, parent_comp);", t);
-    if (t->getTarget()->activities().size()) {
-        arl::dm::IDataTypeActivity *activity = 
-            t->getTarget()->activities().at(0)->getDataTypeT<arl::dm::IDataTypeActivity>();
-        ActivityVariant *variant = m_variant_s.back()->getVariant(activity);
-
-        run->println("activity_traverse_compound_c #(%s, activity_%p) activity = new(actor, parent_comp);",
-            m_gen->getNameMap()->getName(t->getTarget()).c_str(),
-            variant->info()->activity());
+    if (t->getWithC()) {
+        run->println("activity_%p activity = new(actor, parent_comp);", t);
     } else {
         run->println("activity_traverse_c #(%s) activity = new(actor, parent_comp);", 
             m_gen->getNameMap()->getName(t->getTarget()).c_str());
@@ -257,7 +222,7 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
     run->dec_ind();
     run->println("end");
 
-    // ActivityVariant *variant = m_variant_s.back();
+    // ActionActivityVariant *variant = m_variant_s.back();
     // char varname[64];
     // snprintf(varname, sizeof(varname), "%s_%p", 
     //     m_gen->getNameMap()->getName(t->getTarget()).c_str(), t);
@@ -355,9 +320,9 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
 //     run->dec_ind();
 //     run->println("end");
 //     if (t->getTarget()->activities().size()) {
-//         arl::dm::IDataTypeActivity *activity = t->getTarget()->activities().at(0)->getDataTypeT<arl::dm::IDataTypeActivity>();
+//         arl::dm::IDataTypeActionActivity *activity = t->getTarget()->activities().at(0)->getDataTypeT<arl::dm::IDataTypeActionActivity>();
 //         DEBUG("activity: %p", activity);
-//         ActivityVariant *variant = m_variant_s.back()->getVariant(activity);
+//         ActionActivityVariant *variant = m_variant_s.back()->getVariant(activity);
 //         DEBUG("variant: %p", variant);
 //         // TODO: invoke activity
 //         run->println("begin");
@@ -391,7 +356,7 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
 //     run->println("%s.dtor();", varname);
 //     run->dec_ind();
 //     run->println("end");
-    DEBUG_LEAVE("visitDataTypeActivityTraverseType");
+    DEBUG_LEAVE("visitDataTypeActionActivityTraverseType");
 }
 
 }

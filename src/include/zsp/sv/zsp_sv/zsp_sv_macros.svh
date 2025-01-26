@@ -51,6 +51,24 @@
         return get_comp_type(); \
     endfunction
 
+`define ZSP_DEBUG_ENTER(region, msg) \
+    begin \
+        string _msg = $sformatf msg; \
+        $display("--> %0s::%0s", region, _msg); \
+    end
+
+`define ZSP_DEBUG(region, msg) \
+    begin \
+        string _msg = $sformatf msg; \
+        $display("%0s::%0s", region, _msg); \
+    end
+
+`define ZSP_DEBUG_LEAVE(region, msg) \
+    begin \
+        string _msg = $sformatf msg; \
+        $display("<-- %0s::%0s", region, _msg); \
+    end
+
 
 
 `endif /* INCLUDED_ZSP_SV_MACROS_SVH */

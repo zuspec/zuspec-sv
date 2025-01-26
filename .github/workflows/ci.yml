@@ -13,8 +13,9 @@ jobs:
         - name: Test build
           run: |
             sudo apt-get install valgrind
-            python3 -m pip install ivpm
-            DEBUG=1 python3 -m ivpm update -a
+            python3 -m venv packages/python
+            ./packages/python/bin/pip install ivpm
+            DEBUG=1 ./packages/python/bin/python3 -m ivpm update -a
             DEBUG=1 ./packages/python/bin/python3 setup.py build_ext --inplace
             #./packages/python/bin/python3 -m pip uninstall debug-mgr
             ./packages/python/bin/python3 -m pip install --force-reinstall -e $(pwd)/packages/debug-mgr

@@ -23,6 +23,7 @@
 #include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateAction.h"
+#include "TaskGenerateActionActivity.h"
 #include "TaskGenerateActionConstraints.h"
 #include "TaskGenerateActionCtor.h"
 #include "TaskGenerateActionFields.h"
@@ -160,15 +161,29 @@ void TaskGenerateAction::generate_methods(vsc::dm::IDataTypeStruct *t) {
     m_out->println("endfunction");
     m_out->println("");
 
-    m_out->println("virtual task run();");
-    m_out->inc_ind();
-    if (action_t->activities().size()) {
-    } else {
-        const std::vector<arl::dm::ITypeExecUP> &execs = 
-            action_t->getExecs(arl::dm::ExecKindT::Body);
-    }
-    m_out->dec_ind();
-    m_out->println("endtask");
+    // m_out->println("virtual task run();");
+    // m_out->inc_ind();
+    // if (action_t->activities().size()) {
+    //     GenRefExprExecModel genref(
+    //         m_gen,
+    //         t,
+    //         "this",
+    //         false);
+
+    //     if (action_t->activities().size() > 1) {
+    //         DEBUG("TODO: handle schedule");
+    //     } else {
+    //         m_out->println("activity_%p activity = new(actor, this);",
+    //             action_t->activities().at(0).get());
+    //         m_out->println("activity.run();");
+    //         m_out->println("activity.dtor();");
+    //     }
+    // } else {
+    //     const std::vector<arl::dm::ITypeExecUP> &execs = 
+    //         action_t->getExecs(arl::dm::ExecKindT::Body);
+    // }
+    // m_out->dec_ind();
+    // m_out->println("endtask");
 
     DEBUG_LEAVE("generate_methods");
 }
