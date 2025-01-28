@@ -43,16 +43,17 @@ class solve_action_context_c;
     endfunction
 
     function void post_randomize();
-        $display("post_randomize");
+        `ZSP_DEBUG_ENTER("solve_action_context_c", ("post_randomize"));
 `ifdef VERILATOR
         foreach (comp_idx[i]) begin
             comp_idx[i] = $urandom_range(0, action_comp_s[i].size()-1);
         end
 `endif
         foreach (comp_idx[i]) begin
-            $display("Select comp %0d", comp_idx[i]);
+            `ZSP_DEBUG("solve_action_context_c", ("Select comp %0d", comp_idx[i]));
             actions[i].set_component(action_comp_s[i][comp_idx[i]]);
         end
+        `ZSP_DEBUG_LEAVE("solve_action_context_c", ("post_randomize"));
     endfunction
 
 `ifndef VERILATOR
@@ -81,18 +82,18 @@ class solve_action_context_c;
 
     function void add_action(action_c action);
         obj_type_c comp_t = action.get_obj_comp_type();
-        $display("add_action: comp_t=%0s", comp_t.name);
-        $display("parent_comp: %0s", parent_comp.name);
-        $display("parent_comp.size: %0d", parent_comp.comp_t_inst_m.size());
+        `ZSP_DEBUG_ENTER("solve_action_context_c", ("add_action: comp_t=%0s", comp_t.name));
+        `ZSP_DEBUG("solve_action_context_c", ("parent_comp: %0s", parent_comp.name));
+        `ZSP_DEBUG("solve_action_context_c", ("parent_comp.size: %0d", parent_comp.comp_t_inst_m.size()));
 //        $display("action.comp_obj_type: %0p", action.get_obj_comp_type());
 
         if (parent_comp.comp_t_inst_m.exists(comp_t)) begin
             actions.push_back(action);
             action_comp_s.push_back(parent_comp.comp_t_inst_m[comp_t]);
-            for(int i=0; i<parent_comp.comp_t_inst_m[comp_t].size(); i++) begin
-                $display("comp[%0d] %0s", i, 
-                    parent_comp.comp_t_inst_m[comp_t][i].name);
-            end
+            // for(int i=0; i<parent_comp.comp_t_inst_m[comp_t].size(); i++) begin
+            //     $display("comp[%0d] %0s", i, 
+            //     parent_comp.comp_t_inst_m[comp_t][i].name);
+            // end
         end else begin
             $display("FATAL: solve_action_context_c::add_action: No component instances for %0s", comp_t.name);
             $finish;
@@ -103,7 +104,6 @@ class solve_action_context_c;
     endfunction
 
     function bit resolve();
-        $display("RESOLVE");
         return this.randomize();
     endfunction
 

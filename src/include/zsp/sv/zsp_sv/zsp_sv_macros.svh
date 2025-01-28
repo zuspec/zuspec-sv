@@ -32,14 +32,12 @@
 `define zsp_typed_obj_util(tname) \
     static obj_type_c __type; \
     static function obj_type_c get_type(); \
-        $display("Macros::get_type: %0s", `"tname`"); \
         if (__type == null) begin \
             __type = new(`"tname`"); \
         end \
         return __type; \
     endfunction \
     virtual function obj_type_c get_obj_type(); \
-        $display("Macro::get_obj_type: %0s", `"tname`"); \
         return get_type(); \
     endfunction
 
@@ -52,21 +50,18 @@
     endfunction
 
 `define ZSP_DEBUG_ENTER(region, msg) \
-    begin \
-        string _msg = $sformatf msg; \
-        $display("--> %0s::%0s", region, _msg); \
+    if (zsp_sv::log_level) begin \
+        $display("--> %0s::%0s", region, $sformatf msg); \
     end
 
 `define ZSP_DEBUG(region, msg) \
-    begin \
-        string _msg = $sformatf msg; \
-        $display("%0s::%0s", region, _msg); \
+    if (zsp_sv::log_level) begin \
+        $display("%0s::%0s", region, $sformatf msg); \
     end
 
 `define ZSP_DEBUG_LEAVE(region, msg) \
-    begin \
-        string _msg = $sformatf msg; \
-        $display("<-- %0s::%0s", region, _msg); \
+    if (zsp_sv::log_level) begin \
+        $display("<-- %0s::%0s", region, $sformatf msg); \
     end
 
 

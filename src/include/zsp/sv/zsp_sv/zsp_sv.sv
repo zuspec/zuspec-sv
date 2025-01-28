@@ -34,6 +34,8 @@ typedef class executor_base;
 
     typedef enum {NONE, LOW, MEDIUM, HIGH, FULL} message_verbosity_e;
 
+    int log_level = 0;
+
 class empty_t;
 endclass
 

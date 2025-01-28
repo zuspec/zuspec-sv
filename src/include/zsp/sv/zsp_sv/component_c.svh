@@ -68,7 +68,6 @@ class component_c extends typed_obj_c;
             l.push_back(comp);
             comp_t_inst_m[comp_t] = l;
         end
-        $display("Contains: %0d", comp_t_inst_m[comp_t].size);
     endfunction
 
     virtual function void init_down(executor_base exec_b);

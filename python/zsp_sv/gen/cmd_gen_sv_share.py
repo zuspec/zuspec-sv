@@ -31,7 +31,7 @@ class CmdGenSvShare(object):
         else:
             # In a source-level environment
             zsp_sv_dir = os.path.abspath(os.path.join(zsp_sv_dir, "../.."))
-            print(os.path.join(zsp_sv_dir, "share"))
+            print(os.path.join(zsp_sv_dir, "src"))
 
     @staticmethod
     def register(cmd, subparsers):

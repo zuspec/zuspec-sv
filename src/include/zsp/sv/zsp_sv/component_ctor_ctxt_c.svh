@@ -33,7 +33,7 @@ class component_ctor_ctxt_c;
     endfunction
 
     function void enter(component_c comp);
-        $display("enter %0s", comp.name);
+        `ZSP_DEBUG_ENTER("component_ctor_c", ("enter %0s", comp.name));
         if (!comp_inst_s.size || comp_inst_s[comp_inst_s.size-1] != comp) begin
             obj_type_c comp_t = comp.get_obj_type();
             comp_inst_s.push_back(comp);
@@ -41,13 +41,15 @@ class component_ctor_ctxt_c;
                 comp_inst_s[i].add_comp_inst(comp);
             end
         end
+        `ZSP_DEBUG_LEAVE("component_ctor_c", ("enter %0s", comp.name));
     endfunction
 
     function void leave(component_c comp);
-        $display("leave %0s", comp.name);
+        `ZSP_DEBUG_ENTER("component_ctor_c", ("leave %0s", comp.name));
         if (comp_inst_s.size && comp_inst_s[comp_inst_s.size-1] == comp) begin
             comp_inst_s.pop_back();
         end
+        `ZSP_DEBUG_LEAVE("component_ctor_c", ("leave %0s", comp.name));
     endfunction
 
 endclass
