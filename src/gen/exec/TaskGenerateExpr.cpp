@@ -90,6 +90,14 @@ void TaskGenerateExpr::visitTypeExprBin(vsc::dm::ITypeExprBin *e) {
     DEBUG_LEAVE("visitTypeExprBin");
 }
 
+void TaskGenerateExpr::visitTypeExprEnumRef(vsc::dm::ITypeExprEnumRef *e) {
+    DEBUG_ENTER("visitTypeExprEnumRef");
+    vsc::dm::IDataTypeEnum *enum_t = e->getEnumType();
+    std::pair<std::string,vsc::dm::ValRef> val = enum_t->getEnumerator(e->getEnumeratorId());
+    m_out->write(val.first.c_str());
+    DEBUG_LEAVE("visitTypeExprEnumRef");
+}
+
 void TaskGenerateExpr::visitTypeExprMethodCallContext(
     arl::dm::ITypeExprMethodCallContext *e) {
     DEBUG_ENTER("visitTypeExprMethodCallContext %s", e->getTarget()->name().c_str());

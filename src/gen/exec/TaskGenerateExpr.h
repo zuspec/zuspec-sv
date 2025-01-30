@@ -47,6 +47,8 @@ public:
 
 	virtual void visitTypeExprBin(vsc::dm::ITypeExprBin *e) override;
 
+	virtual void visitTypeExprEnumRef(vsc::dm::ITypeExprEnumRef *e) override;
+
     virtual void visitTypeExprMethodCallContext(arl::dm::ITypeExprMethodCallContext *e) override;
 
     virtual void visitTypeExprMethodCallStatic(arl::dm::ITypeExprMethodCallStatic *e) override;

@@ -13,7 +13,7 @@ def test_message_basics(dirconfig):
 
             action Entry {
                 exec body {
-                    message(0, "RES: Hello World!");
+                    message(LOW, "RES: Hello World!");
                 }
             }
         }
@@ -21,7 +21,7 @@ def test_message_basics(dirconfig):
     expect = """
     RES: Hello World!
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dirconfig, content, expect, debug=True)
 
 def test_message_verbosity_filter(dirconfig):
     content = """
