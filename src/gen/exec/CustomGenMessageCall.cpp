@@ -80,11 +80,15 @@ void CustomGenMessageCall::genExprMethodCallStatic(
         }
         last_c = fmt[i];
     }
-    out->write("begin message_verbosity_e v = message_verbosity_e'(");
+    // out->write("begin message_verbosity_e v = message_verbosity_e'(");
+    // TaskGenerateExpr(gen, refgen, out).generate(call->getParameters().at(0).get());
+    // out->write("); ");
+    // out->write("if (exec_b.get_actor().verbosity >= v) ");
+    // out->write("exec_b.get_api().message($sformatf(\"%s\"", fmt.c_str());
+
+    out->write("`zsp_message(exec_b, ");
     TaskGenerateExpr(gen, refgen, out).generate(call->getParameters().at(0).get());
-    out->write("); ");
-    out->write("if (exec_b.get_actor().verbosity >= v) ");
-    out->write("exec_b.get_api().message($sformatf(\"%s\"", fmt.c_str());
+    out->write(", (\"%s\"", fmt.c_str());
 
     if (call->getParameters().size() > 2) {
         for (std::vector<vsc::dm::ITypeExprUP>::const_iterator
@@ -95,7 +99,7 @@ void CustomGenMessageCall::genExprMethodCallStatic(
         }
     }
 
-    out->write(")); end ");
+    out->write("))");
     DEBUG_LEAVE("genExprMethodCallStatic");
 }
 

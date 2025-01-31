@@ -81,7 +81,7 @@ void CustomGenPrintCall::genExprMethodCallStatic(
         last_c = fmt[i];
     }
 
-    out->write("$display(\"%s\"", fmt.c_str());
+    out->write("`zsp_print(exec_b, (\"%s\"", fmt.c_str());
 
     if (call->getParameters().size() > 1) {
         for (std::vector<vsc::dm::ITypeExprUP>::const_iterator
@@ -92,7 +92,7 @@ void CustomGenPrintCall::genExprMethodCallStatic(
         }
     }
 
-    out->write(")");
+    out->write("))");
     DEBUG_LEAVE("genExprMethodCallStatic");
 }
 

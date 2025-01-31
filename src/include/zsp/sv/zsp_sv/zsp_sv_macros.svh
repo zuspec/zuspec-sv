@@ -64,6 +64,16 @@
         $display("<-- %0s::%0s", region, $sformatf msg); \
     end
 
+`define zsp_print(exec_b, msg) \
+    $write msg 
+
+`define zsp_message(exec_b, verb, msg) \
+    begin \
+        message_verbosity_e v = message_verbosity_e'(verb); \
+        if (exec_b.get_actor().verbosity >= v) begin \
+            exec_b.get_api().message($sformatf msg ); \
+        end \
+    end 
 
 
 `endif /* INCLUDED_ZSP_SV_MACROS_SVH */
