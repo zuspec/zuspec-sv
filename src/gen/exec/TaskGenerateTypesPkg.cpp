@@ -65,13 +65,17 @@ bool TaskGenerateTypesPkg::generate() {
     std::vector<int32_t> sorted = types->sort();
 
     std::set<std::string> omitted = {
-        "addr_handle_t"
+        "addr_handle_t",
     };
     for (std::vector<int32_t>::const_iterator
         it=sorted.begin();
         it!=sorted.end(); it++) {
         vsc::dm::IDataType *t = types->getType(*it);
-        if (omitted.find(getNameMap()->getName(t)) == omitted.end()) {
+        std::string name = getNameMap()->getName(t);
+        if ((omitted.find(name) == omitted.end()) &&
+            name.find("executor_pkg__") == -1 &&
+            name.find("addr_reg_pkg__") == -1 &&
+            name.find("std_pkg__") == -1) {
             out->println("typedef class %s;", getNameMap()->getName(t).c_str());
         }
     }
@@ -80,11 +84,14 @@ bool TaskGenerateTypesPkg::generate() {
     for (std::vector<int32_t>::const_iterator
         it=sorted.begin();
         it!=sorted.end(); it++) {
-        if (it != sorted.begin()) {
-            out->println("");
-        }
         ICustomGen *custom_gen = dynamic_cast<ICustomGen *>(
             types->getType(*it)->getAssociatedData());
+        vsc::dm::IDataType *dt = types->getType(*it);
+        if (dynamic_cast<vsc::dm::IDataTypeStruct *>(dt)) {
+            DEBUG("gen type %s (%p)", 
+                dynamic_cast<vsc::dm::IDataTypeStruct *>(dt)->name().c_str(),
+                custom_gen);
+        }
         if (custom_gen) {
             custom_gen->genDefinition(
                 this, 
@@ -93,6 +100,7 @@ bool TaskGenerateTypesPkg::generate() {
         } else {
             TaskDefineType(this, out.get()).generate(
                 types->getType(*it));
+            out->println("");
         }
     }
     out->println("");

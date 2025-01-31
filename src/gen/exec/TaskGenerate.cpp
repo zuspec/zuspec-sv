@@ -28,6 +28,7 @@
 #include "CustomGenAddrRegion.h"
 #include "CustomGenAddrRegionTransparent.h"
 #include "CustomGenCoreMethodCall.h"
+#include "CustomGenCoreType.h"
 #include "CustomGenMemRwCall.h"
 #include "CustomGenMessageCall.h"
 #include "CustomGenPrintCall.h"
@@ -145,8 +146,12 @@ void TaskGenerate::attach_custom_gen() {
         } else if (isInstance(it->get(), addr_region_base_bases)) {
             DEBUG("Is derived from addr_region_base");
             (*it)->setAssociatedData(new CustomGenAddrRegion(getDebugMgr()));
+        } else if (name.find("addr_reg_pkg::") == 0
+            || name.find("executor_pkg::") == 0
+            || name.find("std_pkg::") == 0) {
+            DEBUG("Add for type %s", name.c_str());
+            (*it)->setAssociatedData(new CustomGenCoreType(m_dmgr));
         }
-
 
 #ifdef UNDEFINED
         if (name.find("::contiguous_addr_space_c") != -1 
@@ -249,15 +254,30 @@ bool TaskGenerate::isInstance(
         vsc::dm::IDataTypeStruct *t, 
         const std::vector<vsc::dm::IDataTypeStruct *> &bases) {
     bool ret = false;
+    int32_t depth = 0;
+
+//    DEBUG_ENTER("isInstance");
 
     while (t && !ret) {
-        for (std::vector<vsc::dm::IDataTypeStruct *>::const_iterator
-            it=bases.begin();
-            it!=bases.end() && !ret; it++) {
-            ret |= (t == *it);
+//        DEBUG("t=%s", t->name().c_str());
+        if (depth) {
+            for (std::vector<vsc::dm::IDataTypeStruct *>::const_iterator
+                it=bases.begin();
+                it!=bases.end() && !ret; it++) {
+                if (t == *it) {
+ //                   DEBUG("is-a %s", (*it)->name().c_str());
+                    ret = true;
+                    break;
+                }
+            }
         }
+
         t = t->getSuper();
+
+        depth++;
     }
+
+//    DEBUG_LEAVE("isInstance %d", ret);
 
     return ret;
 }
