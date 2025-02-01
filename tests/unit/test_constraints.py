@@ -17,8 +17,8 @@ def test_eq(dirconfig):
                     b == 2;
                 }
                 exec post_solve {
-                    print("RES: a=%d", a);
-                    print("RES: b=%d", b);
+                    print("RES: a=%d\\n", a);
+                    print("RES: b=%d\\n", b);
                 }
             }
         }
@@ -45,7 +45,7 @@ def test_if_1(dirconfig):
                     }
                 }
                 exec post_solve {
-                    print("RES: a=%d", a);
+                    print("RES: a=%d\\n", a);
                 }
             }
         }
@@ -77,8 +77,8 @@ def test_if(dirconfig):
                     }
                 }
                 exec post_solve {
-                    print("RES: a=%d", a);
-                    print("RES: b=%d", b);
+                    print("RES: a=%d\\n", a);
+                    print("RES: b=%d\\n", b);
                 }
             }
         }
@@ -104,8 +104,8 @@ def test_if(dirconfig):
 #                     (c2 == 2) -> b == 2;
 #                 }
 #                 exec post_solve {
-#                     print("RES: a=%d", a);
-#                     print("RES: b=%d", b);
+#                     print("RES: a=%d\\n", a);
+#                     print("RES: b=%d\\n", b);
 #                 }
 #             }
 #         }

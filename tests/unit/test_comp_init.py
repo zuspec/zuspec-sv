@@ -10,10 +10,10 @@ def test_single_level_init(dirconfig):
         import std_pkg::*;
         component pss_top {
             exec init_down {
-                print("RES: init_down");
+                print("RES: init_down\\n");
             }
             exec init_up {
-                print("RES: init_up");
+                print("RES: init_up\\n");
             }
             action Entry {
             }
@@ -30,19 +30,19 @@ def test_nested_dual(dirconfig):
         import std_pkg::*;
         component C {
             exec init_down {
-                print("RES: C.init_down");
+                print("RES: C.init_down\\n");
             }
             exec init_up {
-                print("RES: C.init_up");
+                print("RES: C.init_up\\n");
             }
         }
         component pss_top {
             C c1, c2;
             exec init_down {
-                print("RES: init_down");
+                print("RES: init_down\\n");
             }
             exec init_up {
-                print("RES: init_up");
+                print("RES: init_up\\n");
             }
             action Entry {
             }

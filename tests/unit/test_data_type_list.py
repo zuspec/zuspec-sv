@@ -20,7 +20,7 @@ def test_decl_int_list_comp(dirconfig):
 
             action Entry {
                 exec post_solve {
-                    print("RES: arr=%d,%d,%d,%d", 
+                    print("RES: arr=%d,%d,%d,%d\\n", 
                         comp.arr[0], comp.arr[1], 
                         comp.arr[2], comp.arr[3]);
                 }
@@ -50,7 +50,7 @@ def test_decl_int_list_comp_foreach(dirconfig):
 
             action Entry {
                 exec post_solve {
-                    print("RES: arr=%d,%d,%d,%d", 
+                    print("RES: arr=%d,%d,%d,%d\\n", 
                         comp.arr[0], comp.arr[1], 
                         comp.arr[2], comp.arr[3]);
                 }
@@ -71,7 +71,7 @@ def test_decl_int_array_action(dirconfig):
             action Entry {
                 int     arr[4] = {1, 2, 3, 4};
                 exec post_solve {
-                    print("RES: arr=%d,%d,%d,%d", 
+                    print("RES: arr=%d,%d,%d,%d\\n", 
                         arr[0], arr[1], 
                         arr[2], arr[3]);
                 }
@@ -102,7 +102,7 @@ def test_decl_rand_int_list_action(dirconfig):
                     arr[3] == 4;
                 }
                 exec post_solve {
-                    print("RES: arr=%d,%d,%d,%d", 
+                    print("RES: arr=%d,%d,%d,%d\\n", 
                         arr[0], arr[1], 
                         arr[2], arr[3]);
                 }
@@ -136,7 +136,7 @@ def test_decl_rand_int_list_action_foreach(dirconfig : pfv.DirConfig):
                     }
                 }
                 exec post_solve {
-                    print("RES: arr=%d,%d,%d,%d", 
+                    print("RES: arr=%d,%d,%d,%d\\n", 
                         arr[0], arr[1], 
                         arr[2], arr[3]);
                 }

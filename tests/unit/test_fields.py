@@ -15,8 +15,8 @@ def test_bool_field(dirconfig):
                 constraint f1 == 0;
                 constraint f2 == 1;
                 exec post_solve {
-                    print("RES: f1=%d", f1);
-                    print("RES: f2=%d", f2);
+                    print("RES: f1=%d\\n", f1);
+                    print("RES: f2=%d\\n", f2);
                 }
             }
         }
@@ -35,7 +35,7 @@ def test_bit_field(dirconfig):
                 rand bit[4] f1;
                 constraint f1 == 15;
                 exec post_solve {
-                    print("RES: f1=%d", f1);
+                    print("RES: f1=%d\\n", f1);
                 }
             }
         }
@@ -53,7 +53,7 @@ def test_int_field(dirconfig):
                 rand int[4] f1;
                 constraint f1 == 15;
                 exec post_solve {
-                    print("RES: f1=%d", f1);
+                    print("RES: f1=%d\\n", f1);
                 }
             }
         }
@@ -74,7 +74,7 @@ def disabled_test_struct_field(dirconfig):
                 rand S f1;
                 constraint f1.a == 4;
                 exec post_solve {
-                    print("RES: f1.a=%d", f1.a);
+                    print("RES: f1.a=%d\\n", f1.a);
                 }
             }
         }
@@ -90,32 +90,32 @@ def disabled_test_struct_nested_field(dirconfig):
         struct S1 {
             rand bit[4] a;
             exec pre_solve {
-                print("RES: S1.pre_solve");
+                print("RES: S1.pre_solve\\n");
             }
             exec post_solve {
-                print("RES: S1.post_solve");
+                print("RES: S1.post_solve\\n");
             }
         }
         struct S {
             rand bit[4] a;
             rand S1     b;
             exec pre_solve {
-                print("RES: S.pre_solve");
+                print("RES: S.pre_solve\\n");
             }
             exec post_solve {
-                print("RES: S.post_solve");
+                print("RES: S.post_solve\\n");
             }
         }
         component pss_top {
             action Entry {
                 rand S f1;
                 exec pre_solve {
-                    print("RES: Entry.pre_solve");
+                    print("RES: Entry.pre_solve\\n");
                 }
                 constraint f1.a == 4;
                 constraint f1.b.a == 7;
                 exec post_solve {
-                    print("RES: f1.a=%d f1.b.a=%d", f1.a, f1.b.a);
+                    print("RES: f1.a=%d f1.b.a=%d\\n", f1.a, f1.b.a);
                 }
             }
         }

@@ -65,4 +65,9 @@ class addr_handle_t extends object_pool_base;
         end
         return ret;
     endfunction
+
+    static function addr_handle_t create_default();
+        return null;
+    endfunction
+
 endclass

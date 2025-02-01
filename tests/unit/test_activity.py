@@ -12,7 +12,7 @@ def test_subactivity(dirconfig):
 
             action Leaf {
                 exec post_solve {
-                    print("RES: leaf");
+                    print("RES: leaf\\n");
                 }
             }
 
@@ -45,7 +45,7 @@ def test_subactivity_with(dirconfig):
             action Leaf {
                 rand bit[16] val0, val;
                 exec post_solve {
-                    print("RES: leaf %d", val);
+                    print("RES: leaf %d\\n", val);
                 }
             }
 
@@ -87,7 +87,7 @@ def test_subactivity_subcomp(dirconfig):
             action Leaf {
                 rand bit[16] val0, val;
                 exec post_solve {
-                    print("RES: leaf %d", val);
+                    print("RES: leaf %d\\n", val);
                 }
             }
 
@@ -116,7 +116,7 @@ def test_subactivity_subcomp(dirconfig):
 
             action Entry {
                 exec pre_solve {
-                    print("Entry::pre_solve");
+                    print("Entry::pre_solve\\n");
                 }
 
                 activity {
@@ -142,7 +142,7 @@ def test_subactivity_listener(dirconfig):
 
             action Leaf {
                 exec post_solve {
-                    print("RES: leaf");
+                    print("RES: leaf\\n");
                 }
             }
 

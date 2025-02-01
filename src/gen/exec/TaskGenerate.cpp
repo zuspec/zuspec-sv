@@ -145,12 +145,20 @@ void TaskGenerate::attach_custom_gen() {
             (*it)->setAssociatedData(new CustomGenAddrRegionTransparent(getDebugMgr()));
         } else if (isInstance(it->get(), addr_region_base_bases)) {
             DEBUG("Is derived from addr_region_base");
-            (*it)->setAssociatedData(new CustomGenAddrRegion(getDebugMgr()));
+            if (it->get()->name().find("addr_reg_pkg::") == 0) {
+                std::string leaf = name.substr(name.find("::")+2);
+                (*it)->setAssociatedData(new CustomGenCoreType(m_dmgr));
+                m_namemap->setName(it->get(), leaf);
+            } else {
+                (*it)->setAssociatedData(new CustomGenAddrRegion(getDebugMgr()));
+            }
         } else if (name.find("addr_reg_pkg::") == 0
             || name.find("executor_pkg::") == 0
             || name.find("std_pkg::") == 0) {
             DEBUG("Add for type %s", name.c_str());
+            std::string leaf = name.substr(name.find("::")+2);
             (*it)->setAssociatedData(new CustomGenCoreType(m_dmgr));
+            m_namemap->setName(it->get(), leaf);
         }
 
 #ifdef UNDEFINED

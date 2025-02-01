@@ -20,7 +20,7 @@ def test_struct_comp_field(dirconfig):
             }
             action Entry {
                 exec post_solve {
-                    print("RES: a=%d b=%d", comp.s1.a, comp.s1.b);
+                    print("RES: a=%d b=%d\\n", comp.s1.a, comp.s1.b);
                 }
             }
         }
@@ -48,7 +48,7 @@ def test_struct_action_field(dirconfig):
                 }
 
                 exec post_solve {
-                    print("RES: a=%d b=%d", s1.a, s1.b);
+                    print("RES: a=%d b=%d\\n", s1.a, s1.b);
                 }
             }
         }
@@ -75,7 +75,7 @@ def test_struct_exec_var(dirconfig):
                     S s1, s2;
                     s1.a = 1;
                     s1.b = 2;
-                    print("RES: a=%d b=%d", s1.a, s1.b);
+                    print("RES: a=%d b=%d\\n", s1.a, s1.b);
                 }
             }
         }
@@ -107,8 +107,8 @@ def test_struct_assign(dirconfig):
                     s2 = s1;
                     s1.a = 3;
                     s1.b = 4;
-                    print("RES: a=%d b=%d", s1.a, s1.b);
-                    print("RES: a=%d b=%d", s2.a, s2.b);
+                    print("RES: a=%d b=%d\\n", s1.a, s1.b);
+                    print("RES: a=%d b=%d\\n", s2.a, s2.b);
                 }
             }
         }

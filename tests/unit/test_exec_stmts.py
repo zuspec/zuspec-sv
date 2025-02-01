@@ -12,7 +12,7 @@ def test_repeat_count(dirconfig):
             action Entry {
                 exec post_solve {
                     repeat (2) {
-                        print("RES: Hello");
+                        print("RES: Hello\\n");
                     }
                 }
             }
@@ -31,7 +31,7 @@ def test_repeat_count(dirconfig):
 #             action Entry {
 #                 exec post_solve {
 #                     repeat (2) {
-#                         print("RES: Hello");
+#                         print("RES: Hello\\n");
 #                     }
 #                 }
 #             }
@@ -50,7 +50,7 @@ def test_repeat_count_var(dirconfig):
             action Entry {
                 exec post_solve {
                     repeat (i : 2) {
-                        print("RES: Hello %d", i);
+                        print("RES: Hello %d\\n", i);
                     }
                 }
             }
@@ -70,7 +70,7 @@ def test_repeat_local_var(dirconfig):
                 exec post_solve {
                     repeat (i : 2) {
                         int x = 1;
-                        print("RES: Hello %d", x);
+                        print("RES: Hello %d\\n", x);
                     }
                 }
             }
@@ -90,7 +90,7 @@ def test_repeat_count_local_var(dirconfig):
                 exec post_solve {
                     repeat (i : 2) {
                         int x = i+1;
-                        print("RES: Hello %d %d", i, x);
+                        print("RES: Hello %d %d\\n", i, x);
                     }
                 }
             }
@@ -110,7 +110,7 @@ def test_while(dirconfig):
                 exec post_solve {
                     int i = 0;
                     while (i < 2) {
-                        print("RES: Hello %d", i);
+                        print("RES: Hello %d\\n", i);
                         i += 1;
                     }
                 }
@@ -131,7 +131,7 @@ def test_repeat_while(dirconfig):
                 exec post_solve {
                     int i = 0;
                     repeat {
-                        print("RES: Hello %d", i);
+                        print("RES: Hello %d\\n", i);
                         i += 1;
                     } while (i < 2);
                 }
@@ -152,14 +152,14 @@ def test_if_else(dirconfig):
                 exec post_solve {
                     int i = 1;
                     if (i == 1) {
-                        print("RES: i==1");
+                        print("RES: i==1\\n");
                     } else {
-                        print("RES: !(i==1)");
+                        print("RES: !(i==1)\\n");
                     }
                     if (i != 1) {
-                        print("RES: i!=1");
+                        print("RES: i!=1\\n");
                     } else {
-                        print("RES: !(i!=1)");
+                        print("RES: !(i!=1)\\n");
                     }
                 }
             }
@@ -179,18 +179,18 @@ def test_if_elsif(dirconfig):
                 exec post_solve {
                     int i = 1;
                     if (i == 2) {
-                        print("RES: i==2");
+                        print("RES: i==2\\n");
                     } else if (i == 1) {
-                        print("RES: i==1");
+                        print("RES: i==1\\n");
                     } else {
-                        print("RES: !(i==1)");
+                        print("RES: !(i==1)\\n");
                     }
                     if (i != 1) {
-                        print("RES: i!=1");
+                        print("RES: i!=1\\n");
                     } else if (i != 2) {
-                        print("RES: i!=1");
+                        print("RES: i!=1\\n");
                     } else {
-                        print("RES: !(i!=1)");
+                        print("RES: !(i!=1)\\n");
                     }
                 }
             }
@@ -232,23 +232,23 @@ def test_assign(dirconfig):
             action Entry {
                 exec post_solve {
                     int i = 1;
-                    print("RES: i==1 ; i=%d", i);
+                    print("RES: i==1 ; i=%d\\n", i);
                     i += 1;
-                    print("RES: i==2 ; i=%d", i);
+                    print("RES: i==2 ; i=%d\\n", i);
                     i = 1;
-                    print("RES: i==1 ; i=%d", i);
+                    print("RES: i==1 ; i=%d\\n", i);
                     i -= 1;
-                    print("RES: i==0 ; i=%d", i);
+                    print("RES: i==0 ; i=%d\\n", i);
                     i |= 1;
-                    print("RES: i==1 ; i=%d", i);
+                    print("RES: i==1 ; i=%d\\n", i);
                     i |= 2;
-                    print("RES: i==3 ; i=%d", i);
+                    print("RES: i==3 ; i=%d\\n", i);
                     i &= 2;
-                    print("RES: i==2 ; i=%d", i);
+                    print("RES: i==2 ; i=%d\\n", i);
                     i <<= 2;
-                    print("RES: i==8 ; i=%d", i);
+                    print("RES: i==8 ; i=%d\\n", i);
                     i >>= 2;
-                    print("RES: i==2 ; i=%d", i);
+                    print("RES: i==2 ; i=%d\\n", i);
                 }
             }
         }

@@ -12,7 +12,7 @@ def test_default_api_impl_no_access(dirconfig):
 
             action Entry {
                 exec post_solve {
-                    print("RES: Hello World");
+                    print("RES: Hello World\\n");
                 }
             }
         }

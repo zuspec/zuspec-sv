@@ -10,7 +10,7 @@ def test_function_global(dirconfig):
     content = """
         import std_pkg::*;
         function void print_val(int v) {
-          print("RES: %d", v);
+          print("RES: %d\\n", v);
         }
         component pss_top {
             action Entry {
@@ -36,8 +36,8 @@ def test_function_global_rval_int(dirconfig):
         component pss_top {
             action Entry {
                 exec post_solve {
-                    print("RES: %d", print_val(2));
-                    print("RES: %d", print_val(4));
+                    print("RES: %d\\n", print_val(2));
+                    print("RES: %d\\n", print_val(4));
                     print_val(4);
                 }
             }
@@ -62,11 +62,11 @@ def test_function_global_recurse(dirconfig):
         component pss_top {
             action Entry {
                 exec post_solve {
-                    print("RES: %d", fibonacci(0));
-                    print("RES: %d", fibonacci(1));
-                    print("RES: %d", fibonacci(2));
-                    print("RES: %d", fibonacci(3));
-                    print("RES: %d", fibonacci(4));
+                    print("RES: %d\\n", fibonacci(0));
+                    print("RES: %d\\n", fibonacci(1));
+                    print("RES: %d\\n", fibonacci(2));
+                    print("RES: %d\\n", fibonacci(3));
+                    print("RES: %d\\n", fibonacci(4));
                 }
             }
         }

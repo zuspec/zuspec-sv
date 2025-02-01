@@ -33,7 +33,7 @@ def test_simple_reg(dirconfig):
             exec init_down {
                 addr_handle_t reg_addr;
                 transparent_addr_region_s<> region;
-                print("RES: init_down");
+                print("RES: init_down\\n");
 
                 region.addr = 0x80000000;
                 region.size = 0x00010000;
@@ -83,7 +83,7 @@ def disabled_test_reg_get_handle(dirconfig):
             exec init_down {
                 addr_handle_t reg_addr;
                 transparent_addr_region_s<> region;
-                print("RES: init_down");
+                print("RES: init_down\\n");
 
                 region.addr = 0x80000000;
                 region.size = 0x00010000;
@@ -155,7 +155,7 @@ def test_group_array(dirconfig):
             exec init_down {
                 addr_handle_t reg_addr;
                 transparent_addr_region_s<> region;
-                print("RES: init_down");
+                print("RES: init_down\\n");
 
                 region.addr = 0x80000000;
                 region.size = 0x00010000;
@@ -226,7 +226,7 @@ def test_group_array_action_field_index(dirconfig):
             exec init_down {
                 addr_handle_t reg_addr;
                 transparent_addr_region_s<> region;
-                print("RES: init_down");
+                print("RES: init_down\\n");
 
                 region.addr = 0x80000000;
                 region.size = 0x00010000;

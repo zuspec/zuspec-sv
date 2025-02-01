@@ -110,6 +110,11 @@ endclass
     `include "storage_handle_s.svh"
     `include "addr_handle_t.svh"
 
+    `include "empty_addr_trait_s.svh"
+    `include "addr_region_base_s.svh"
+    `include "addr_region_s.svh"
+    `include "transparent_addr_region_s.svh"
+
 
 
 class addr_claim_t;
@@ -157,15 +162,8 @@ endfunction
 `include "component_c.svh"
 `include "actor_t_c.svh"
 
-class addr_region_base_s extends object;
-    bit[63:0]           size;
-    string              tag;
-    bit[63:0]           addr;
+`include "transparent_addr_space_c.svh"
 
-    virtual function bit[63:0] get_address();
-        return addr;
-    endfunction
-endclass
 
 class addr_space_c extends component_c;
     function new(string name, component_ctor_ctxt ctxt, component_c parent);
