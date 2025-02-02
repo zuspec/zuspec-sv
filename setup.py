@@ -5,16 +5,16 @@ import os
 import sys
 from setuptools import Extension, find_namespace_packages
 
-version="0.0.1"
 
 proj_dir = os.path.dirname(os.path.abspath(__file__))
 
 try:
     sys.path.insert(0, os.path.join(proj_dir, "python/zsp_sv"))
-    from __build_num__ import BUILD_NUM
-    version += ".%s" % str(BUILD_NUM)
+    from __version__ import VERSION
+    version = VERSION
 except ImportError as e:
     print("No build num: %s" % str(e))
+    version="0.0.1"
 
 isSrcBuild = False
 try:
