@@ -34,7 +34,8 @@ namespace exec {
 TaskGenerateActivity::TaskGenerateActivity(
     TaskGenerateActorPkgPrv *gen,
     IGenRefExpr             *genref,
-    IOutput                 *out) : m_dbg(0), m_gen(gen), m_genref(genref), m_out(out) {
+    IOutput                 *out) : 
+        m_dbg(0), m_gen(gen), m_genref(genref), m_out(out), m_depth(1) {
     DEBUG_INIT("Zsp::sv::gen::exec::TaskGenerateActivity", gen->getDebugMgr());
 }
 
@@ -46,6 +47,7 @@ void TaskGenerateActivity::generate(ActivityVariant *variant) {
     arl::dm::IDataTypeActivity *activity = variant->info()->activity();
     DEBUG_ENTER("generate");
 
+    m_depth = 1;
     m_variant_s.clear();
     m_variant_s.push_back(variant);
 
@@ -96,12 +98,14 @@ void TaskGenerateActivity::visitDataTypeActivityParallel(arl::dm::IDataTypeActiv
 
 void TaskGenerateActivity::visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) {
     DEBUG_ENTER("visitDataTypeActivitySequence %p", t);
-    bool new_scope = (m_depth > 1);
-    if (!m_depth) {
-        ActivityVariant *variant = m_variant_s.back()->getVariant(t);
-        DEBUG("variant: %p", variant);
-        m_variant_s.push_back(variant);
-    }
+    // Note: This is disabled because it was effectively gated by a UMR.
+    //       We need to revisit this. 
+    // bool new_scope = (m_depth > 1);
+    // if (!m_depth) {
+    //     ActivityVariant *variant = m_variant_s.back()->getVariant(t);
+    //     DEBUG("variant: %p", variant);
+    //     m_variant_s.push_back(variant);
+    // }
 
     for (std::vector<arl::dm::ITypeFieldActivityUP>::const_iterator
         it=t->getActivities().begin();
@@ -109,9 +113,9 @@ void TaskGenerateActivity::visitDataTypeActivitySequence(arl::dm::IDataTypeActiv
         (*it)->accept(m_this);
     }
 
-    if (!m_depth) {
-        m_variant_s.pop_back();
-    }
+    // if (!m_depth) {
+    //     m_variant_s.pop_back();
+    // }
 
     DEBUG_LEAVE("visitDataTypeActivitySequence");
 }

@@ -71,4 +71,4 @@ def test_simple_memread(dirconfig):
     RES: read32 0x80000000 0x00000020
     """
     run_unit_test(dirconfig, content, expect,
-                  debug=True)
+                  debug=False)

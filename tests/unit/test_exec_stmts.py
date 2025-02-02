@@ -41,7 +41,7 @@ def test_repeat_count(dirconfig):
 #     RES: Hello
 #     RES: Hello
 #     """
-#     run_unit_test(dirconfig, content, expect, debug=True)
+#     run_unit_test(dirconfig, content, expect, debug=False)
 
 def test_repeat_count_var(dirconfig):
     content = """
@@ -60,7 +60,7 @@ def test_repeat_count_var(dirconfig):
     RES: Hello 0
     RES: Hello 1
     """
-    run_unit_test(dirconfig, content, expect, debug=True)
+    run_unit_test(dirconfig, content, expect, debug=False)
 
 def test_repeat_local_var(dirconfig):
     content = """
@@ -80,7 +80,7 @@ def test_repeat_local_var(dirconfig):
     RES: Hello 1
     RES: Hello 1
     """
-    run_unit_test(dirconfig, content, expect, debug=True)
+    run_unit_test(dirconfig, content, expect, debug=False)
 
 def test_repeat_count_local_var(dirconfig):
     content = """
@@ -100,7 +100,7 @@ def test_repeat_count_local_var(dirconfig):
     RES: Hello 0 1
     RES: Hello 1 2
     """
-    run_unit_test(dirconfig, content, expect, debug=True)
+    run_unit_test(dirconfig, content, expect, debug=False)
 
 def test_while(dirconfig):
     content = """
@@ -121,7 +121,7 @@ def test_while(dirconfig):
     RES: Hello 0
     RES: Hello 1
     """
-    run_unit_test(dirconfig, content, expect, debug=True)
+    run_unit_test(dirconfig, content, expect, debug=False)
 
 def test_repeat_while(dirconfig):
     content = """
@@ -142,7 +142,7 @@ def test_repeat_while(dirconfig):
     RES: Hello 0
     RES: Hello 1
     """
-    run_unit_test(dirconfig, content, expect, debug=True)
+    run_unit_test(dirconfig, content, expect, debug=False)
 
 def test_if_else(dirconfig):
     content = """

@@ -5,6 +5,24 @@ from pytest_fv.fixtures import *
 import sys
 from .simple_test_flow import run_unit_test
 
+def test_leaf_action(dirconfig):
+    content = """
+import std_pkg::*;
+
+component pss_top {
+    action Entry {
+        exec body {
+            message(0, "RES: Hello World!");
+        }
+    }
+}
+    """
+
+    expect = """
+    RES: Hello World!
+    """
+    run_unit_test(dirconfig, content, expect)
+
 def test_subactivity(dirconfig):
     content = """
         import std_pkg::*;

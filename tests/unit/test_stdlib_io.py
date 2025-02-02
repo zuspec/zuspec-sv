@@ -21,7 +21,7 @@ def test_message_basics(dirconfig):
     expect = """
     RES: Hello World!
     """
-    run_unit_test(dirconfig, content, expect, debug=True)
+    run_unit_test(dirconfig, content, expect, debug=False)
 
 def test_message_verbosity_filter(dirconfig):
     content = """
