@@ -61,6 +61,11 @@ public:
         IGenRefExpr                         *refgen,
         vsc::dm::ITypeField                 *field) = 0;
 
+    virtual void genFwdDecl(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        vsc::dm::IDataType                  *type) = 0;
+
     virtual void genFunctionDefinition(
         TaskGenerate                        *gen,
         IOutput                             *out,

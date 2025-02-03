@@ -110,6 +110,13 @@ void CustomGenBase::genFunctionDefinition(
     TaskGenerateFunction(gen, refgen, out).generate(func);
 }
 
+void CustomGenBase::genFwdDecl(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        vsc::dm::IDataType                  *type) {
+    out->println("typedef class %s;", gen->getNameMap()->getName(type).c_str());
+}
+
 void CustomGenBase::genVarDeclInit(
         TaskGenerate                        *gen,
         IOutput                             *out,

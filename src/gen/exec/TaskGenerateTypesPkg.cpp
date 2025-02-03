@@ -71,11 +71,15 @@ bool TaskGenerateTypesPkg::generate() {
         it=sorted.begin();
         it!=sorted.end(); it++) {
         vsc::dm::IDataType *t = types->getType(*it);
-        std::string name = getNameMap()->getName(t);
-        if ((omitted.find(name) == omitted.end()) &&
-            name.find("executor_pkg__") == -1 &&
-            name.find("addr_reg_pkg__") == -1 &&
-            name.find("std_pkg__") == -1) {
+        ICustomGen *custom_gen = dynamic_cast<ICustomGen *>(
+            t->getAssociatedData());
+        if (custom_gen) {
+            custom_gen->genFwdDecl(
+                this, 
+                out.get(),
+                types->getType(*it));
+        } else {
+            std::string name = getNameMap()->getName(t);
             out->println("typedef class %s;", getNameMap()->getName(t).c_str());
         }
     }

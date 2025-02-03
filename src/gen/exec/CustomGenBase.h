@@ -66,6 +66,11 @@ public:
         IOutput                             *out,
         IGenRefExpr                         *refgen,
         arl::dm::IDataTypeFunction          *func) override;
+        
+    virtual void genFwdDecl(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        vsc::dm::IDataType                  *type) override;
 
     virtual void genVarDeclInit(
         TaskGenerate                        *gen,

@@ -40,6 +40,11 @@ public:
         IOutput                             *out,
         vsc::dm::IDataType                  *type) override { }
 
+    virtual void genFwdDecl(
+        TaskGenerate                        *gen,
+        IOutput                             *out,
+        vsc::dm::IDataType                  *type) override { }
+
 };
 
 }
