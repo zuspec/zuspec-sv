@@ -47,7 +47,7 @@ class component_ctor_ctxt_c;
     function void leave(component_c comp);
         `ZSP_DEBUG_ENTER("component_ctor_c", ("leave %0s", comp.name));
         if (comp_inst_s.size && comp_inst_s[comp_inst_s.size-1] == comp) begin
-            comp_inst_s.pop_back();
+            void'(comp_inst_s.pop_back());
         end
         `ZSP_DEBUG_LEAVE("component_ctor_c", ("leave %0s", comp.name));
     endfunction
