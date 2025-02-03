@@ -162,6 +162,9 @@ endfunction
 `include "component_c.svh"
 `include "actor_t_c.svh"
 
+`include "addr_claim_base_s.svh"
+`include "addr_trait_s.svh"
+`include "addr_space_base_c.svh"
 `include "transparent_addr_space_c.svh"
 
 
@@ -189,6 +192,9 @@ endclass
     `include "backend_api.svh"
     `include "executor_base.svh"
     `include "actor_c.svh"
+
+    `include "empty_executor_trait_s.svh"
+    `include "executor_trait_s.svh"
 
 endpackage
 
