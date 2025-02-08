@@ -62,7 +62,9 @@ void TaskGenerateExecBlock::generate(
     m_out->inc_ind();
     if (executor) {
         m_out->println("executor_t executor;");
+        m_out->println("pss_import_api api;");
         m_out->println("$cast(executor, exec_b);");
+        m_out->println("$cast(api, exec_b.get_api());");
         m_out->println("begin");
         m_out->inc_ind();
     }

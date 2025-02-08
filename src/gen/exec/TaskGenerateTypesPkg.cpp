@@ -21,6 +21,7 @@
 #include "dmgr/impl/DebugMacros.h"
 #include "gen/Output.h"
 #include "gen/TaskBuildTypeCollection.h"
+#include "GenRefExprExecModel.h"
 #include "ICustomGen.h"
 #include "TaskGenerateImportApi.h"
 #include "TaskGenerateTypesPkg.h"
@@ -109,13 +110,19 @@ bool TaskGenerateTypesPkg::generate() {
     }
     out->println("");
 
+    GenRefExprExecModel genref(
+        this,
+        0,
+        "self",
+        false);
+
     for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
         it=m_ctxt->getDataTypeFunctions().begin();
         it!=m_ctxt->getDataTypeFunctions().end(); it++) {
         // TODO: filter out specific functions
         if (!(*it)->hasFlags(arl::dm::DataTypeFunctionFlags::Context) 
             && !(*it)->hasFlags(arl::dm::DataTypeFunctionFlags::Core)) {
-            TaskDefineType(this, out.get()).generate(*it);
+            TaskDefineType(this, &genref, out.get()).generate(*it);
         }
     }
 

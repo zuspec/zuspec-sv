@@ -59,9 +59,9 @@ void TaskGenerateFunction::generate(
         name = m_gen->getNameMap()->getName(f);
     }
 
-    bool is_task = f->hasFlags(
-        arl::dm::DataTypeFunctionFlags::Target
-        |arl::dm::DataTypeFunctionFlags::Blocks);
+    bool is_task = (
+        f->hasFlags(arl::dm::DataTypeFunctionFlags::Target)
+        || f->hasFlags(arl::dm::DataTypeFunctionFlags::Blocks));
 
     m_out->indent();
     if (is_task) {
@@ -75,7 +75,7 @@ void TaskGenerateFunction::generate(
             m_out->indent();
             m_out->write("output ");
             TaskGenerateDataType(m_gen, m_out).generate(f->getReturnType());
-            m_out->write("__retval,\n");
+            m_out->write(" __retval,\n");
         }
     } else {
         m_out->write("%sfunction%s", 

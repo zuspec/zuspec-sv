@@ -122,11 +122,13 @@ void TaskDefineType::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
 }
 
 void TaskDefineType::visitDataTypeFunction(arl::dm::IDataTypeFunction *t) { 
-    if (m_genref) {
-        TaskGenerateFunction(m_gen, m_genref, m_out).generate(t, false);
-    } else {
-        GenRefExprExecModel genref(m_gen, 0, "", false);
-        TaskGenerateFunction(m_gen, &genref, m_out).generate(t, false);
+    if (t->getImportSpecs().size() == 0) {
+        if (m_genref) {
+            TaskGenerateFunction(m_gen, m_genref, m_out).generate(t, false);
+        } else {
+            GenRefExprExecModel genref(m_gen, 0, "", false);
+            TaskGenerateFunction(m_gen, &genref, m_out).generate(t, false);
+        }
     }
 }
 

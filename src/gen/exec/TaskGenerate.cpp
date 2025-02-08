@@ -29,6 +29,7 @@
 #include "CustomGenAddrRegionTransparent.h"
 #include "CustomGenCoreMethodCall.h"
 #include "CustomGenCoreType.h"
+#include "CustomGenImportCall.h"
 #include "CustomGenMemRwCall.h"
 #include "CustomGenMessageCall.h"
 #include "CustomGenPrintCall.h"
@@ -251,6 +252,13 @@ void TaskGenerate::attach_custom_gen() {
                 (*it)->setAssociatedData(
                     new CustomGenPrintCall(m_dmgr)
                 );
+            }
+        } else {
+            // This is an import function
+            if ((*it)->getImportSpecs().size()) {
+                DEBUG("TODO: Attach custom generator to %s", name.c_str());
+                (*it)->setAssociatedData(
+                    new CustomGenImportCall(m_dmgr));
             }
         }
     }

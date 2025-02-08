@@ -19,7 +19,9 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "GenRefExprExecModel.h"
 #include "TaskGenerate.h"
+#include "TaskGenerateDataType.h"
 #include "TaskGenerateImportApi.h"
 
 
@@ -49,6 +51,74 @@ void TaskGenerateImportApi::generate(const std::vector<arl::dm::IDataTypeFunctio
     }
     m_out->dec_ind();
     m_out->println("endclass");
+}
+
+void TaskGenerateImportApi::visitDataTypeFunction(arl::dm::IDataTypeFunction *f) {
+    DEBUG_ENTER("visitDataTypeFunction %s", f->name().c_str());
+    if (f->getImportSpecs().size() > 0) {
+        std::string name;
+
+        GenRefExprExecModel genref(m_gen, 0, "", false);
+        bool is_ctxt = f->hasFlags(arl::dm::DataTypeFunctionFlags::Context);
+    
+        if (is_ctxt) {
+            int idx = f->name().rfind("::");
+            if (idx != -1) {
+                name = f->name().substr(idx+2);
+            } else {
+                name = f->name();
+            }
+        } else {
+            name = m_gen->getNameMap()->getName(f);
+        }
+    
+        bool is_task = f->hasFlags(arl::dm::DataTypeFunctionFlags::Target);
+    
+        m_out->indent();
+        if (is_task) {
+            m_out->write("virtual task %s(\n", name.c_str());
+            m_out->inc_ind();
+            m_out->inc_ind();
+            if (f->getReturnType()) {
+                m_out->indent();
+                m_out->write("output ");
+                TaskGenerateDataType(m_gen, m_out).generate(f->getReturnType());
+                m_out->write(" __retval,\n");
+            }
+        } else {
+            m_out->write("virtual function ");
+            if (f->getReturnType()) {
+                TaskGenerateDataType(m_gen, m_out).generate(f->getReturnType());
+            } else {
+                m_out->write("void");
+            }
+            m_out->write(" %s(\n", name.c_str());
+            m_out->inc_ind();
+            m_out->inc_ind();
+        }
+        // We're indented for the remaining parameters
+        for (std::vector<arl::dm::IDataTypeFunctionParamDecl *>::const_iterator
+            it=f->getParameters().begin();
+            it!=f->getParameters().end(); it++) {
+            m_out->indent();
+            switch ((*it)->getDirection()) {
+                case arl::dm::ParamDir::In: m_out->write("input "); break;
+                case arl::dm::ParamDir::Out: m_out->write("output "); break;
+                case arl::dm::ParamDir::InOut: m_out->write("inout "); break;
+            }
+            TaskGenerateDataType(m_gen, m_out).generate((*it)->getDataType());
+            m_out->write(" %s%s\n",
+                (*it)->name().c_str(),
+                (it+1 != f->getParameters().end())?",":");");
+        }
+        m_out->dec_ind();
+
+        m_out->println("`ZSP_FATAL((\"Import function %s is not implemented\"));", name.c_str());
+        // 
+        m_out->dec_ind();
+        m_out->println("end%s", is_task?"task":"function");
+    }
+    DEBUG_LEAVE("visitDataTypeFunction");
 }
 
 dmgr::IDebug *TaskGenerateImportApi::m_dbg = 0;

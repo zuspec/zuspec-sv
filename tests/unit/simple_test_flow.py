@@ -42,7 +42,8 @@ def run_unit_test(
         expect,
         test_top="top.sv",
         prefixes=("RES:",),
-        debug=False):
+        debug=False,
+        extra_content=None):
     top_pss = dirconfig.mkBuildDirFile("top.pss", content)
     actor_sv = os.path.join(dirconfig.builddir(), "actor.sv")
     zsp_sv = os.path.abspath(os.path.join(
@@ -55,6 +56,14 @@ def run_unit_test(
 
     if not isinstance(prefixes,tuple):
         prefixes = (prefixes,)
+
+    if extra_content is not None:
+        for path,content in extra_content.items():
+            full_path = os.path.join(dirconfig.builddir(), path)
+            if not os.path.exists(os.path.dirname(full_path)):
+                os.makedirs(os.path.dirname(full_path))
+            with open(full_path, "w") as fp:
+                fp.write(content)
 
     print("test_srcdir: %s" % dirconfig.test_srcdir(), flush=True)
     flow.addTaskToPhase("generate.main", TaskGenSvActor(
@@ -71,7 +80,9 @@ def run_unit_test(
             zsp_sv,
             ["zsp_sv.sv"], 
             "systemVerilogSource",
-            incs=[zsp_sv]
+            incs=[
+                zsp_sv,
+                dirconfig.builddir()]
         )
     )
     flow.addFileset("sim",

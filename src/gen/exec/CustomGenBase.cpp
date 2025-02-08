@@ -107,7 +107,9 @@ void CustomGenBase::genFunctionDefinition(
         IOutput                             *out,
         IGenRefExpr                         *refgen,
         arl::dm::IDataTypeFunction          *func) {
-    TaskGenerateFunction(gen, refgen, out).generate(func);
+    if (func->getImportSpecs().size() == 0) {
+        TaskGenerateFunction(gen, refgen, out).generate(func);
+    }
 }
 
 void CustomGenBase::genFwdDecl(
