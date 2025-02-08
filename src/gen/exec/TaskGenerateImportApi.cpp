@@ -111,6 +111,9 @@ void TaskGenerateImportApi::visitDataTypeFunction(arl::dm::IDataTypeFunction *f)
                 (*it)->name().c_str(),
                 (it+1 != f->getParameters().end())?",":");");
         }
+        if (f->getParameters().size() == 0) {
+            m_out->write(");\n");
+        }
         m_out->dec_ind();
 
         m_out->println("`ZSP_FATAL((\"Import function %s is not implemented\"));", name.c_str());
