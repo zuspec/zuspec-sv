@@ -55,7 +55,7 @@ void TaskGenerateImportApi::generate(const std::vector<arl::dm::IDataTypeFunctio
 
 void TaskGenerateImportApi::visitDataTypeFunction(arl::dm::IDataTypeFunction *f) {
     DEBUG_ENTER("visitDataTypeFunction %s", f->name().c_str());
-    if (f->getImportSpecs().size() > 0) {
+    if (f->getImportSpecs().size() > 0 && !f->hasFlags(arl::dm::DataTypeFunctionFlags::Core)) {
         std::string name;
 
         GenRefExprExecModel genref(m_gen, 0, "", false);

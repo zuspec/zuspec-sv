@@ -57,8 +57,9 @@ protected:
     void attach_custom_gen();
 
     bool isInstance(
-        vsc::dm::IDataTypeStruct *t, 
-        const std::vector<vsc::dm::IDataTypeStruct *> &bases);
+        vsc::dm::IDataTypeStruct                        *t, 
+        const std::vector<vsc::dm::IDataTypeStruct *>   &bases,
+        bool                                            excl_self=true);
 
 protected:
     dmgr::IDebug                    *m_dbg;

@@ -18,6 +18,7 @@
  * Created on:
  *     Author:
  */
+#include "ICustomGen.h"
 #include "TaskGenerate.h"
 #include "TaskGenerateDataType.h"
 

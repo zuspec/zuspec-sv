@@ -146,13 +146,20 @@ void TaskGenerate::attach_custom_gen() {
             (*it)->setAssociatedData(new CustomGenAddrRegionTransparent(getDebugMgr()));
         } else if (isInstance(it->get(), addr_region_base_bases)) {
             DEBUG("Is derived from addr_region_base");
+            std::string leaf = name.substr(name.find("::")+2);
+            m_namemap->setName(it->get(), leaf);
+
             if (it->get()->name().find("addr_reg_pkg::") == 0) {
-                std::string leaf = name.substr(name.find("::")+2);
                 (*it)->setAssociatedData(new CustomGenCoreType(m_dmgr));
-                m_namemap->setName(it->get(), leaf);
             } else {
                 (*it)->setAssociatedData(new CustomGenAddrRegion(getDebugMgr()));
             }
+        } else if (isInstance(it->get(), addr_region_base_bases, false)
+            || isInstance(it->get(), addr_region_transparent_bases, false)) {
+            // Check if this *is* addr_region_base_s
+            DEBUG("Is addr_region_base_s or transparent_addr_region_s");
+            std::string leaf = name.substr(name.find("::")+2);
+            m_namemap->setName(it->get(), leaf);
         } else if (name.find("addr_reg_pkg::") == 0
             || name.find("executor_pkg::") == 0
             || name.find("std_pkg::") == 0) {
@@ -270,8 +277,9 @@ void TaskGenerate::attach_custom_gen() {
 }
 
 bool TaskGenerate::isInstance(
-        vsc::dm::IDataTypeStruct *t, 
-        const std::vector<vsc::dm::IDataTypeStruct *> &bases) {
+        vsc::dm::IDataTypeStruct                        *t, 
+        const std::vector<vsc::dm::IDataTypeStruct *>   &bases,
+        bool                                            excl_self) {
     bool ret = false;
     int32_t depth = 0;
 
@@ -279,7 +287,7 @@ bool TaskGenerate::isInstance(
 
     while (t && !ret) {
 //        DEBUG("t=%s", t->name().c_str());
-        if (depth) {
+        if (depth || !excl_self) {
             for (std::vector<vsc::dm::IDataTypeStruct *>::const_iterator
                 it=bases.begin();
                 it!=bases.end() && !ret; it++) {
