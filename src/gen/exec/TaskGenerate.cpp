@@ -216,6 +216,9 @@ void TaskGenerate::attach_custom_gen() {
                 std::string rt_name = (name.find("add_region") != -1)?
                     "zsp_rt_addr_space_add_region":
                     "zsp_rt_addr_space_add_nonallocatable_region";
+            } else if (name.find("read") != -1 || name.find("write") != -1) {
+                DEBUG("Marking function %s as target", name.c_str());
+                (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Target);
             }
         } else if (name.find("executor_pkg::") == 0) {
             (*it)->setAssociatedData(

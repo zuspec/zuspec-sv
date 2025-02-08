@@ -44,13 +44,13 @@ TaskPrepContext::~TaskPrepContext() {
 void TaskPrepContext::prepare() {
     DEBUG_ENTER("prepare");
 
+    tag_functions();
+
     for (std::vector<vsc::dm::IDataTypeStructUP>::const_iterator
         it=m_ctxt->getDataTypeStructs().begin();
         it!=m_ctxt->getDataTypeStructs().end(); it++) {
         (*it)->accept(m_this);
     }
-
-    tag_functions();
 
     DEBUG_LEAVE("prepare");
 }
@@ -75,6 +75,7 @@ void TaskPrepContext::visitTypeExecProc(arl::dm::ITypeExecProc *e) {
 }
 
 void TaskPrepContext::tag_functions() {
+    DEBUG_ENTER("tag_functions");
     for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
         it=m_ctxt->getDataTypeFunctions().begin();
         it!=m_ctxt->getDataTypeFunctions().end(); it++) {
@@ -83,12 +84,17 @@ void TaskPrepContext::tag_functions() {
         if (name.find("std_pkg::") == 0) {
             (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Core);
         } else if (name.find("addr_reg_pkg::") == 0) {
+            DEBUG("addr_reg_pkg: %s", name.c_str());
             (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Core);
+            if (name.find("write") != -1 || name.find("read") != -1) {
+                DEBUG("Add target");
+                (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Target);
+            }
         } else if (name.find("executor_pkg::") == 0) {
             (*it)->setFlags(arl::dm::DataTypeFunctionFlags::Core);
         }
     }
-
+    DEBUG_LEAVE("tag_functions");
 }
 
 dmgr::IDebug *TaskPrepContext::m_dbg = 0;
