@@ -94,6 +94,7 @@ package:
     - name: sphinx-rtd-theme
       src: pypi
     - name: sphinx-jsonschema
+      src: pypi
 
   - name: default-dev-src
     deps:
