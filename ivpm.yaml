@@ -60,6 +60,56 @@ package:
     - name: vsc-solvers
       url: https://github.com/vsc-tools/vsc-solvers.git
     - name: zuspec-arl-dm
+      src: pypi
+    - name: zuspec-arl-eval
+      src: pypi
+    - name: zuspec-parser
+      src: pypi
+    - name: zuspec-fe-parser
+      src: pypi
+    - name: zuspec-cli
+      url: https://github.com/zuspec/zuspec-cli.git
+    - name: pytest-fv
+      url: https://github.com/fvutils/pytest-fv.git
+    - name: ninja
+      src: pypi
+    - name: simplesat
+      version: 0.8.2
+      src: pypi
+    - name: verilator
+      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.028/verilator-ubuntu-x64-5.028.tar.gz
+      #      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.028/verilator-ubuntu-x64-5.030.tar.gz
+    - name: cython
+      src: pypi
+    - name: Sphinx
+      src: pypi
+    - name: sphinx-argparse
+      src: pypi
+    - name: sphinxcontrib-makedomain
+      src: pypi
+    - name: sphinxcontrib-openapi
+      src: pypi
+    - name: sphinxcontrib-spelling
+      src: pypi
+    - name: sphinx-rtd-theme
+      src: pypi
+    - name: sphinx-jsonschema
+
+  - name: default-dev-src
+    deps:
+    - name: debug-mgr
+      url: https://github.com/mballance-utils/debug-mgr.git
+    - name: pytypeworks
+      url: https://github.com/fvutils/pytypeworks.git
+    - name: pyvsc-dataclasses
+      url: https://github.com/vsc-tools/pyvsc-dataclasses.git
+    - name: zuspec-dataclasses
+      url: https://github.com/zuspec/zuspec-dataclasses.git
+    - name: vsc-dm
+      url: https://github.com/vsc-tools/vsc-dm.git
+    - name: vsc-solvers
+      url: https://github.com/vsc-tools/vsc-solvers.git
+    - name: zuspec-arl-dm
       url: https://github.com/zuspec/zuspec-arl-dm.git
     - name: zuspec-arl-eval
       url: https://github.com/zuspec/zuspec-arl-eval.git

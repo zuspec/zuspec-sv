@@ -10,11 +10,13 @@ proj_dir = os.path.dirname(os.path.abspath(__file__))
 
 try:
     sys.path.insert(0, os.path.join(proj_dir, "python/zsp_sv"))
-    from __version__ import VERSION
+    from __version__ import VERSION, BASE
+    base = BASE
     version = VERSION
 except ImportError as e:
     print("No build num: %s" % str(e))
-    version="0.0.1"
+    base="0.0.1"
+    version=base
 
 isSrcBuild = False
 try:
@@ -63,10 +65,10 @@ setup_args = dict(
   keywords = ["SystemVerilog", "Verilog", "RTL", "Python"],
   url = "https://github.com/zuspec/zuspec-sv",
   install_requires=[
-    'zuspec-parser',
-    'zuspec-fe-parser',
-    'zuspec-arl-dm',
-    'zuspec-arl-eval',
+    "zuspec-parser>=%s" % base, 
+    "zuspec-fe-parser>=%s" % base, 
+    "zuspec-arl-dm>=%s" % base,
+    "zuspec-arl-eval>=%s" % base,
     'zuspec-cli'
   ],
   entry_points={
@@ -87,8 +89,8 @@ setup_args = dict(
 if isSrcBuild:
     setup_args["ivpm_extdep_pkgs"] = [
         "pyapi-compat-if",
-        "zuspec-parser", 
-        "zuspec-fe-parser", 
+        "zuspec-parser",
+        "zuspec-fe-parser",
         "zuspec-arl-dm",
         "zuspec-arl-eval",
         "vsc-solvers",
