@@ -56,9 +56,9 @@ package:
     - name: zuspec-dataclasses
       url: https://github.com/zuspec/zuspec-dataclasses.git
     - name: vsc-dm
-      url: https://github.com/vsc-tools/vsc-dm.git
+      src: pypi
     - name: vsc-solvers
-      url: https://github.com/vsc-tools/vsc-solvers.git
+      src: pypi
     - name: zuspec-arl-dm
       src: pypi
     - name: zuspec-arl-eval

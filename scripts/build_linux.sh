@@ -6,7 +6,7 @@ yum install -y java-11-openjdk-devel uuid-devel libuuid-devel
 
 echo "BUILD_NUM=${BUILD_NUM}" >> python/zsp_sv/__build_num__.py
 ${IVPM_PYTHON} -m pip install ivpm cython
-${IVPM_PYTHON} -m ivpm update -a
+${IVPM_PYTHON} -m ivpm update -a --py-prerls-packages
 
 echo "Requirements Files"
 cat packages/*.txt

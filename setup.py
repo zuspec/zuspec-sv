@@ -64,6 +64,10 @@ setup_args = dict(
   license = "Apache 2.0",
   keywords = ["SystemVerilog", "Verilog", "RTL", "Python"],
   url = "https://github.com/zuspec/zuspec-sv",
+  package_data = {'zsp_arl_eval': [
+      'core.pxd',
+      'decl.pxd'
+  ]},
   install_requires=[
     "zuspec-parser>=%s" % base, 
     "zuspec-fe-parser>=%s" % base, 
