@@ -100,28 +100,37 @@ package:
     deps:
     - name: debug-mgr
       url: https://github.com/mballance-utils/debug-mgr.git
+      dep-set: default-dev
     - name: pytypeworks
       url: https://github.com/fvutils/pytypeworks.git
+      dep-set: default-dev
     - name: pyvsc-dataclasses
       url: https://github.com/vsc-tools/pyvsc-dataclasses.git
+      dep-set: default-dev
     - name: zuspec-dataclasses
       url: https://github.com/zuspec/zuspec-dataclasses.git
+      dep-set: default-dev
     - name: vsc-dm
       url: https://github.com/vsc-tools/vsc-dm.git
+      dep-set: default-dev
     - name: vsc-solvers
       url: https://github.com/vsc-tools/vsc-solvers.git
+      dep-set: default-dev
     - name: zuspec-arl-dm
       url: https://github.com/zuspec/zuspec-arl-dm.git
+      dep-set: default-dev
     - name: zuspec-arl-eval
       url: https://github.com/zuspec/zuspec-arl-eval.git
     - name: zuspec-parser
       url: https://github.com/zuspec/zuspec-parser.git
+      dep-set: default-dev
     - name: zuspec-fe-parser
       url: https://github.com/zuspec/zuspec-fe-parser.git
     - name: zuspec-cli
       url: https://github.com/zuspec/zuspec-cli.git
     - name: pytest-fv
       url: https://github.com/fvutils/pytest-fv.git
+      dep-set: default-dev
     - name: ninja
       src: pypi
     - name: simplesat

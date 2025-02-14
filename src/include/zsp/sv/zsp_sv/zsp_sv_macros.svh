@@ -65,7 +65,7 @@
     end
 
 `define ZSP_FATAL(msg) \
-    $display("Fatal: %0s", $sformatf msg); \
+    $display("Fatal: %0s", $sformatf msg ); \
     $finish
 
 `define zsp_print(exec_b, msg) \
