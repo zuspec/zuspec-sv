@@ -156,6 +156,11 @@ bool TaskGenerateActorPkgPrv::generate() {
     out->println("component_ctor_ctxt ctxt;");
     out->println("super.new(\"<actor>\", null, null);");
     out->println("ctxt = new(this, 0);");
+    out->println("if (api == null) begin");
+    out->inc_ind();
+    out->println("api = new();");
+    out->dec_ind();
+    out->println("end");
     out->println("this.api = api;");
     out->println("this.default_executor = new(\"default_executor\", this);");
     out->println("comp_tree = new(\"pss_top\", ctxt, this);");

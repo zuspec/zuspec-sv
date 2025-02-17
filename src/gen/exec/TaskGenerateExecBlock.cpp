@@ -63,7 +63,16 @@ void TaskGenerateExecBlock::generate(
     if (executor) {
         m_out->println("executor_t executor;");
         m_out->println("pss_import_api api;");
-        m_out->println("$cast(executor, exec_b);");
+        m_out->println("if (!$cast(executor, exec_b)) begin");
+        m_out->inc_ind();
+        m_out->println("`ZSP_FATAL((\"Failed to cast executor\"));");
+        m_out->dec_ind();
+        m_out->println("end");
+        m_out->println("if (executor == null) begin");
+        m_out->inc_ind();
+        m_out->println("`ZSP_FATAL((\"executor is null\"));");
+        m_out->dec_ind();
+        m_out->println("end");
         m_out->println("$cast(api, exec_b.get_api());");
         m_out->println("begin");
         m_out->inc_ind();

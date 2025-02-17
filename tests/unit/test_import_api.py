@@ -47,7 +47,9 @@ def test_default_api_impl_mem_access(dirconfig):
             }
             action Entry {
                 exec body {
-                    write32(comp.hndl, 32);
+                    addr_handle_t hndl;
+//                    write32(comp.hndl, 32);
+                    write32(hndl, 32);
                 }
             }
         }

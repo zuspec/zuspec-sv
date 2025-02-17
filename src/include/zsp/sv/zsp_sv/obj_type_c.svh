@@ -26,6 +26,8 @@ class obj_type_c;
     endfunction
 
     static function obj_type_c get_type();
+        `ZSP_FATAL(("get_type not implemented"));
+        return null;
     endfunction
 
 endclass

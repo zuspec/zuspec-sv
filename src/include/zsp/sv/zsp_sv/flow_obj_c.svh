@@ -18,9 +18,9 @@
  * Created on:
  *     Author:
  */
-typedef class pool_c;
+typedef class pool_base_c;
 
 class flow_obj_c extends object;
-    pool_c      pool;
+    pool_base_c      pool;
 endclass
 

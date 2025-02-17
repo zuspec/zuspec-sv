@@ -19,12 +19,13 @@
  *     Author:
  */
 class resource_c;
-    int     instance_id;
-    bit     locked;
-    int     shared;
+    bit         locked;
+    int         shared;
+    rand int    instance_id;
 
-    function new(int instance_id);
-        this.instance_id = instance_id;
+    static function obj_type_c get_type();
+        `ZSP_FATAL(("get_type not implemented"));
+        return null;
     endfunction
 
 endclass

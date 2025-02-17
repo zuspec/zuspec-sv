@@ -55,103 +55,103 @@ def test_subactivity(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
-# def test_subactivity_with(dirconfig):
-#     content = """
-#         import std_pkg::*;
-#         component pss_top {
+def test_subactivity_with(dirconfig):
+    content = """
+        import std_pkg::*;
+        component pss_top {
 
-#             action Leaf {
-#                 rand bit[16] val0, val;
-#                 exec post_solve {
-#                     print("RES: leaf %d\\n", val);
-#                 }
-#             }
+            action Leaf {
+                rand bit[16] val0, val;
+                exec post_solve {
+                    print("RES: leaf %d\\n", val);
+                }
+            }
 
-#             action Mid {
-#                 int i;
-#                 activity {
-#                     do Leaf with {
-#                       val == 1;
-#                     };
-#                     do Leaf with {
-#                       val == 2;
-#                     }
-#                 }
-#             }
+            action Mid {
+                int i;
+                activity {
+                    do Leaf with {
+                      val == 1;
+                    };
+                    do Leaf with {
+                      val == 2;
+                    }
+                }
+            }
 
-#             action Entry {
-#                 activity {
-#                     do Mid;
-#                 }
-#             }
-#         }
-#     """
+            action Entry {
+                activity {
+                    do Mid;
+                }
+            }
+        }
+    """
 
-#     expect = """
-#     RES: leaf 1
-#     RES: leaf 2
-#     """
+    expect = """
+    RES: leaf 1
+    RES: leaf 2
+    """
 
-#     if dirconfig.config.getHdlSim() == "vlt":
-#         pytest.skip("Nested randomization not supported as of 5.028")
-#     else:
-#         run_unit_test(dirconfig, content, expect)
+    if dirconfig.config.getHdlSim() == "vlt":
+        pytest.skip("Nested randomization not supported as of 5.028")
+    else:
+        run_unit_test(dirconfig, content, expect)
 
-# def test_subactivity_subcomp(dirconfig):
-#     content = """
-#         import std_pkg::*;
-#         component C {
-#             int cv;
-#             action Leaf {
-#                 rand bit[16] val0, val;
-#                 exec post_solve {
-#                     print("RES: leaf %d\\n", val);
-#                 }
-#             }
+def test_subactivity_subcomp(dirconfig):
+    content = """
+        import std_pkg::*;
+        component C {
+            int cv;
+            action Leaf {
+                rand bit[16] val0, val;
+                exec post_solve {
+                    print("RES: leaf %d\\n", val);
+                }
+            }
 
-#             action Mid {
-#                 int i;
-#                 activity {
-#                     do Leaf with {
-#                       val == 1;
-#                     };
-#                     do Leaf with {
-#                       val == 2;
-#                     }
-#                 }
-#             }
+            action Mid {
+                int i;
+                activity {
+                    do Leaf with {
+                      val == 1;
+                    };
+                    do Leaf with {
+                      val == 2;
+                    }
+                }
+            }
 
-#         }
-#         component pss_top {
-#             C c1, c2, c3, c4;
+        }
+        component pss_top {
+            C c1, c2, c3, c4;
 
-#             exec init_down {
-#                 c1.cv = 1;
-#                 c2.cv = 2;
-#                 c3.cv = 3;
-#                 c4.cv = 4;
-#             }
+            exec init_down {
+                c1.cv = 1;
+                c2.cv = 2;
+                c3.cv = 3;
+                c4.cv = 4;
+            }
 
-#             action Entry {
-#                 exec pre_solve {
-#                     print("Entry::pre_solve\\n");
-#                 }
+            action Entry {
+                exec pre_solve {
+                    print("Entry::pre_solve\\n");
+                }
 
-#                 activity {
-#                     do C::Mid;
-#                 }
-#             }
-#         }
-#     """
+                activity {
+                    do C::Mid;
+                }
+            }
+        }
+    """
 
-#     expect = """
-#     RES: leaf 1
-#     RES: leaf 2
-#     """
-#     if dirconfig.config.getHdlSim() == "vlt":
-#         pytest.skip("Nested randomization not supported as of 5.028")
-#     else:
-#         run_unit_test(dirconfig, content, expect)
+    expect = """
+    RES: leaf 1
+    RES: leaf 2
+    """
+    if dirconfig.config.getHdlSim() == "vlt":
+        pytest.skip("Nested randomization not supported as of 5.028")
+    else:
+        run_unit_test(dirconfig, content, expect)
 
 def test_subactivity_listener(dirconfig):
     content = """

@@ -57,8 +57,10 @@ class activity_traverse_c #(type Ta) extends activity_c;
             // The context didn't assign component. Need to 
             // perform the context solving here...
             solve_action_context_c ctxt_solver = new(parent_comp);
-            ctxt_solver.add_action(action);
+`ifdef UNDEFINED
+            void'(ctxt_solver.add_action(action));
             void'(ctxt_solver.resolve());
+`endif // UNDEFINED
         end
 
         action.pre_solve();
@@ -98,7 +100,7 @@ class activity_traverse_c #(type Ta) extends activity_c;
     endtask
 
     function bit do_randomize();
-        return action.randomize();
+        return this.randomize();
     endfunction
 
 endclass

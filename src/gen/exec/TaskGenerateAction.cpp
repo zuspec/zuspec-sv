@@ -54,9 +54,10 @@ void TaskGenerateAction::generate_head(vsc::dm::IDataTypeStruct *t) {
         m_gen->getNameMap()->getName(action_t->getComponentType()).c_str());
     m_out->println("class %s extends action_c;", m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
-    m_out->println("`zsp_typed_obj_util(%s)", m_gen->getNameMap()->getName(t).c_str());
-    m_out->println("`zsp_action_comp_type(%s)", 
+    m_out->println("`zsp_action_util_begin(%s, %s)", 
+        m_gen->getNameMap()->getName(t).c_str(),
         m_gen->getNameMap()->getName(action_t->getComponentType()).c_str());
+    m_out->println("`zsp_action_util_end");
 }
 
 void TaskGenerateAction::generate_fields(vsc::dm::IDataTypeStruct *t) {

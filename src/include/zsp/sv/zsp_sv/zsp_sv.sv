@@ -34,7 +34,7 @@ typedef class executor_base;
 
     typedef enum {NONE, LOW, MEDIUM, HIGH, FULL} message_verbosity_e;
 
-    int log_level = 0;
+    int log_level = FULL;
 
 class empty_t;
 endclass
@@ -96,6 +96,7 @@ endclass
 
     `include "solve_action_context_c.svh"
     `include "solve_resource_claim_data_c.svh"
+    `include "solve_traversal_context_c.svh"
 
 interface class packed_s;
 
@@ -153,12 +154,15 @@ endfunction
     `include "activity_traverse_compound_c.svh"
     `include "action_c.svh"
     `include "action_constraint_c.svh"
+    `include "action_type_c.svh"
+    `include "component_type_c.svh"
 
     `include "activity_listener_c.svh"
 
 
 
 `include "component_ctor_ctxt_c.svh"
+`include "component_init_ctxt_c.svh"
 `include "component_c.svh"
 `include "actor_t_c.svh"
 

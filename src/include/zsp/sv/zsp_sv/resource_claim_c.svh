@@ -21,6 +21,8 @@
 typedef class action_c;
 typedef class resource_c;
 
+// Need a base class for all refs (?)
+
 class resource_claim_base_c;
     int       ref_id; // Index within action type. Used to discover pool
     bit       lock;

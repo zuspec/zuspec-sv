@@ -18,6 +18,9 @@
  * Created on:
  *     Author:
  */
+
+ typedef class action_type_c;
+
 class component_ctor_ctxt_c;
     actor_c         actor;
     executor_base   executor_m[];
@@ -38,7 +41,7 @@ class component_ctor_ctxt_c;
             obj_type_c comp_t = comp.get_obj_type();
             comp_inst_s.push_back(comp);
             for (int i=comp_inst_s.size-1; i>=0; i--) begin
-                comp_inst_s[i].add_comp_inst(comp);
+//                comp_inst_s[i].add_comp_inst(comp);
             end
         end
         `ZSP_DEBUG_LEAVE("component_ctor_c", ("enter %0s", comp.name));
