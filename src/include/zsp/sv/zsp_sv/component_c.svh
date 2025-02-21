@@ -36,7 +36,7 @@ class component_c extends typed_obj_c;
     component_queue_h       comp_t_inst_m[obj_type_c];
 
 
-    // Each component needs a map of action-claim refs to pool
+    // Each component maintains a map of claim type to executor
     executor_base  executor_m[];
 
     // aspace_t_map

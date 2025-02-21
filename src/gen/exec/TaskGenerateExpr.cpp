@@ -120,6 +120,11 @@ void TaskGenerateExpr::visitTypeExprMethodCallContext(
         m_out->write("%s.%s(",
             m_genref->genRval(e->getContext()).c_str(),
             name.c_str());
+        if (!e->getTarget()->hasFlags(arl::dm::DataTypeFunctionFlags::Import) 
+            && !e->getTarget()->hasFlags(arl::dm::DataTypeFunctionFlags::Core)) {
+            // Need to pass exec_b along
+            m_out->write("exec_b%s", (e->getParameters().size())?", ":"");
+        }
         for (std::vector<vsc::dm::ITypeExprUP>::const_iterator
             it=e->getParameters().begin();
             it!=e->getParameters().end(); it++) {

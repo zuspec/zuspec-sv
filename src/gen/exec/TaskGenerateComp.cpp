@@ -51,8 +51,13 @@ TaskGenerateComp::~TaskGenerateComp() {
 }
 
 void TaskGenerateComp::generate_head(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("class %s extends component_c;", 
-        m_gen->getNameMap()->getName(t).c_str());
+    std::string super = "component_c";
+    if (t->getSuper()) {
+        super = m_gen->getNameMap()->getName(t->getSuper());
+    }
+    m_out->println("class %s extends %s;", 
+        m_gen->getNameMap()->getName(t).c_str(),
+        super.c_str());
     m_out->inc_ind();
     m_out->println("`zsp_typed_obj_util(%s)",
         m_gen->getNameMap()->getName(t).c_str());

@@ -91,7 +91,7 @@ void TaskGenerateFunction::generate(
         m_out->inc_ind();
     }
     // We're indented for the remaining parameters
-    m_out->println("input executor_base exec_b%s", (f->getParameters().size())?",":"");
+    m_out->println("input executor_base exec_b%s", (f->getParameters().size())?",":");");
     for (std::vector<arl::dm::IDataTypeFunctionParamDecl *>::const_iterator
         it=f->getParameters().begin();
         it!=f->getParameters().end(); it++) {
@@ -108,7 +108,11 @@ void TaskGenerateFunction::generate(
     }
     m_out->dec_ind();
     m_genref->pushScope(f->getParamScope());
-    TaskGenerateExecScope(m_gen, m_genref, m_out).generate(f->getBody(), false);
+    m_out->println("pss_import_api api;");
+    m_out->println("executor_t executor;");
+    m_out->println("$cast(api, exec_b.get_api());");
+    m_out->println("$cast(executor, exec_b);");
+    TaskGenerateExecScope(m_gen, m_genref, m_out).generate(f->getBody(), true);
     m_genref->popScope();
 
     // 

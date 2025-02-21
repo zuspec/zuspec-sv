@@ -57,10 +57,10 @@ void TaskGenerateExecScope::generate(
     m_exec_s.push_back(&out);
     m_istask = istask;
 
-    if (newscope) {
-        m_out_top->println("begin");
-        m_out_top->inc_ind();
-    }
+    // if (newscope) {
+    //     m_out_top->println("begin");
+    //     m_out_top->inc_ind();
+    // }
 
     m_genref->pushScope(scope);
     for (std::vector<arl::dm::ITypeProcStmtUP>::const_iterator
@@ -73,10 +73,10 @@ void TaskGenerateExecScope::generate(
     m_exec_s.back()->apply(m_out_top);
 
 
-    if (newscope) {
-        m_out_top->dec_ind();
-        m_out_top->println("end");
-    }
+    // if (newscope) {
+    //     m_out_top->dec_ind();
+    //     m_out_top->println("end");
+    // }
     m_exec_s.pop_back();
     DEBUG_LEAVE("generate");
 }

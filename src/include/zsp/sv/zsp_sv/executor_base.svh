@@ -22,8 +22,8 @@ class executor_base extends component_c;
     actor_c            actor;
     backend_api        api;
 
-    function new(string name, component_c parent);
-        super.new(name, null, parent);
+    function new(string name, component_ctor_ctxt_c ctxt, component_c parent);
+        super.new(name, ctxt, parent);
     endfunction
 
     function backend_api get_api();
@@ -59,63 +59,49 @@ class executor_base extends component_c;
     endfunction
 
     virtual task read8 (output bit[7:0] data, input addr_handle_t hndl);
-        backend_api api = get_api();
-        bit[63:0] addr = addr_value(hndl);
-        api.read8(data, addr);
+        `ZSP_FATAL(("executor read8 not implemented"));
     endtask
 
     virtual task read16(output bit[15:0] data, input addr_handle_t hndl);
-        backend_api api = get_api();
-        bit[63:0] addr = addr_value(hndl);
-        api.read16(data, addr);
+        `ZSP_FATAL(("executor read16 not implemented"));
     endtask
 
     virtual task read32(output bit[31:0] data, input addr_handle_t hndl);
-        backend_api api = get_api();
-        bit[63:0] addr = addr_value(hndl);
-        api.read32(data, addr);
+        `ZSP_FATAL(("executor read32 not implemented"));
     endtask
 
     virtual task read64(output bit[63:0] data, input addr_handle_t hndl);
-        backend_api api = get_api();
-        bit[63:0] addr = addr_value(hndl);
-        api.read64(data, addr);
+        `ZSP_FATAL(("executor read64 not implemented"));
     endtask
 
     virtual task write8 (addr_handle_t hndl, bit[7:0] data);
-        backend_api api = get_api();
-        bit[63:0] addr = addr_value(hndl);
-        api.write8(addr, data);
+        `ZSP_FATAL(("executor write8 not implemented"));
     endtask
 
     virtual task write16(addr_handle_t hndl, bit[15:0] data);
-        backend_api api = get_api();
-        bit[63:0] addr = addr_value(hndl);
-        api.write16(addr, data);
+        `ZSP_FATAL(("executor write16 not implemented"));
     endtask
 
     virtual task write32(addr_handle_t hndl, bit[31:0] data);
-        backend_api api = get_api();
-        bit[63:0] addr = addr_value(hndl);
-        api.write32(addr, data);
+        `ZSP_FATAL(("executor write32 not implemented"));
     endtask
 
     virtual task write64(addr_handle_t hndl, bit[63:0] data);
-        backend_api api = get_api();
-        bit[63:0] addr = addr_value(hndl);
-        api.write64(addr, data);
+        `ZSP_FATAL(("executor write64 not implemented"));
     endtask
 
     virtual task read_bytes (addr_handle_t hndl, bit[7:0] data[$], int size);
-        backend_api api = get_api();
-        bit[63:0] addr = addr_value(hndl);
-//        api.write64(addr, data);
+        `ZSP_FATAL(("executor read_bytes not implemented"));
     endtask
 
     virtual task write_bytes(addr_handle_t hndl, bit[7:0] data[$]);
-        backend_api api = get_api();
-        bit[63:0] addr = addr_value(hndl);
-//        api.write64(addr, data);
+        `ZSP_FATAL(("executor write_bytes not implemented"));
     endtask
 
+endclass
+
+class executor_c extends executor_base;
+    function new(string name, component_ctor_ctxt_c ctxt, component_c parent);
+        super.new(name, ctxt, parent);
+    endfunction
 endclass

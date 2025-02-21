@@ -59,7 +59,7 @@ OutputExecScope::~OutputExecScope() {
 
 void OutputExecScope::apply(IOutput *out) {
     if (m_new_scope) {
-        out->println("{");
+        out->println("begin");
         out->inc_ind();
     }
     if (m_decl.getValue().size()) {
@@ -84,7 +84,7 @@ void OutputExecScope::apply(IOutput *out) {
 
     if (m_new_scope) {
         out->dec_ind();
-        out->println("}");
+        out->println("end");
     }
 }
 

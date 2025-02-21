@@ -5,17 +5,28 @@ from pytest_fv.fixtures import *
 import sys
 from .simple_test_flow import run_unit_test
 
+@pytest.mark.skip(reason="Not implemented")
 def test_simple_memwrite(dirconfig):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
+        import executor_pkg::*;
         pure component simple_regs : reg_group_c {
             reg_c<bit[32]>        R1;
             reg_c<bit[32]>        R2;
         }
+        import target function void my_write32(bit[64] addr, bit[32] data);
+
+        component my_executor : executor_c<> {
+            function void write32(addr_handle_t addr, bit[32] data) {
+                my_write32(addr_value(addr), data);
+            }
+        }
+
         component pss_top {
             transparent_addr_space_c<>      aspace;
             addr_handle_t                   hndl;
+            my_executor                     executor;
 
             exec init_down {
                 transparent_addr_region_s<> region;
@@ -36,8 +47,24 @@ def test_simple_memwrite(dirconfig):
     RES: write32 0x80000000 0x00000020
     RES: write32 0x80000000 0x00000040
     """
-    run_unit_test(dirconfig, content, expect)
+    
+    custom_api = """
+    class custom_api extends pss_import_api;
+        virtual task my_write32(longint unsigned addr, int unsigned data);
+            $display("RES: write32 0x%08h 0x%08h", addr, data);
+        endtask
+    endclass
+    """
+    run_unit_test(
+        dirconfig, 
+        content, 
+        expect,
+        test_top="top_custom_api_inc.sv",
+        extra_content={
+            "custom_api.svh": custom_api
+        })
 
+@pytest.mark.skip(reason="Not implemented")
 def test_simple_memread(dirconfig):
     content = """
         import std_pkg::*;

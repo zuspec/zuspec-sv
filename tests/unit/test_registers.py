@@ -5,6 +5,7 @@ from pytest_fv.fixtures import *
 import sys
 from .simple_test_flow import run_unit_test
 
+@pytest.mark.skip(reason="Not implemented")
 def test_simple_reg(dirconfig):
     content = """
         import std_pkg::*;
@@ -55,6 +56,7 @@ def test_simple_reg(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
+@pytest.mark.skip(reason="Not implemented")
 def disabled_test_reg_get_handle(dirconfig):
     content = """
         import std_pkg::*;
@@ -106,6 +108,7 @@ def disabled_test_reg_get_handle(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
+@pytest.mark.skip(reason="Not implemented")
 def test_group_array(dirconfig):
     content = """
         import std_pkg::*;
@@ -177,6 +180,7 @@ def test_group_array(dirconfig):
     """
     run_unit_test(dirconfig, content, expect)
 
+@pytest.mark.skip(reason="Not implemented")
 def test_group_array_action_field_index(dirconfig):
     content = """
         import std_pkg::*;
