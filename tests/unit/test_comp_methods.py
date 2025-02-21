@@ -28,7 +28,7 @@ def test_call_comp_method(dirconfig):
         content, 
         expect,
         "top_default_api.sv",
-        debug=True)
+        debug=False)
 
 def test_call_comp_global_method(dirconfig):
     content = """
@@ -57,7 +57,7 @@ def test_call_comp_global_method(dirconfig):
         content, 
         expect,
         "top_default_api.sv",
-        debug=True)
+        debug=False)
 
 def test_call_comp_global_qmethod(dirconfig):
     content = """
@@ -86,5 +86,5 @@ def test_call_comp_global_qmethod(dirconfig):
         content, 
         expect,
         "top_default_api.sv",
-        debug=True)
+        debug=False)
     

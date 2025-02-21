@@ -25,4 +25,4 @@ def test_init_struct(dirconfig):
     expect = """
     RES: a=4 b=6
     """
-    run_unit_test(dirconfig, content, expect, debug=True)
+    run_unit_test(dirconfig, content, expect, debug=False)
