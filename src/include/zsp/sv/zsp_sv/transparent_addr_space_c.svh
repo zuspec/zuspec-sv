@@ -1,5 +1,6 @@
 
 class transparent_addr_space_c extends addr_space_base_c;
+    `zsp_typed_obj_util(transparent_addr_space_c)
 
     function new(string name, component_ctor_ctxt ctxt, component_c parent=null);
         super.new(name, ctxt, parent);

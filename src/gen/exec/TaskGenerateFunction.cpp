@@ -71,6 +71,7 @@ void TaskGenerateFunction::generate(
             name.c_str());
         m_out->inc_ind();
         m_out->inc_ind();
+        m_out->println("input executor_base_c exec_b%s", (f->getParameters().size())?",":");");
         if (f->getReturnType()) {
             m_out->indent();
             m_out->write("output ");
@@ -89,9 +90,9 @@ void TaskGenerateFunction::generate(
         m_out->write(" %s(\n", name.c_str());
         m_out->inc_ind();
         m_out->inc_ind();
+        m_out->println("input executor_base_c exec_b%s", (f->getParameters().size())?",":");");
     }
     // We're indented for the remaining parameters
-    m_out->println("input executor_base exec_b%s", (f->getParameters().size())?",":");");
     for (std::vector<arl::dm::IDataTypeFunctionParamDecl *>::const_iterator
         it=f->getParameters().begin();
         it!=f->getParameters().end(); it++) {
@@ -112,7 +113,10 @@ void TaskGenerateFunction::generate(
     m_out->println("executor_t executor;");
     m_out->println("$cast(api, exec_b.get_api());");
     m_out->println("$cast(executor, exec_b);");
-    TaskGenerateExecScope(m_gen, m_genref, m_out).generate(f->getBody(), true);
+    TaskGenerateExecScope(m_gen, m_genref, m_out).generate(
+        f->getBody(), 
+        true, // newscope
+        is_task);
     m_genref->popScope();
 
     // 

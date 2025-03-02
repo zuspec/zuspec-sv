@@ -50,6 +50,30 @@ void TaskRewriteTargetRvCalls::rewrite(arl::dm::ITypeProcStmtScope *scope) {
     DEBUG_LEAVE("rewrite");
 }
 
+void TaskRewriteTargetRvCalls::visitTypeProcStmtAssign(arl::dm::ITypeProcStmtAssign *s) {
+    DEBUG_ENTER("visitTypeProcStmtAssign");
+
+    m_expr = 0;
+    s->getRhs()->accept(m_this);
+
+    if (m_expr) {
+        s->setRhs(m_expr);
+    }
+
+    DEBUG_LEAVE("visitTypeProcStmtAssign");
+}
+
+void TaskRewriteTargetRvCalls::visitTypeProcStmtReturn(arl::dm::ITypeProcStmtReturn *s) {
+    DEBUG_ENTER("visitTypeProcStmtReturn");
+    m_expr = 0;
+    s->getExpr()->accept(m_this);
+
+    if (m_expr) {
+        s->setExpr(m_expr);
+    }
+    DEBUG_LEAVE("visitTypeProcStmtReturn");
+}
+
 void TaskRewriteTargetRvCalls::visitTypeProcStmtScope(arl::dm::ITypeProcStmtScope *s) {
     DEBUG_ENTER("visitTypeProcStmtScope");
     m_scope_s.push_back({s, 0});
@@ -226,15 +250,6 @@ void TaskRewriteTargetRvCalls::visitTypeExprMethodCallStatic(arl::dm::ITypeExprM
     DEBUG_LEAVE("visitTypeExprMethodCallStatic");
 }
 
-void TaskRewriteTargetRvCalls::visitTypeProcStmtAssign(arl::dm::ITypeProcStmtAssign *s) {
-
-    m_expr = 0;
-    s->getRhs()->accept(m_this);
-
-    if (m_expr) {
-        s->setRhs(m_expr);
-    }
-}
 
 dmgr::IDebug *TaskRewriteTargetRvCalls::m_dbg;
 

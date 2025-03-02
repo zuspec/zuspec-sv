@@ -147,9 +147,10 @@ bool TaskGenerateActorPkgPrv::generate() {
 //     #(.comp_t(%s), .activity_t(activity_%p));", 
     out->println("class %s_actor extends actor_c;", actor.c_str());
     out->inc_ind();
+    out->println("`zsp_typed_obj_util(%s)", actor.c_str());
     out->println("%s comp_tree;", getNameMap()->getName(m_comp_t).c_str());
     out->println("pss_import_api api;");
-    out->println("executor_base_c default_executor;");
+    out->println("executor_t default_executor;");
     out->println("");
     out->println("function new(pss_import_api api=null);");
     out->inc_ind();
@@ -166,9 +167,6 @@ bool TaskGenerateActorPkgPrv::generate() {
     out->inc_ind();
     out->println("activity_%p root_activity = new(this, comp_tree);", root_activity.get());
     out->println("");
-    out->println("comp_tree.init(this.default_executor);");
-    out->println("comp_tree.do_init(this.default_executor);");
-    out->println("");
     out->println("if (comp_tree.check()) begin");
     out->inc_ind();
     out->println("if (api == null) begin");
@@ -176,6 +174,9 @@ bool TaskGenerateActorPkgPrv::generate() {
     out->println("api = new();");
     out->dec_ind();
     out->println("end");
+    out->println("");
+    out->println("comp_tree.init(this.default_executor);");
+    out->println("do_init(this.default_executor);");
     out->println("");
     out->println("comp_tree.start(this.default_executor);");
     out->println("");
@@ -208,7 +209,7 @@ bool TaskGenerateActorPkgPrv::generate() {
     out->dec_ind();
     out->println("endfunction");
     out->println("");
-    out->println("virtual function executor_base get_default_executor();");
+    out->println("virtual function executor_base_c get_default_executor();");
     out->inc_ind();
     out->println("return default_executor;");
     out->dec_ind();

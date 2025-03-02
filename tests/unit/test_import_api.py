@@ -64,7 +64,7 @@ def test_default_api_impl_mem_access(dirconfig):
         }
     """
     expect = """
-    Fatal: executor write32 not implemented
+    Fatal: write32 not implemented
     """
     run_unit_test(
         dirconfig, 

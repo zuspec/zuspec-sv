@@ -80,8 +80,8 @@ void TaskGenerateComp::generate_init(vsc::dm::IDataTypeStruct *t) {
     DEBUG_ENTER("generate_init");
     DEBUG("Skip");
     // Generate the 'init' at the same time
-    TaskGenerateCompDoInit(m_gen, m_out).generate(t);
-    m_out->println("");
+//    TaskGenerateCompDoInit(m_gen, m_out).generate(t);
+//    m_out->println("");
     /*
     TaskGenerateCompInit(m_gen, 0, m_out).generate(t);
     m_out->println("");

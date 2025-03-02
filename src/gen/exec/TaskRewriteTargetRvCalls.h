@@ -44,6 +44,8 @@ public:
 
     virtual void visitTypeProcStmtAssign(arl::dm::ITypeProcStmtAssign *s) override;
 
+    virtual void visitTypeProcStmtReturn(arl::dm::ITypeProcStmtReturn *s) override;
+
     virtual void visitTypeProcStmtScope(arl::dm::ITypeProcStmtScope *s) override;
 
 	virtual void visitTypeExprArrIndex(vsc::dm::ITypeExprArrIndex *e) override;

@@ -34,7 +34,7 @@ class actor_t_c #(type Tc=component_c, type Ta=int) extends Tc;
 
     endtask
 
-    virtual function void start(executor_base exec_b);
+    virtual function void start(executor_base_c exec_b);
         fork
             run_activity();
         join_none

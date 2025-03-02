@@ -58,7 +58,7 @@ void TaskGenerateExecBlock::generate(
     m_out->println("%s %s(%s);", 
         (istask)?"task":"function void", 
         fname.c_str(),
-        (executor)?"executor_base exec_b":"");
+        (executor)?"executor_base_c exec_b":"");
     m_out->inc_ind();
     if (executor) {
         m_out->println("executor_t executor;");

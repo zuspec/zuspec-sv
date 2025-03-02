@@ -19,15 +19,21 @@
  *     Author:
  */
 typedef component_c component_queue_h[$];
+typedef class empty_executor_trait_s;
+typedef class executor_group_c;
+typedef class executor_group_base_c;
+typedef class executor_group_dummy_c;
 typedef class pool_c;
 
 class component_c extends typed_obj_c;
     int                     comp_id;
     string                  name;
     component_c             parent;
-    
-    pool_c                pool_m;
 
+    executor_group_base_c   exec_groups[$];
+    executor_base_c         executors[$];
+    pool_c                  pool_m;
+    executor_group_base_c   exec_group_m[obj_type_c];
 
     /**
      * Map of component type to list of component instances
@@ -35,9 +41,11 @@ class component_c extends typed_obj_c;
      */
     component_queue_h       comp_t_inst_m[obj_type_c];
 
+    component_c             subcomponents[$];
+
 
     // Each component maintains a map of claim type to executor
-    executor_base  executor_m[];
+    executor_base_c  executor_m[];
 
     // aspace_t_map
     // executor_t_map
@@ -47,6 +55,11 @@ class component_c extends typed_obj_c;
         //$display("component_c::new: %0s ctxt=%p", name, ctxt);
         this.name = name;
         this.parent = parent;
+
+        if (parent != null) begin
+            parent.subcomponents.push_back(this);
+        end
+
         if (ctxt != null) begin
             this.comp_id = ctxt.actor.comp_l.size();
             ctxt.actor.comp_l.push_back(this);
@@ -61,6 +74,7 @@ class component_c extends typed_obj_c;
      */
     function void add_comp_inst(component_c comp);
         obj_type_c comp_t = comp.get_obj_type();
+        `ZSP_DEBUG_ENTER("component_c", ("add_comp_inst %0s (%0s)", comp.name, this.name));
         if (comp_t_inst_m.exists(comp_t)) begin
             comp_t_inst_m[comp_t].push_back(comp);
         end else begin
@@ -70,16 +84,76 @@ class component_c extends typed_obj_c;
         end
     endfunction
 
-    virtual function void init_down(executor_base exec_b);
+    virtual function void do_init(executor_base_c exec_b);
+        `ZSP_DEBUG_ENTER("component_c", ("do_init %0s", this.name));
+        init_down(exec_b);
+
+        // Process added components
+        foreach (subcomponents[i]) begin
+            add_comp_inst(subcomponents[i]);
+        end
+        add_comp_inst(this);
+
+        // If we're not changnig anything at this
+        // level, just take our parent's map
+        if (parent != null && exec_groups.size() == 0 && executors.size() == 0) begin
+            `ZSP_DEBUG("component_c", ("Taking parent's exec_group_m"));
+            exec_group_m = parent.exec_group_m;
+        end else begin
+            // We're making changes - question is what
+            executor_group_base_c exec_group_m[obj_type_c];
+
+            `ZSP_DEBUG("component_c", ("Updating parent's exec_group_m"));
+
+            if (parent != null) begin
+                exec_group_m = parent.exec_group_m;
+            end
+
+            // Slot in local executor groups
+            foreach (exec_groups[i]) begin
+                `ZSP_DEBUG("component_c", ("Setting group %0s for type %0s",
+                    exec_groups[i].name, exec_groups[i].get_trait_type().name));
+                exec_group_m[exec_groups[i].get_trait_type()] = exec_groups[i];
+            end
+
+            // Now, see if we need to create a synthetic group
+            // for any standalone executors
+            foreach (executors[i]) begin
+                if (!exec_group_m.exists(executors[i].get_trait_type())) begin
+                    executor_group_dummy_c exec_group = new(
+                        {"__group_", executors[i].name},
+                        null,
+                        this,
+                        executors[i].get_trait_type());
+                    exec_group_m[executors[i].get_trait_type()] = exec_group;
+                    exec_group.add_executor(executors[i]);
+                    `ZSP_DEBUG("component_c", ("Creating dummy group %0s for type %0s",
+                        exec_group.name, executors[i].get_trait_type().name));
+                end
+            end
+
+            // Save the updated map 
+            this.exec_group_m = exec_group_m;
+        end
+
+        foreach (subcomponents[i]) begin
+            subcomponents[i].do_init(exec_b);
+        end
+
+        init_up(exec_b);
+        `ZSP_DEBUG_LEAVE("component_c", ("<-- do_init %0s", this.name));
     endfunction
 
-    virtual function void init(executor_base exec_b);
+    virtual function void init_down(executor_base_c exec_b);
     endfunction
 
-    virtual function void init_up(executor_base exec_b);
+    virtual function void init(executor_base_c exec_b);
     endfunction
 
-    virtual function void start(executor_base exec_b);
+    virtual function void init_up(executor_base_c exec_b);
+    endfunction
+
+    virtual function void start(executor_base_c exec_b);
     endfunction
 
     virtual function bit check();
@@ -97,7 +171,7 @@ class component_c extends typed_obj_c;
         return actor;
     endfunction
 
-    virtual function executor_base get_default_executor();
+    virtual function executor_base_c get_default_executor();
         component_c c = parent;
         actor_c actor;
 
@@ -106,6 +180,19 @@ class component_c extends typed_obj_c;
         end
         $cast(actor, c);
         return actor.get_default_executor();
+    endfunction
+
+    virtual function executor_group_base_c get_executor_group(obj_type_c trait_t=null);
+        executor_group_base_c ret;
+        if (trait_t == null) begin
+            trait_t = empty_executor_trait_s::get_type();
+        end
+        if (exec_group_m.exists(trait_t)) begin
+            ret = exec_group_m[trait_t];
+        end else begin
+            `ZSP_FATAL(("Failed to find executor group for trait %0s", trait_t.name));
+        end
+        return ret;
     endfunction
 
 endclass

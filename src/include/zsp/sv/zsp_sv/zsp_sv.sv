@@ -27,14 +27,14 @@ package zsp_sv;
 typedef class object_pool_base;
 typedef class actor_c;
 typedef class component_c;
-typedef class executor_base;
+typedef class executor_base_c;
 
     `include "array_c.svh"
     `include "list_c.svh"
 
     typedef enum {NONE, LOW, MEDIUM, HIGH, FULL} message_verbosity_e;
 
-    int log_level = 0;
+    int log_level = 10;
 
 class empty_t;
 endclass
@@ -65,7 +65,7 @@ endclass
 
 class object extends object_pool_base;
 
-//    virtual function void init(executor_base exec_b);
+//    virtual function void init(executor_base_c exec_b);
 //    endfunction
 
     virtual function void dtor();
@@ -77,10 +77,10 @@ class object extends object_pool_base;
     virtual function void pre_solve();
     endfunction
 
-    virtual function void do_post_solve(executor_base exec_b);
+    virtual function void do_post_solve(executor_base_c exec_b);
     endfunction
     
-    virtual function void post_solve(executor_base exec_b);
+    virtual function void post_solve(executor_base_c exec_b);
     endfunction
 
 endclass
@@ -122,7 +122,7 @@ class addr_claim_t;
 endclass
 
 function automatic addr_handle_t make_handle_from_claim(
-        executor_base   exec_b,
+        executor_base_c   exec_b,
         addr_claim_t    claim, 
         bit[63:0]       offset);
     addr_handle_t ret;
@@ -131,7 +131,7 @@ function automatic addr_handle_t make_handle_from_claim(
 endfunction
 
 function automatic addr_handle_t make_handle_from_handle(
-    executor_base       exec_b,
+    executor_base_c       exec_b,
     addr_handle_t       hndl,
     bit[63:0]           offset);
     addr_handle_t ret;
@@ -190,11 +190,16 @@ endclass
     `include "hndl_drop_listener.svh"
 
     `include "backend_api.svh"
-    `include "executor_base.svh"
+    `include "executor_base_c.svh"
+    `include "executor_c.svh"
+    `include "executor_group_base_c.svh"
+    `include "executor_group_dummy_c.svh"
+    `include "executor_group_c.svh"
+
     `include "actor_c.svh"
 
-    `include "empty_executor_trait_s.svh"
     `include "executor_trait_s.svh"
+    `include "empty_executor_trait_s.svh"
 
 endpackage
 

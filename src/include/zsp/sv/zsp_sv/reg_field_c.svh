@@ -27,7 +27,7 @@ class reg_field_c;
     endfunction
 
     virtual function void map(
-        executor_base   exec_b,
+        executor_base_c exec_b,
         reg_group_c     group);
         offset = group.get_offset_of_instance(exec_b, name);
     endfunction

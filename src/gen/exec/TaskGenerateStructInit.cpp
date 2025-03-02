@@ -42,7 +42,7 @@ TaskGenerateStructInit::~TaskGenerateStructInit() {
 
 
 void TaskGenerateStructInit::generate_head(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("virtual function void init(executor_base exec_b);");
+    m_out->println("virtual function void init(executor_base_c exec_b);");
 }
 
 void TaskGenerateStructInit::generate(vsc::dm::IDataTypeStruct *t) {

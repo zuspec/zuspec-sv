@@ -48,6 +48,8 @@ public:
 
 	virtual void visitTypeExecProc(arl::dm::ITypeExecProc *e) override;
 
+    virtual void visitDataTypeFunction(arl::dm::IDataTypeFunction *t) override;
+
 protected:
     void tag_functions();
 

@@ -19,7 +19,7 @@
  *     Author:
  */
 class actor_c extends component_c;
-    component_c                               comp_l[$];
+    component_c                             comp_l[$];
     activity_listener_c                     listeners[$];
     hndl_drop_listener #(addr_handle_t)     addr_handle_drop_listeners[$];
     message_verbosity_e                     verbosity = MEDIUM;
@@ -30,13 +30,13 @@ class actor_c extends component_c;
     endfunction
 
     virtual task run();
-        executor_base exec_b = get_default_executor();
+        executor_base_c exec_b = get_default_executor();
         foreach (comp_l[i]) begin
             comp_l[i].start(exec_b);
         end
     endtask
 
-    virtual function void start(executor_base exec_b);
+    virtual function void start(executor_base_c exec_b);
         // The root actor's behavior is solely controlled from 'run'
     endfunction
 
@@ -59,7 +59,7 @@ class actor_c extends component_c;
         return null;
     endfunction
 
-    virtual function executor_base get_default_executor();
+    virtual function executor_base_c get_default_executor();
         return null;
     endfunction
 

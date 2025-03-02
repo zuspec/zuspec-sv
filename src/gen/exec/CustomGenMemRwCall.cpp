@@ -50,7 +50,7 @@ void CustomGenMemRwCall::genExprMethodCallStatic(
 
     // TODO: this relies on direct read usages being remapped
 
-    out->write("executor.%s(", name.c_str());
+    out->write("executor.%s(exec_b, ", name.c_str());
     for (std::vector<vsc::dm::ITypeExprUP>::const_iterator
         it=call->getParameters().begin();
         it!=call->getParameters().end(); it++) {
