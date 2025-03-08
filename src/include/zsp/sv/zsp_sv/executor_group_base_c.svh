@@ -1,9 +1,9 @@
 
-class executor_group_base_c;
+class executor_group_base_c extends component_c;
     executor_base_c executors[$];
 
-    function new(string name, component_c parent);
-        super.new(name, null, parent);
+    function new(string name, component_ctor_ctxt_c ctxt, component_c parent);
+        super.new(name, ctxt, parent);
 
         if (parent != null) begin
             parent.exec_groups.push_back(this);

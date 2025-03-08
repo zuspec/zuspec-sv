@@ -60,8 +60,7 @@ bool TaskGenerateTypesPkg::generate() {
     out->println("");
     out->println("typedef class pss_import_api;");
     out->println("// TODO: define model-specific executor class");
-    out->println("typedef executor_base executor_base_c;");
-    out->println("typedef executor_base executor_t;");
+    out->println("typedef executor_c executor_t;");
     TypeCollectionUP types(TaskBuildTypeCollection(m_dmgr).build(m_ctxt));
     std::vector<int32_t> sorted = types->sort();
 

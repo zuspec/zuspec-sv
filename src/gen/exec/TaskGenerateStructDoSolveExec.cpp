@@ -48,7 +48,7 @@ void TaskGenerateStructDoSolveExec::generate(
     m_executor = executor;
     m_out->println("function void do_%s(%s);", 
         kind.c_str(),
-        (executor)?"executor_base exec_b":"");
+        (executor)?"executor_base_c exec_b":"");
     m_out->inc_ind();
     m_out->println("%s(%s);", 
         kind.c_str(),

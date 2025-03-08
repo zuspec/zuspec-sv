@@ -29,6 +29,7 @@
 #include "CustomGenAddrRegionTransparent.h"
 #include "CustomGenCoreMethodCall.h"
 #include "CustomGenCoreType.h"
+#include "CustomGenExecFunc.h"
 #include "CustomGenImportCall.h"
 #include "CustomGenMemRwCall.h"
 #include "CustomGenMessageCall.h"
@@ -116,6 +117,16 @@ void TaskGenerate::attach_custom_gen() {
         it!=rw_funcs.end(); it++) {
         f_t = m_ctxt->findDataTypeFunction(*it);
         f_t->setAssociatedData(new CustomGenMemRwCall(m_dmgr));
+    }
+
+    std::vector<std::string> exec_funcs = {
+        "addr_reg_pkg::addr_value"
+    };
+    for (std::vector<std::string>::const_iterator
+        it=exec_funcs.begin();
+        it!=exec_funcs.end(); it++) {
+        f_t = m_ctxt->findDataTypeFunction(*it);
+        f_t->setAssociatedData(new CustomGenExecFunc(m_dmgr));
     }
 
     std::vector<vsc::dm::IDataTypeStruct *> addr_region_transparent_bases;

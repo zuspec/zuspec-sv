@@ -1,5 +1,5 @@
 /**
- * TaskPrepContext.h
+ * TaskGenerateStructMethods.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -20,9 +20,8 @@
  */
 #pragma once
 #include "dmgr/IDebugMgr.h"
-#include "zsp/arl/dm/IContext.h"
 #include "zsp/arl/dm/impl/VisitorBase.h"
-#include "zsp/arl/eval/IFactory.h"
+#include "gen/IOutput.h"
 
 namespace zsp {
 namespace sv {
@@ -30,34 +29,27 @@ namespace gen {
 namespace exec {
 
 
+class TaskGenerate;
 
-class TaskPrepContext :
-    public virtual arl::dm::VisitorBase {
+class TaskGenerateStructMethods :
+    virtual public arl::dm::VisitorBase {
 public:
-    TaskPrepContext(
-        dmgr::IDebugMgr     *dmgr,
-        arl::dm::IContext   *ctxt,
-        arl::eval::IFactory *eval_f
-    );
+    TaskGenerateStructMethods(
+        TaskGenerate             *gen,
+        IOutput                  *out);
 
-    virtual ~TaskPrepContext();
+    virtual ~TaskGenerateStructMethods();
 
-    virtual void prepare();
+    virtual void generate(vsc::dm::IDataTypeStruct *t);
 
-    virtual void visitDataTypeAction(arl::dm::IDataTypeAction *t) override;
+    virtual void visitDataTypeArlStruct(arl::dm::IDataTypeArlStruct *t) override;
 
-	virtual void visitTypeExecProc(arl::dm::ITypeExecProc *e) override;
-
-    virtual void visitDataTypeFunction(arl::dm::IDataTypeFunction *t) override;
-
-protected:
-    void tag_functions();
+    virtual void visitDataTypeComponent(arl::dm::IDataTypeComponent *t) override;
 
 private:
-    static dmgr::IDebug             *m_dbg;
-    dmgr::IDebugMgr                 *m_dmgr;
-    arl::dm::IContext               *m_ctxt;
-    arl::eval::IFactory             *m_eval_f;
+    static dmgr::IDebug         *m_dbg;
+    TaskGenerate                *m_gen;
+    IOutput                     *m_out;
 
 };
 

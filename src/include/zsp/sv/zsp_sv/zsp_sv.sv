@@ -28,6 +28,7 @@ typedef class object_pool_base;
 typedef class actor_c;
 typedef class component_c;
 typedef class executor_base_c;
+typedef class executor_base_c;
 
     `include "array_c.svh"
     `include "list_c.svh"
@@ -205,6 +206,8 @@ endclass
 
     `include "actor_c.svh"
 
+    `include "executor_trait_s.svh"
+    `include "empty_executor_trait_s.svh"
 
 endpackage
 

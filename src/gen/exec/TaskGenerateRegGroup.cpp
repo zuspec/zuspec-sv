@@ -55,7 +55,7 @@ void TaskGenerateRegGroup::generate(vsc::dm::IDataTypeStruct *t) {
     }
     m_out->println("");
     m_phase = PhaseE::Ctor;
-    m_out->println("function new(executor_base exec_b);");
+    m_out->println("function new(executor_base_c exec_b);");
     m_out->inc_ind();
     m_out->println("super.new();");
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
@@ -87,7 +87,7 @@ void TaskGenerateRegGroup::generate(vsc::dm::IDataTypeStruct *t) {
         }
     }
 
-    m_out->println("static function %s inst(executor_base exec_b);",
+    m_out->println("static function %s inst(executor_base_c exec_b);",
         m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
     m_out->println("if (prv_inst == null) begin");

@@ -18,15 +18,15 @@
  * Created on:
  *     Author:
  */
-typedef class executor_base;
+typedef class executor_base_c;
 
 class addr_handle_t extends object_pool_base;
-    executor_base       exec_b;
+    executor_base_c     exec_b;
     storage_handle_s    base;
     bit[63:0]           offset;
     
     function new(
-        executor_base       exec_b,
+        executor_base_c     exec_b,
         storage_handle_s    base=null, 
         bit[63:0]           offset=0);
         this.exec_b = exec_b;

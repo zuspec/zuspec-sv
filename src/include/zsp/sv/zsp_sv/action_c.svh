@@ -27,7 +27,7 @@ class action_c extends activity_c;
         super.new(null, null);
     endfunction
 
-    virtual task body(executor_base exec_b);
+    virtual task body(executor_base_c exec_b);
     endtask
 
     virtual function int add_resource_claim(resource_claim_base_c rsrc_claim);
@@ -36,7 +36,7 @@ class action_c extends activity_c;
         return ret;
     endfunction
 
-    virtual function executor_base get_executor();
+    virtual function executor_base_c get_executor();
         return null;
     endfunction
 

@@ -35,7 +35,7 @@ class reg_group_field_arr_c #(type group_t=reg_group_c) extends reg_group_field_
     endfunction
 
     virtual function void map(
-        executor_base   exec_b,
+        executor_base_c exec_b,
         reg_group_c     group);
         foreach (offsets[i]) begin
             offsets[i] = group.get_offset_of_instance_array(exec_b, name, i);

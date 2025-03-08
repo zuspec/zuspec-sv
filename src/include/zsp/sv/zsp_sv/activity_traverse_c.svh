@@ -21,6 +21,7 @@
 // Traversal constraints are added via aspects (?)
 
 typedef class action_constraint_base_c;
+typedef class executor_group_base_c;
 
 class activity_traverse_c #(type Ta) extends activity_c;
     rand Ta                         action;
@@ -48,7 +49,9 @@ class activity_traverse_c #(type Ta) extends activity_c;
     endfunction
 
     task run();
-        executor_base exec_b = actor.get_default_executor();
+        executor_base_c exec_b;
+        executor_group_base_c exec_group;
+        component_c comp;
         `ZSP_DEBUG_ENTER("activity_traverse_c", ("run"));
 
         action.init(actor, parent_comp);
@@ -62,6 +65,15 @@ class activity_traverse_c #(type Ta) extends activity_c;
             void'(ctxt_solver.resolve());
 `endif // UNDEFINED
         end
+
+        comp = this.action.get_component();
+        exec_group = comp.get_executor_group();
+        exec_b = exec_group.executors[0];
+
+        `ZSP_DEBUG("activity_traverse_c", ("executor for comp %0s: %0s/%0s",
+            comp.name,
+            exec_group.name,
+            exec_b.name));
 
         action.pre_solve();
 
@@ -95,7 +107,7 @@ class activity_traverse_c #(type Ta) extends activity_c;
         `ZSP_DEBUG_LEAVE("activity_traverse_c", ("run"));
     endtask
 
-    virtual task run_body(executor_base exec_b);
+    virtual task run_body(executor_base_c exec_b);
         action.body(exec_b);
     endtask
 

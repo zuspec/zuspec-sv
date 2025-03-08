@@ -28,7 +28,7 @@ class activity_traverse_compound_c #(type Ta, type Tact=activity_c) extends acti
         super.new(actor, parent_comp, action);
     endfunction
 
-    virtual task run_body(executor_base exec_b);
+    virtual task run_body(executor_base_c exec_b);
         Tact activity = new(actor, parent_comp, action);
         activity.run();
     endtask

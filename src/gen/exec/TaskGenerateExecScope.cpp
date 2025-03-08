@@ -57,10 +57,10 @@ void TaskGenerateExecScope::generate(
     m_exec_s.push_back(&out);
     m_istask = istask;
 
-    if (newscope) {
-        m_out_top->println("begin");
-        m_out_top->inc_ind();
-    }
+    // if (newscope) {
+    //     m_out_top->println("begin");
+    //     m_out_top->inc_ind();
+    // }
 
     m_genref->pushScope(scope);
     for (std::vector<arl::dm::ITypeProcStmtUP>::const_iterator
@@ -73,10 +73,10 @@ void TaskGenerateExecScope::generate(
     m_exec_s.back()->apply(m_out_top);
 
 
-    if (newscope) {
-        m_out_top->dec_ind();
-        m_out_top->println("end");
-    }
+    // if (newscope) {
+    //     m_out_top->dec_ind();
+    //     m_out_top->println("end");
+    // }
     m_exec_s.pop_back();
     DEBUG_LEAVE("generate");
 }
@@ -183,14 +183,18 @@ void TaskGenerateExecScope::visitTypeProcStmtIfElse(arl::dm::ITypeProcStmtIfElse
         TaskGenerateExpr(m_gen, m_genref, m_exec_s.back()->exec()).generate((*it)->getCond());
         m_exec_s.back()->exec()->write(") begin\n");
         m_exec_s.back()->exec()->inc_ind();
-        TaskGenerateExecScope(m_gen, m_genref, m_exec_s.back()->exec()).generate((*it)->getStmt());
+        TaskGenerateExecScope(m_gen, m_genref, m_exec_s.back()->exec()).generate(
+            (*it)->getStmt(),
+            m_istask);
         m_exec_s.back()->exec()->dec_ind();
     }
 
     if (s->getElseClause()) {
         m_exec_s.back()->exec()->println("end else begin");
         m_exec_s.back()->exec()->inc_ind();
-        TaskGenerateExecScope(m_gen, m_genref, m_exec_s.back()->exec()).generate(s->getElseClause());
+        TaskGenerateExecScope(m_gen, m_genref, m_exec_s.back()->exec()).generate(
+            s->getElseClause(),
+            m_istask);
         m_exec_s.back()->exec()->dec_ind();
     }
     m_exec_s.back()->exec()->println("end");
@@ -286,7 +290,7 @@ void TaskGenerateExecScope::visitTypeProcStmtReturn(arl::dm::ITypeProcStmtReturn
     if (m_istask) {
         if (s->getExpr()) {
             m_exec_s.back()->exec()->indent();
-            m_exec_s.back()->exec()->write("__ret = ");
+            m_exec_s.back()->exec()->write("__retval = ");
             TaskGenerateExpr(m_gen, m_genref, m_exec_s.back()->exec()).generate(s->getExpr());
             m_exec_s.back()->exec()->write(";\n");
         }

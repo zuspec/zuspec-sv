@@ -31,6 +31,7 @@
 #include "TaskGenerateStructDtor.h"
 #include "TaskGenerateStructDoSolveExec.h"
 #include "TaskGenerateStructFields.h"
+#include "TaskGenerateStructMethods.h"
 #include "TaskGenerateStructInit.h"
 
 
@@ -163,6 +164,7 @@ void TaskGenerateStruct::generate_execs(vsc::dm::IDataTypeStruct *t) {
 
 void TaskGenerateStruct::generate_methods(vsc::dm::IDataTypeStruct *t) {
     DEBUG_ENTER("generate_methods");
+    TaskGenerateStructMethods(m_gen, m_out).generate(t);
     DEBUG_LEAVE("generate_methods");
 }
 

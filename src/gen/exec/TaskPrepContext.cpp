@@ -51,6 +51,11 @@ void TaskPrepContext::prepare() {
         it!=m_ctxt->getDataTypeStructs().end(); it++) {
         (*it)->accept(m_this);
     }
+    for (std::vector<arl::dm::IDataTypeFunction *>::const_iterator
+        it=m_ctxt->getDataTypeFunctions().begin();
+        it!=m_ctxt->getDataTypeFunctions().end(); it++) {
+        (*it)->accept(m_this);
+    }
 
     DEBUG_LEAVE("prepare");
 }
@@ -66,6 +71,14 @@ void TaskPrepContext::visitDataTypeAction(arl::dm::IDataTypeAction *t) {
     }
 
     DEBUG_LEAVE("visitDataTypeAction %s", t->name().c_str());
+}
+
+void TaskPrepContext::visitDataTypeFunction(arl::dm::IDataTypeFunction *t) {
+    DEBUG_ENTER("visitDataTypeFunction %s", t->name().c_str());
+    if (t->getBody() && t->hasFlags(arl::dm::DataTypeFunctionFlags::Target)) {
+        TaskRewriteTargetRvCalls(m_dmgr, m_ctxt).rewrite(t->getBody());
+    }
+    DEBUG_LEAVE("visitDataTypeFunction %s", t->name().c_str());
 }
 
 void TaskPrepContext::visitTypeExecProc(arl::dm::ITypeExecProc *e) {

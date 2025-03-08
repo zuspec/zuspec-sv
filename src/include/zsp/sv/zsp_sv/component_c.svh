@@ -18,40 +18,20 @@
  * Created on:
  *     Author:
  */
-class component_queue_h;
-    component_c comps[$];
-endclass
-
-
-typedef pool_base_c action_type_bind_entry[int];
-
-class type_pool_bind_entry_c;
-    action_type_bind_entry  action_t_m[action_type_c];
-
-    function pool_base_c get_pool(action_type_c action_t, int refclaim_id);
-        if (action_t_m.exists(action_t)) begin
-            return action_t_m[action_t][refclaim_id];
-        end else begin
-            `ZSP_FATAL(("action_t %0s / ref %0d is not bound", action_t.name, refclaim_id));
-        end
-        return null;
-    endfunction
-endclass
-
+typedef component_c component_queue_h[$];
+typedef class empty_executor_trait_s;
+typedef class executor_group_c;
+typedef class executor_group_base_c;
+typedef class executor_group_dummy_c;
+typedef class pool_c;
 
 class component_c extends typed_obj_c;
     `zsp_component_util(component_c)
     int                     comp_id;
     string                  name;
     component_c             parent;
-    component_c             children[$];
-    pool_base_c             pool_l[$];
-    action_type_bind_entry  refclaim_pool_m[action_type_c];
-    executor_group_base_c   exec_groups[$];
-    executor_base_c         executors[$];
-
-    // action-factory map
-    action_type_c           action_m[action_type_c];
+    
+    pool_c                pool_m;
 
 
     /**
@@ -60,9 +40,11 @@ class component_c extends typed_obj_c;
      */
     component_queue_h       comp_t_inst_m[component_type_c];
 
+    component_c             subcomponents[$];
 
-    // Each component needs a map of action-claim refs to pool
-    executor_base  executor_m[];
+
+    // Each component maintains a map of claim type to executor
+    executor_base_c  executor_m[];
 
     // aspace_t_map
     // executor_t_map
@@ -72,11 +54,6 @@ class component_c extends typed_obj_c;
         //$display("component_c::new: %0s ctxt=%p", name, ctxt);
         this.name = name;
         this.parent = parent;
-
-        if (parent != null) begin
-            parent.children.push_back(this);
-        end
-
         if (ctxt != null) begin
             this.comp_id = ctxt.actor.comp_l.size();
             ctxt.actor.comp_l.push_back(this);
@@ -89,157 +66,87 @@ class component_c extends typed_obj_c;
     /**
      * Adds a component instance to the map of comp_t -> [comp_inst] map
      */
-    // function void register_comp_inst(component_c comp);
-    //     component_type_c comp_t;
-
-    //     $cast(comp_t, comp.get_obj_type());
-
-    //     if (comp_t_inst_m.exists(comp_t)) begin
-    //         comp_t_inst_m[comp_t].comps.push_back(comp);
-    //     end else begin
-    //         component_queue_h l = new();
-    //         l.comps.push_back(comp);
-    //         comp_t_inst_m[comp_t] = l;
-    //     end
-    // endfunction
-
-    function void add_pool(pool_base_c pool);
-//        pool.id = pool_l.size();
-        pool_l.push_back(pool);
+    function void add_comp_inst(component_c comp);
+        obj_type_c comp_t = comp.get_obj_type();
+        if (comp_t_inst_m.exists(comp_t)) begin
+            comp_t_inst_m[comp_t].push_back(comp);
+        end else begin
+            component_queue_h l;
+            l.push_back(comp);
+            comp_t_inst_m[comp_t] = l;
+        end
     endfunction
 
-    virtual function void do_init(
-        executor_base           exec_b,
-        component_init_ctxt_c   ctxt=null);
-        `ZSP_DEBUG_ENTER("component_c", ("do_init %0s", name));
-
-        if (ctxt == null) begin
-            ctxt = new();
-        end
-
-        // if (parent != null) begin
-        //     parent.register_comp_inst(this);
-        // end
-
-        // First, call the local init_down
+    virtual function void do_init(executor_base_c exec_b);
+        `ZSP_DEBUG_ENTER("component_c", ("do_init %0s", this.name));
         init_down(exec_b);
 
-        // Process children
-        foreach (children[i]) begin
-            children[i].do_init(exec_b, ctxt);
+        // Process added components
+        foreach (subcomponents[i]) begin
+            add_comp_inst(subcomponents[i]);
+        end
+        add_comp_inst(this);
+
+        // If we're not changnig anything at this
+        // level, just take our parent's map
+        if (parent != null && exec_groups.size() == 0 && executors.size() == 0) begin
+            `ZSP_DEBUG("component_c", ("Taking parent's exec_group_m"));
+            exec_group_m = parent.exec_group_m;
+        end else begin
+            // We're making changes - question is what
+            executor_group_base_c exec_group_m[obj_type_c];
+
+            `ZSP_DEBUG("component_c", ("Updating parent's exec_group_m"));
+
+            if (parent != null) begin
+                exec_group_m = parent.exec_group_m;
+            end
+
+            // Slot in local executor groups
+            foreach (exec_groups[i]) begin
+                `ZSP_DEBUG("component_c", ("Setting group %0s for type %0s",
+                    exec_groups[i].name, exec_groups[i].get_trait_type().name));
+                exec_group_m[exec_groups[i].get_trait_type()] = exec_groups[i];
+            end
+
+            // Now, see if we need to create a synthetic group
+            // for any standalone executors
+            foreach (executors[i]) begin
+                if (!exec_group_m.exists(executors[i].get_trait_type())) begin
+                    executor_group_dummy_c exec_group = new(
+                        {"__group_", executors[i].name},
+                        null,
+                        this,
+                        executors[i].get_trait_type());
+                    exec_group_m[executors[i].get_trait_type()] = exec_group;
+                    exec_group.add_executor(executors[i]);
+                    `ZSP_DEBUG("component_c", ("Creating dummy group %0s for type %0s",
+                        exec_group.name, executors[i].get_trait_type().name));
+                end
+            end
+
+            // Save the updated map 
+            this.exec_group_m = exec_group_m;
         end
 
-        // Finally, call the local init_up
+        foreach (subcomponents[i]) begin
+            subcomponents[i].do_init(exec_b);
+        end
+
         init_up(exec_b);
-
-        // Create a component-instance map for this level
-        foreach (children[i]) begin
-            component_type_c child_comp_t;
-            `ZSP_DEBUG("component_c", ("children[i]: %0s", children[i].name));
-            if (children[i].comp_t_inst_m.first(child_comp_t)) begin
-                `ZSP_DEBUG("component_c", ("child_comp_t=%0s", child_comp_t.name));
-                do begin
-                    component_queue_h this_comp_l;
-                    component_queue_h child_comps = children[i].comp_t_inst_m[child_comp_t];
-                    if (!comp_t_inst_m.exists(child_comp_t)) begin
-                        this_comp_l = new();
-                        `ZSP_DEBUG("component_c", ("%0s does not have an entry", name));
-                        comp_t_inst_m[child_comp_t] = this_comp_l;
-                    end else begin
-                        `ZSP_DEBUG("component_c", ("%0s already has an entry", name));
-                        this_comp_l = comp_t_inst_m[child_comp_t];
-                    end
-
-                    foreach (child_comps.comps[j]) begin
-                        `ZSP_DEBUG("component_c", ("child_comps.comps[%0d]: %0s", j, child_comps.comps[j].name));
-                        this_comp_l.comps.push_back(child_comps.comps[j]);
-                    end
-                end while (children[i].comp_t_inst_m.next(child_comp_t));
-            end
-        end
-        // Add an entry for ourselves
-        begin
-            component_queue_h this_comp_l = new();
-            component_type_c comp_t;
-            $cast(comp_t, get_obj_type());
-            this_comp_l.comps.push_back(this);
-            comp_t_inst_m[comp_t] = this_comp_l;
-        end
-
-
-        // At this point, all construction and initialization
-        // have been performed. We need to build the bind
-        // map for this component
-        do_bind(ctxt);
-
-        `ZSP_DEBUG_LEAVE("component_c", ("do_init %0s", name));
+        `ZSP_DEBUG_LEAVE("component_c", ("<-- do_init %0s", this.name));
     endfunction
 
-    virtual function void do_bind(component_init_ctxt_c ctxt);
-        component_type_c comp_t;
-        pool_base_c pool;
-        `ZSP_DEBUG_ENTER("component_c", ("do_bind %0s", name));
-
-        ctxt.push_scope(this);
-
-        // Apply bind information from this scope
-        bind_pools(ctxt);
-
-        // Process all action types, and all claim/ref info
-        $cast(comp_t, get_obj_type());
-        foreach (comp_t.actions[i]) begin
-            type_pool_bind_entry_c type_bind_entry = new();
-            $display("action %0s", comp_t.actions[i].name);
-
-            foreach (comp_t.actions[i].ref_claim_type_l[j]) begin
-                obj_type_c item_c = comp_t.actions[i].ref_claim_type_l[j].obj_t;
-
-                if (!refclaim_pool_m.exists(comp_t.actions[i])) begin
-                    action_type_bind_entry entry;
-                    refclaim_pool_m[comp_t.actions[i]] = entry;
-                end
-
-                // Need to find the pool to use for this action type in this scope
-                $display("  claim %0s", comp_t.actions[i].ref_claim_type_l[j].name);
-                pool = ctxt.get_pool(comp_t.actions[i], j);
-                if (pool == null) begin
-                    `ZSP_FATAL(("No pool found for %0s", comp_t.actions[i].ref_claim_type_l[j].name));
-                end
-
-                refclaim_pool_m[comp_t.actions[i]][j] = pool;
-            end
-        end
-
-        // We need to have a map:
-        // flow_obj_t -> map_info
-        // map_info:
-        // - default pool (if any)
-        // - action_t -> ref_id -> pool
-
-
-        foreach (children[i]) begin
-            children[i].do_bind(ctxt);
-        end
-
-        ctxt.pop_scope();
-
-        `ZSP_DEBUG_LEAVE("component_c", ("do_bind %0s", name));
+    virtual function void init_down(executor_base_c exec_b);
     endfunction
 
-
-    virtual function void bind_pools(component_init_ctxt_c ctxt);
+    virtual function void init(executor_base_c exec_b);
     endfunction
 
-    virtual function void init_down(executor_base exec_b);
+    virtual function void init_up(executor_base_c exec_b);
     endfunction
 
-    virtual function void init(executor_base exec_b);
-    endfunction
-
-    virtual function void init_up(executor_base exec_b);
-    endfunction
-
-    virtual function void start(executor_base exec_b);
+    virtual function void start(executor_base_c exec_b);
     endfunction
 
     virtual function bit check();
@@ -257,7 +164,7 @@ class component_c extends typed_obj_c;
         return actor;
     endfunction
 
-    virtual function executor_base get_default_executor();
+    virtual function executor_base_c get_default_executor();
         component_c c = parent;
         actor_c actor;
 
@@ -266,19 +173,6 @@ class component_c extends typed_obj_c;
         end
         $cast(actor, c);
         return actor.get_default_executor();
-    endfunction
-
-    virtual function action_c mk_action(action_type_c action_t);
-        action_type_c actual_action_t = action_t;
-        action_c action;
-
-        if (action_m.exists(action_t)) begin
-            actual_action_t = action_m[action_t];
-        end
-
-        action = actual_action_t.mk();
-
-        return action;
     endfunction
 
 endclass

@@ -1,5 +1,5 @@
 /*
- * CustomGenMemRwCall.cpp
+ * CustomGenExecFunc.cpp
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -20,7 +20,7 @@
  */
 #include "TaskGenerate.h"
 #include "TaskGenerateExpr.h"
-#include "CustomGenMemRwCall.h"
+#include "CustomGenExecFunc.h"
 
 
 namespace zsp {
@@ -29,20 +29,20 @@ namespace gen {
 namespace exec {
 
 
-CustomGenMemRwCall::CustomGenMemRwCall(dmgr::IDebugMgr *dmgr) :
+CustomGenExecFunc::CustomGenExecFunc(dmgr::IDebugMgr *dmgr) :
     CustomGenBase(dmgr) {
 
 }
 
-CustomGenMemRwCall::~CustomGenMemRwCall() {
+CustomGenExecFunc::~CustomGenExecFunc() {
 
 }
 
-void CustomGenMemRwCall::genExprMethodCallStatic(
-        TaskGenerate                        *gen,
-        IOutput                             *out,
-        IGenRefExpr                         *refgen,
-        arl::dm::ITypeExprMethodCallStatic  *call) {
+void CustomGenExecFunc::genExprMethodCallStatic(
+    TaskGenerate                        *gen,
+    IOutput                             *out,
+    IGenRefExpr                         *refgen,
+    arl::dm::ITypeExprMethodCallStatic  *call) {
     arl::dm::IDataTypeFunction *target = call->getTarget();
     std::string name = target->name();
     int colon_idx = name.find("::");
@@ -50,7 +50,7 @@ void CustomGenMemRwCall::genExprMethodCallStatic(
 
     // TODO: this relies on direct read usages being remapped
 
-    out->write("executor.%s(exec_b, ", name.c_str());
+    out->write("executor.%s(", name.c_str());
     for (std::vector<vsc::dm::ITypeExprUP>::const_iterator
         it=call->getParameters().begin();
         it!=call->getParameters().end(); it++) {

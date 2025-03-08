@@ -22,8 +22,8 @@ class executor_base_c extends component_c;
     actor_c            actor;
     backend_api        api;
 
-    function new(string name, component_c parent);
-        super.new(name, null, parent);
+    function new(string name, component_ctor_ctxt_c ctxt, component_c parent);
+        super.new(name, ctxt, parent);
 
         if (parent != null) begin
             parent.executors.push_back(this);
@@ -72,6 +72,7 @@ class executor_base_c extends component_c;
         return hndl.addr_value();
     endfunction
 
+<<<<<<< HEAD
     virtual task read8 (output bit[7:0] data, input addr_handle_t hndl);
         backend_api api = get_api();
         bit[63:0] addr = addr_value(hndl);
@@ -122,12 +123,74 @@ class executor_base_c extends component_c;
 
     virtual task read_bytes (addr_handle_t hndl, bit[7:0] data[$], int size);
         backend_api api = get_api();
+=======
+    virtual task read8 (
+        input executor_base_c   exec_b,
+        output byte unsigned    __retval,
+        input addr_handle_t     hndl);
+        `ZSP_FATAL(("read8 not implemented"));
+    endtask
+
+    virtual task read16(
+        input executor_base_c   exec_b,
+        output shortint unsigned __retval,
+        input addr_handle_t     hndl);
+        `ZSP_FATAL(("read16 not implemented"));
+    endtask
+
+    virtual task read32(
+        input executor_base_c   exec_b,
+        output int unsigned     __retval,
+        input addr_handle_t     hndl);
+        `ZSP_FATAL(("read32 not implemented"));
+    endtask
+
+    virtual task read64(
+        input executor_base_c   exec_b,
+        output longint unsigned __retval,
+        input addr_handle_t     hndl);
+        `ZSP_FATAL(("read64 not implemented"));
+    endtask
+
+    virtual task write8 (
+        executor_base_c         exec_b,
+        addr_handle_t           hndl, 
+        byte unsigned           data);
+        `ZSP_FATAL(("write8 not implemented"));
+    endtask
+
+    virtual task write16(
+        executor_base_c         exec_b,
+        addr_handle_t           hndl,
+        shortint unsigned       data);
+        `ZSP_FATAL(("write16 not implemented"));
+    endtask
+
+    virtual task write32(
+        executor_base_c         exec_b,
+        addr_handle_t           hndl,
+        int unsigned            data);
+        `ZSP_FATAL(("write32 not implemented"));
+    endtask
+
+    virtual task write64(
+        executor_base_c         exec_b,
+        addr_handle_t           hndl,
+        longint unsigned        data);
+        `ZSP_FATAL(("write64 not implemented"));
+    endtask
+
+    virtual task read_bytes (addr_handle_t hndl, bit[7:0] data[$], int size);
+>>>>>>> origin/main
         bit[63:0] addr = addr_value(hndl);
 //        api.write64(addr, data);
     endtask
 
     virtual task write_bytes(addr_handle_t hndl, bit[7:0] data[$]);
+<<<<<<< HEAD
         backend_api api = get_api();
+=======
+>>>>>>> origin/main
         bit[63:0] addr = addr_value(hndl);
 //        api.write64(addr, data);
     endtask

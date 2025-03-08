@@ -30,10 +30,21 @@ def test_default_api_impl_mem_access(dirconfig):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
+        import executor_pkg::*;
         pure component simple_regs : reg_group_c {
             reg_c<bit[32]>        R1;
             reg_c<bit[32]>        R2;
         }
+
+        /*
+        import target function void write32(addr_handle_t addr, bit[32] data);
+        component mem_executor_c : executor_c<> {
+            function void write32(addr_handle_t addr, bit[32] data) {
+                ::write32(addr, data);
+            }
+        }
+         */
+
         component pss_top {
             transparent_addr_space_c<>      aspace;
             addr_handle_t                   hndl;

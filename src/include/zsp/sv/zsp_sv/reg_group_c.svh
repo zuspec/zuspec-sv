@@ -27,7 +27,7 @@ class reg_group_c;
     endfunction
 
 
-    function void map_registers(executor_base exec_b);
+    function void map_registers(executor_base_c exec_b);
         $display("map_registers");
         foreach (fields[i]) begin
             reg_group_field_arr_c arr;
@@ -49,11 +49,11 @@ class reg_group_c;
         end
     endfunction
 
-    virtual function bit[63:0] get_offset_of_instance(executor_base exec_b, string name);
+    virtual function bit[63:0] get_offset_of_instance(executor_base_c exec_b, string name);
         return {64{1'b1}};
     endfunction
 
-    virtual function bit[63:0] get_offset_of_instance_array(executor_base exec_b, string name, int index);
+    virtual function bit[63:0] get_offset_of_instance_array(executor_base_c exec_b, string name, int index);
         return {64{1'b1}};
     endfunction
 

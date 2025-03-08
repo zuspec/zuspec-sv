@@ -151,7 +151,7 @@
     $finish
 
 `define zsp_print(exec_b, msg) \
-    $write msg 
+    exec_b.get_api().print($sformatf msg );
 
 `define zsp_message(exec_b, verb, msg) \
     begin \
@@ -159,7 +159,7 @@
         if (exec_b.get_actor().verbosity >= v) begin \
             exec_b.get_api().message($sformatf msg ); \
         end \
-    end 
+    end
 
 
 `endif /* INCLUDED_ZSP_SV_MACROS_SVH */
