@@ -1,10 +1,4 @@
 
-<<<<<<< HEAD
-
-class executor_c #(type TRAIT = empty_executor_trait_s) extends executor_base_c;
-    TRAIT   trait;
-
-=======
 typedef class empty_executor_trait_s;
 
 class executor_c #(type TRAIT = empty_executor_trait_s) extends executor_base_c;
@@ -15,7 +9,6 @@ class executor_c #(type TRAIT = empty_executor_trait_s) extends executor_base_c;
         super.new(name, ctxt, parent);
     endfunction
 
->>>>>>> origin/main
     virtual function obj_type_c get_trait_type();
         return TRAIT ::get_type();
     endfunction
