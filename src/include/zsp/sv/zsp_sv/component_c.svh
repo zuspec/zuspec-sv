@@ -40,12 +40,18 @@ endclass
 
 
 class component_c extends typed_obj_c;
+    `zsp_component_util(component_c)
     int                     comp_id;
     string                  name;
     component_c             parent;
     component_c             children[$];
     pool_base_c             pool_l[$];
     action_type_bind_entry  refclaim_pool_m[action_type_c];
+    executor_group_base_c   exec_groups[$];
+    executor_base_c         executors[$];
+
+    // action-factory map
+    action_type_c           action_m[action_type_c];
 
 
     /**
@@ -260,6 +266,19 @@ class component_c extends typed_obj_c;
         end
         $cast(actor, c);
         return actor.get_default_executor();
+    endfunction
+
+    virtual function action_c mk_action(action_type_c action_t);
+        action_type_c actual_action_t = action_t;
+        action_c action;
+
+        if (action_m.exists(action_t)) begin
+            actual_action_t = action_m[action_t];
+        end
+
+        action = actual_action_t.mk();
+
+        return action;
     endfunction
 
 endclass

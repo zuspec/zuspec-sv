@@ -1,4 +1,4 @@
 
-class executor_trait_s extends empty_executor_trait_s;
+class executor_trait_s extends object;
 endclass
 

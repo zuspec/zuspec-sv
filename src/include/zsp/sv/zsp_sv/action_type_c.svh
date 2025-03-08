@@ -29,9 +29,11 @@ endclass
 class action_type_c extends obj_type_c;
     ref_claim_type_c      ref_claim_type_l[$];
     int                   ref_claim_name_m[string];
+    component_type_c      comp_t;
 
     function new(string name, component_type_c comp_t);
         super.new(name);
+        this.comp_t = comp_t;
         comp_t.add_action_type(this);
     endfunction
 
@@ -63,7 +65,26 @@ class action_type_c extends obj_type_c;
     endfunction
 
     virtual function obj_type_c get_comp_t();
-        return null;
+        return comp_t;
+    endfunction
+
+    virtual function action_c mk();
+        `ZSP_FATAL(("mk: action_type_c::mk is not implemented"));
+    endfunction
+
+endclass
+
+class action_type_t_c #(type Ta=action_c) extends action_type_c;
+    bit override;
+
+    function new(string name, component_type_c comp_t, bit override=0);
+        super.new(name, comp_t);
+        this.override = override;
+    endfunction
+
+    virtual function action_c mk();
+        Ta action = new();
+        return action;
     endfunction
 
 endclass

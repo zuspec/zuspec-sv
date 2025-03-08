@@ -37,7 +37,11 @@ endclass
 class solve_action_context_c;
     component_c                         parent_comp;
     resource_claim_solve_data_c         resource_data_m[obj_type_c];
+
+    // Action types that we are scheduling
     action_type_c                       actions[$];
+
+    // List of valid context for each?
     comp_s                              action_comp_s[$];
 
 
@@ -111,11 +115,15 @@ class solve_action_context_c;
     function int add_action(action_type_c action);
         component_type_c comp_t;
         int action_id = traversal_l.size();
-        `ZSP_DEBUG_ENTER("solve_action_context_c", ("add_action: comp_t=%0s", comp_t.name));
+        `ZSP_DEBUG_ENTER("solve_action_context_c", ("add_action: action_t=%0s", action.name));
         `ZSP_DEBUG("solve_action_context_c", ("parent_comp: %0s", parent_comp.name));
         `ZSP_DEBUG("solve_action_context_c", ("parent_comp.size: %0d", parent_comp.comp_t_inst_m.size()));
 //        $display("action.comp_obj_type: %0p", action.get_obj_comp_type());
-        $cast(comp_t, action.get_comp_t());
+        if (!$cast(comp_t, action.get_comp_t())) begin
+            `ZSP_FATAL(("add_action: Failed to cast to component_type_c"));
+        end else if (comp_t == null) begin
+            `ZSP_FATAL(("add_action: comp_t is null"));
+        end
 
         if (parent_comp.comp_t_inst_m.exists(comp_t)) begin
             actions.push_back(action);

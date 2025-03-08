@@ -1,5 +1,5 @@
 /*
- * executor_base.svh
+ * executor_base_c.svh
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -18,12 +18,21 @@
  * Created on:
  *     Author:
  */
-class executor_base extends component_c;
+class executor_base_c extends component_c;
     actor_c            actor;
     backend_api        api;
 
     function new(string name, component_c parent);
         super.new(name, null, parent);
+
+        if (parent != null) begin
+            parent.executors.push_back(this);
+        end
+    endfunction
+
+    virtual function obj_type_c get_trait_type();
+        `ZSP_FATAL(("get_trait_type not implemented"));
+        return null;
     endfunction
 
     function backend_api get_api();

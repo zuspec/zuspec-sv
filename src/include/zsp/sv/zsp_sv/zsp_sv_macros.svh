@@ -64,10 +64,16 @@
     __type.ref_claim_type_l.push_back(obj_t);
 
 `define zsp_action_util_begin(action_t, comp_t) \
-    static action_type_c __type = get_type(); \
-    static function action_type_c get_type(); \
+    static action_type_t_c #( action_t ) __type = get_type(); \
+    static function action_type_t_c #( action_t ) get_type(); \
         if (__type == null) begin \
             __type = new(`"action_t`", comp_t ::get_type()); \
+
+`define zsp_action_util_ovr_begin(action_t, comp_t) \
+    static action_type_t_c #( action_t ) __type = get_type(); \
+    static function action_type_t_c #( action_t ) get_type(); \
+        if (__type == null) begin \
+            __type = new(`"action_t`", comp_t ::get_type(), 1); \
 
 // Register ref/claim objects here
 `define zsp_action_util_ref(name,obj_t) \
@@ -92,6 +98,7 @@
         end \
         return __type; \
     endfunction \
+    \
     virtual function obj_type_c get_obj_type(); \
         return get_type(); \
     endfunction
@@ -101,6 +108,18 @@
     static function component_type_c get_type(); \
         if (__type == null) begin \
             __type = new(`"comp_t`"); \
+        end \
+        return __type; \
+    endfunction \
+    virtual function obj_type_c get_obj_type(); \
+        return comp_t ::get_type(); \
+    endfunction
+
+`define zsp_component_util_inh(comp_t, super_t) \
+    static component_type_c __type; \
+    static function component_type_c get_type(); \
+        if (__type == null) begin \
+            __type = new(`"comp_t`", super_t ::get_type()); \
         end \
         return __type; \
     endfunction \
