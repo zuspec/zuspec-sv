@@ -90,14 +90,20 @@ endclass
     `include "typed_obj_c.svh"
 
     `include "flow_obj_c.svh"
-    `include "pool_c.svh"
+    `include "pool_base_c.svh"
+    `include "pool_map_c.svh"
     `include "pool_resource_c.svh"
     `include "resource_c.svh"
     `include "resource_claim_c.svh"
 
     `include "solve_action_context_c.svh"
+    `include "solve_compset_c.svh"
+    `include "solve_pool_ref_c.svh"
+    `include "solve_pool2comp_c.svh"
+    `include "solve_pool2comp_map_c.svh"
     `include "solve_resource_claim_data_c.svh"
-    `include "solve_traversal_context_c.svh"
+    `include "solve_resource_pool_ref_c.svh"
+    `include "solve_traversal_data_c.svh"
 
 interface class packed_s;
 
@@ -152,6 +158,7 @@ endfunction
 
     `include "activity_c.svh"
     `include "activity_traverse_c.svh"
+    `include "activity_traverse_base_c.svh"
     `include "activity_traverse_compound_c.svh"
     `include "action_c.svh"
     `include "action_constraint_c.svh"
@@ -202,12 +209,10 @@ endclass
     `include "executor_c.svh"
 
     `include "executor_group_base_c.svh"
+    `include "executor_group_dummy_c.svh"
     `include "executor_group_c.svh"
 
     `include "actor_c.svh"
-
-    `include "executor_trait_s.svh"
-    `include "empty_executor_trait_s.svh"
 
 endpackage
 

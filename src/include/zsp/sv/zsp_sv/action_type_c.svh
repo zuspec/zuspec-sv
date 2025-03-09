@@ -3,7 +3,7 @@ typedef class component_type_c;
 
 class ref_claim_type_c;
     string      name;
-    int         id; 
+    int         id;
     bit         is_claim;
     bit         is_lock;
     int         count;
@@ -64,12 +64,13 @@ class action_type_c extends obj_type_c;
         ref_claim_name_m[name] = info.id;
     endfunction
 
-    virtual function obj_type_c get_comp_t();
+    virtual function component_type_c get_comp_t();
         return comp_t;
     endfunction
 
     virtual function action_c mk();
         `ZSP_FATAL(("mk: action_type_c::mk is not implemented"));
+        return null;
     endfunction
 
 endclass

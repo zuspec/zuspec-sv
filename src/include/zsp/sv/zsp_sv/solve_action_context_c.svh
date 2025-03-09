@@ -18,21 +18,18 @@
  * Created on:
  *     Author:
  */
+typedef class activity_traverse_base_c;
+typedef class component_list_c;
 typedef class component_type_c;
 typedef class resource_claim_solve_data_c;
 typedef class action_type_c;
-typedef class solve_traversal_context_c;
+typedef class solve_compset_c;
 typedef component_c comp_s[$];
-
-class pool_ref_c;
-    rand bit[31:0]          pool_id;
-    bit[31:0]               pool_id_l[$];
-endclass
-
-class resource_pool_ref_c extends pool_ref_c;
-    rand bit[31:0]          id;
-endclass
-
+typedef class ref_claim_type_c;
+typedef class solve_pool_ref_c;
+typedef class solve_pool2comp_map_c;
+typedef class solve_resource_pool_ref_c;
+typedef class solve_traversal_data_c;
 
 class solve_action_context_c;
     component_c                         parent_comp;
@@ -40,9 +37,12 @@ class solve_action_context_c;
 
     // Action types that we are scheduling
     action_type_c                       actions[$];
+    solve_compset_c                     action_compset_m[action_type_c];
 
     // List of valid context for each?
     comp_s                              action_comp_s[$];
+    int                                 comp_inst_m[component_c];
+    component_c                         comp_inst_l[$];
 
 
 
@@ -51,15 +51,15 @@ class solve_action_context_c;
     rand resource_claim_solve_data_c    resource_data[$];
     rand int                            comp_idx[];
 
-    rand solve_traversal_context_c      traversal_l[$];
-    rand resource_pool_ref_c            lock[$];
-    rand resource_pool_ref_c            share[$];
+    rand solve_traversal_data_c         traversal_l[$];
+    rand solve_resource_pool_ref_c      lock[$];
+    rand solve_resource_pool_ref_c      share[$];
 `else
     bit[31:0]                           comp_id_l[$];
     resource_claim_solve_data_c         resource_data[$];
     int                                 comp_idx[];
 
-    solve_traversal_context_c           traversal_l[$];
+    solve_traversal_data_c              traversal_l[$];
     resource_pool_ref_c                 lock[$];
     resource_pool_ref_c                 share[$];
 `endif
@@ -112,9 +112,12 @@ class solve_action_context_c;
         data.add_claim(claim);
     endfunction
 
-    function int add_action(action_type_c action);
+    function int add_traversal(activity_traverse_base_c traversal);
         component_type_c comp_t;
-        int action_id = traversal_l.size();
+        solve_compset_c compset;
+        solve_traversal_data_c data;
+        action_type_c action = traversal.get_action_type();
+        int traversal_id = traversal_l.size();
         `ZSP_DEBUG_ENTER("solve_action_context_c", ("add_action: action_t=%0s", action.name));
         `ZSP_DEBUG("solve_action_context_c", ("parent_comp: %0s", parent_comp.name));
         `ZSP_DEBUG("solve_action_context_c", ("parent_comp.size: %0d", parent_comp.comp_t_inst_m.size()));
@@ -125,7 +128,38 @@ class solve_action_context_c;
             `ZSP_FATAL(("add_action: comp_t is null"));
         end
 
+
+        compset = get_compset(action);
+        data = new(traversal, compset);
+
+        traversal_l.push_back(data);
+
+        // Now, each ref/claim needs to be addressed
+        foreach (action.ref_claim_type_l[i]) begin
+            ref_claim_type_c claim_t = action.ref_claim_type_l[i];
+            pool_base_c pools[$];
+            // Specific to action_t (?)
+            solve_pool2comp_map_c pool2comp_map = new();
+
+            // Identify the pools that <Action>::<ref> might be associated with
+            // in each valid context
+            foreach (compset.comp_id_l[i]) begin
+                // Must be able to ask <comp> for pool associated with <action_t>::<ref_id>
+                pool_base_c pool = comp_inst_l[compset.comp_id_l[i]].get_pool(action, claim_t.id);
+                int comp_id = compset.comp_id_l[i];
+                pools.push_back(pool);
+                pool2comp_map.pool2comp_m.push_back(comp_id);
+            end
+
+            if (claim_t.is_claim) begin
+                // Resource
+            end else begin
+                // Flow object
+            end
+        end
+
         if (parent_comp.comp_t_inst_m.exists(comp_t)) begin
+            // We have available component contexts
             actions.push_back(action);
 //            action_comp_s.push_back(parent_comp.comp_t_inst_m[comp_t]);
             // for(int i=0; i<parent_comp.comp_t_inst_m[comp_t].size(); i++) begin
@@ -136,12 +170,38 @@ class solve_action_context_c;
             $display("FATAL: solve_action_context_c::add_action: No component instances for %0s", comp_t.name);
             $finish;
         end
-        /*
-        foreach (action.rsrc_claims[i]) begin
-            add_resource_claim(action.rsrc_claims[i]);
+
+        return traversal_id;
+    endfunction
+
+    function solve_compset_c get_compset(action_type_c action);
+        if (!action_compset_m.exists(action)) begin
+            // Need to build a new compset
+            if (parent_comp.comp_t_inst_m.exists(action.get_comp_t())) begin
+                // Add each unique component instance to the map
+                component_list_c comp_l = parent_comp.comp_t_inst_m[action.get_comp_t()];
+                solve_compset_c compset = new();
+                foreach (comp_l.comp_l[i]) begin
+                    component_c comp = comp_l.comp_l[i];
+                    int comp_id;
+                    if (!comp_inst_m.exists(comp)) begin
+                        comp_id = comp_inst_l.size();
+                        comp_inst_m[comp] = comp_id;
+                        comp_inst_l.push_back(comp);
+                    end else begin
+                        comp_id = comp_inst_m[comp];
+                    end
+                    compset.comp_id_l.push_back(comp_id);
+                end
+
+                action_compset_m[action] = compset;
+            end else begin
+                $display("FATAL: solve_action_context_c::get_compset: No component instances for %0s",
+                    action.get_comp_t().name);
+                $finish;
+            end
         end
-         */
-        return action_id;
+        return action_compset_m[action];
     endfunction
 
     function action_c mk_action(int action_id);
@@ -154,7 +214,29 @@ class solve_action_context_c;
     endfunction
 
     function bit resolve();
-        return this.randomize();
+        `ZSP_DEBUG_ENTER("solve_action_context_c", ("resolve"));
+        if (!this.randomize()) begin
+            return 0;
+        end
+
+        //
+        foreach(traversal_l[i]) begin
+            action_type_c action_t = traversal_l[i].activity.get_action_type();
+            // Determine which component this is associated with
+            component_c comp;
+            action_c action;
+
+            `ZSP_DEBUG("solve_action_context_c", ("Resolve action %0s", action_t.name));
+
+            // Use the component to create an action of <type>
+            comp = comp_inst_l[traversal_l[i].comp_id];
+            action = comp.mk_action(action_t);
+
+            traversal_l[i].activity.set_action(action);
+        end
+
+        `ZSP_DEBUG_LEAVE("solve_action_context_c", ("resolve"));
+        return 1;
     endfunction
 
 
