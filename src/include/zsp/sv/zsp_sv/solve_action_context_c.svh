@@ -196,8 +196,17 @@ class solve_action_context_c;
 
                 action_compset_m[action] = compset;
             end else begin
-                $display("FATAL: solve_action_context_c::get_compset: No component instances for %0s",
-                    action.get_comp_t().name);
+                component_type_c key;
+                if (parent_comp.comp_t_inst_m.first(key)) begin
+                    do begin
+                        `ZSP_DEBUG("solve_action_context_c", ("Component type: %0s", key.name));
+                    end while (parent_comp.comp_t_inst_m.next(key));
+                end else begin
+                    `ZSP_DEBUG("solve_action_context_c", ("No component instances"));
+                end
+                $display("FATAL: solve_action_context_c::get_compset: No component instances for %0s in %0s",
+                    action.get_comp_t().name,
+                    parent_comp.name);
                 $finish;
             end
         end
@@ -207,7 +216,7 @@ class solve_action_context_c;
     function action_c mk_action(int action_id);
         // Find selected component
         // Ask to build action of designated type
-        // Hook up selected 
+        // Hook up selected
         action_c action;
 
         return action;
@@ -231,6 +240,8 @@ class solve_action_context_c;
             // Use the component to create an action of <type>
             comp = comp_inst_l[traversal_l[i].comp_id];
             action = comp.mk_action(action_t);
+
+            action.set_component(comp);
 
             traversal_l[i].activity.set_action(action);
         end

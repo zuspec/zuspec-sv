@@ -18,16 +18,18 @@
  * Created on:
  *     Author:
  */
+typedef class actor_base_c;
+
 class activity_c extends object;
-    actor_c             actor;  
+    actor_base_c        actor;
     component_c         parent_comp;
 
-    function new(actor_c actor, component_c parent_comp);
+    function new(actor_base_c actor, component_c parent_comp);
         this.actor = actor;
         this.parent_comp = parent_comp;
     endfunction
 
-    function void init(actor_c actor, component_c parent_comp);
+    function void init(actor_base_c actor, component_c parent_comp);
         this.actor = actor;
         this.parent_comp = parent_comp;
     endfunction

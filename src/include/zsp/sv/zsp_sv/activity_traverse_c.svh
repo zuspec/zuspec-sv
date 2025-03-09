@@ -26,7 +26,7 @@ typedef class executor_group_base_c;
 
 class activity_traverse_c #(type Ta=action_c) extends activity_traverse_base_c;
 
-    function new(actor_c actor, component_c parent_comp, Ta action=null);
+    function new(actor_base_c actor, component_c parent_comp, Ta action=null);
         super.new(actor, parent_comp);
     endfunction
 

@@ -4,8 +4,8 @@ class executor_group_dummy_c extends executor_group_base_c;
     obj_type_c      trait_t;
 
     function new(
-        string                  name, 
-        component_ctor_ctxt_c   ctxt, 
+        string                  name,
+        component_ctor_ctxt_c   ctxt,
         component_c             parent,
         obj_type_c              trait_t);
         super.new(name, ctxt, parent);

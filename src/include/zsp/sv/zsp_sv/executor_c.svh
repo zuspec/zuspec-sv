@@ -2,7 +2,7 @@
 typedef class empty_executor_trait_s;
 
 class executor_c #(type TRAIT = empty_executor_trait_s) extends executor_base_c;
-    `zsp_typed_obj_util(executor_c)
+    `zsp_component_util(executor_c)
     TRAIT   trait;
 
     function new(string name, component_ctor_ctxt_c ctxt, component_c parent);

@@ -11,7 +11,7 @@ class activity_traverse_base_c extends activity_c;
     rand action_constraint_base_c   constraints[$];
 `endif
 
-    function new(actor_c actor, component_c parent_comp);
+    function new(actor_base_c actor, component_c parent_comp);
         super.new(actor, parent_comp);
     endfunction
 
