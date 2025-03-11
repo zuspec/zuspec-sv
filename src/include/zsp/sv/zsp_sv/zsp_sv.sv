@@ -25,7 +25,7 @@ package zsp_sv;
 
 
 typedef class object_pool_base;
-typedef class actor_c;
+typedef class actor_base_c;
 typedef class component_c;
 typedef class executor_base_c;
 typedef class executor_base_c;

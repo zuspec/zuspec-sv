@@ -29,7 +29,7 @@ def test_simple_memwrite(dirconfig):
         component pss_top {
             transparent_addr_space_c<>      aspace;
             addr_handle_t                   hndl;
-            executor_group_c<>              exec_group;   
+            executor_group_default_c        exec_group;   
             my_executor                     executor;
 
             exec init_down {
@@ -97,7 +97,7 @@ def test_simple_memread(dirconfig):
         component pss_top {
             transparent_addr_space_c<>      aspace;
             addr_handle_t                   hndl;
-            executor_group_c<>              exec_group;   
+            executor_group_default_c        exec_group;   
             my_executor                     executor;
 
             exec init_down {

@@ -18,17 +18,17 @@
  * Created on:
  *     Author:
  */
-typedef class actor_c;
+typedef class actor_base_c;
 
 class activity_listener_c;
 
     virtual function void enter_actor(
-        actor_c         actor
+        actor_base_c         actor
     );
     endfunction
 
     virtual function void leave_actor(
-        actor_c         actor
+        actor_base_c         actor
     );
     endfunction
 

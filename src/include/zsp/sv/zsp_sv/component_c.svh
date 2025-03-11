@@ -82,9 +82,16 @@ class component_c extends typed_obj_c;
      */
     function void add_comp_inst(component_c comp);
         component_type_c comp_t;
-        `ZSP_DEBUG_ENTER("component_c", ("add_comp_inst %0s", comp.name));
+        `ZSP_DEBUG_ENTER("component_c", ("%0s: add_comp_inst %0s", name, comp.name));
         if (!$cast(comp_t, comp.get_obj_type())) begin
-            `ZSP_FATAL(("Failed to cast %0s (%0s) to component_type_c", comp.name, comp.get_obj_type().name));
+            `ZSP_FATAL(("Failed to cast %0s (%0s) to component_type_c", 
+                comp.name,
+                comp.get_obj_type().name));
+            return;
+        end
+        if (comp_t == null) begin
+            `ZSP_FATAL(("comp_t is null"));
+            return;
         end
         `ZSP_DEBUG("component_c", ("comp_t: %0s", comp_t.name));
         if (comp_t_inst_m.exists(comp_t)) begin
@@ -138,6 +145,7 @@ class component_c extends typed_obj_c;
     endfunction
 
     virtual function void do_init(executor_base_c exec_b);
+
         `ZSP_DEBUG_ENTER("component_c", ("do_init %0s", this.name));
         init_down(exec_b);
 
@@ -212,8 +220,8 @@ class component_c extends typed_obj_c;
                 `ZSP_DEBUG("component_c", ("Merging comp_type_t %0s into %0s", key.name, name));
                 do begin
                     if (!comp_t_inst_m.exists(key)) begin
-                        component_list_c list_c = new();
-                        comp_t_inst_m[key] = list_c;
+                        component_list_c list_l = new();
+                        comp_t_inst_m[key] = list_l;
                     end
                     foreach (subcomp.comp_t_inst_m[key].comp_l[j]) begin
                         `ZSP_DEBUG("component_c", ("Adding sub-comp %0s to %s", 
@@ -245,9 +253,9 @@ class component_c extends typed_obj_c;
         return 1;
     endfunction
 
-    virtual function actor_c get_actor();
+    virtual function actor_base_c get_actor();
         component_c c = parent;
-        actor_c actor;
+        actor_base_c actor;
 
         while (c.parent != null) begin
             c = c.parent;
@@ -258,7 +266,7 @@ class component_c extends typed_obj_c;
 
     virtual function executor_base_c get_default_executor();
         component_c c = parent;
-        actor_c actor;
+        actor_base_c actor;
 
         while (c.parent != null) begin
             c = c.parent;

@@ -59,10 +59,10 @@ void TaskGenerateActivity::generate(ActivityVariant *variant) {
         m_out->println("%s self;", m_gen->getNameMap()->getName(variant->info()->action()).c_str());
     }
     if (variant->info()->action()) {
-        m_out->println("function new(actor_c actor, component_c parent_comp, %s self);",
+        m_out->println("function new(actor_base_c actor, component_c parent_comp, %s self);",
             m_gen->getNameMap()->getName(variant->info()->action()).c_str());
     } else {
-        m_out->println("function new(actor_c actor, component_c parent_comp);");
+        m_out->println("function new(actor_base_c actor, component_c parent_comp);");
     }
     m_out->inc_ind();
     m_out->println("super.new(actor, parent_comp);");

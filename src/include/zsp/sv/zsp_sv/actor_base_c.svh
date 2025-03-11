@@ -82,7 +82,7 @@ class actor_base_c extends component_c;
     endfunction
 
     virtual function executor_base_c get_default_executor();
-        return null;
+        return default_exec;
     endfunction
 
 endclass

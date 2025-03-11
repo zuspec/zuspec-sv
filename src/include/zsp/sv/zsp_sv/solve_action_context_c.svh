@@ -60,8 +60,8 @@ class solve_action_context_c;
     int                                 comp_idx[];
 
     solve_traversal_data_c              traversal_l[$];
-    resource_pool_ref_c                 lock[$];
-    resource_pool_ref_c                 share[$];
+    solve_resource_pool_ref_c           lock[$];
+    solve_resource_pool_ref_c           share[$];
 `endif
 
     function new(component_c parent_comp);
@@ -204,10 +204,9 @@ class solve_action_context_c;
                 end else begin
                     `ZSP_DEBUG("solve_action_context_c", ("No component instances"));
                 end
-                $display("FATAL: solve_action_context_c::get_compset: No component instances for %0s in %0s",
+                `ZSP_FATAL(("get_compset: No component instances for %0s in %0s",
                     action.get_comp_t().name,
-                    parent_comp.name);
-                $finish;
+                    parent_comp.name));
             end
         end
         return action_compset_m[action];

@@ -39,7 +39,7 @@ class addr_handle_t extends object_pool_base;
 
     virtual function void drop();
         if (exec_b != null) begin
-            actor_c actor = exec_b.get_actor();
+            actor_base_c actor = exec_b.get_actor();
             $display("addr_handle_t::drop");
             actor.addr_handle_drop(this);
             if (base != null) begin

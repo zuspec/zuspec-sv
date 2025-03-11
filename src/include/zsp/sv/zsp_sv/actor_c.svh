@@ -7,6 +7,7 @@ class actor_c #(
     type Tapi=backend_api,
     type Tc=component_c,
     type Ta=activity_c) extends actor_base_c;
+    `zsp_component_util(actor_c)
     Tapi        api;
     Tc          top;
 
@@ -23,6 +24,10 @@ class actor_c #(
     endfunction
 
     virtual function backend_api get_backend();
+        return api;
+    endfunction
+
+    virtual function Tapi get_api();
         return api;
     endfunction
 

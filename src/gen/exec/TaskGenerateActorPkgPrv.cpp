@@ -145,45 +145,29 @@ bool TaskGenerateActorPkgPrv::generate() {
 
     // Define the actor
 //     #(.comp_t(%s), .activity_t(activity_%p));", 
-    out->println("class %s_actor extends actor_c;", actor.c_str());
+    out->println("class %s_actor extends actor_c #(pss_import_api, %s);", 
+        actor.c_str(),
+        "pss_top");
     out->inc_ind();
-    out->println("`zsp_typed_obj_util(%s)", actor.c_str());
-    out->println("%s comp_tree;", getNameMap()->getName(m_comp_t).c_str());
-    out->println("pss_import_api api;");
-    out->println("executor_t default_executor;");
+    out->println("`zsp_component_util(%s_actor)", actor.c_str());
     out->println("");
     out->println("function new(pss_import_api api=null);");
     out->inc_ind();
-    out->println("component_ctor_ctxt ctxt;");
-    out->println("super.new(\"<actor>\", null, null);");
-    out->println("ctxt = new(this, 0);");
-    out->println("if (api == null) begin");
-    out->inc_ind();
-    out->println("api = new();");
-    out->dec_ind();
-    out->println("end");
-    out->println("this.api = api;");
-    out->println("this.default_executor = new(\"default_executor\", null, this);");
-    out->println("comp_tree = new(\"pss_top\", ctxt, this);");
+    out->println("super.new(api);");
     out->dec_ind();
     out->println("endfunction");
     out->println("");
     out->println("virtual task run();");
     out->inc_ind();
-    out->println("activity_%p root_activity = new(this, comp_tree);", root_activity.get());
+    out->println("activity_%p root_activity = new(this, top);", root_activity.get());
     out->println("");
-    out->println("if (comp_tree.check()) begin");
+    out->println("if (top.check()) begin");
     out->inc_ind();
-    out->println("if (api == null) begin");
-    out->inc_ind();
-    out->println("api = new();");
-    out->dec_ind();
-    out->println("end");
     out->println("");
-    out->println("comp_tree.init(this.default_executor);");
-    out->println("do_init(this.default_executor);");
+    out->println("top.init(this.default_exec);");
+    out->println("do_init(this.default_exec);");
     out->println("");
-    out->println("comp_tree.start(this.default_executor);");
+    out->println("top.start(this.default_exec);");
     out->println("");
     out->println("foreach(listeners[i]) begin");
     out->inc_ind();
@@ -208,24 +192,6 @@ bool TaskGenerateActorPkgPrv::generate() {
     out->dec_ind();
     out->println("endtask");
     out->println("");
-    out->println("virtual function pss_import_api get_api();");
-    out->inc_ind();
-    out->println("return api;");
-    out->dec_ind();
-    out->println("endfunction");
-    out->println("");
-    out->println("virtual function executor_base_c get_default_executor();");
-    out->inc_ind();
-    out->println("return default_executor;");
-    out->dec_ind();
-    out->println("endfunction");
-    out->println("");
-    out->println("virtual function backend_api get_backend();");
-    out->inc_ind();
-    out->println("return api;");
-    out->dec_ind();
-    out->println("endfunction");
-
 
     out->dec_ind();
     out->println("endclass");

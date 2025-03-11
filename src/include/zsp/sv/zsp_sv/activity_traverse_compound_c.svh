@@ -24,12 +24,15 @@ typedef class action_constraint_base_c;
 
 class activity_traverse_compound_c #(type Ta, type Tact=activity_c) extends activity_traverse_c #(Ta);
 
-    function new(actor_c actor, component_c parent_comp, Ta action=null);
+    function new(actor_base_c actor, component_c parent_comp, Ta action=null);
         super.new(actor, parent_comp, action);
     endfunction
 
     virtual task run_body(executor_base_c exec_b);
-        Tact activity = new(actor, parent_comp, action);
+        Ta action_p;
+        Tact activity;
+        $cast(action_p, action);
+        activity = new(actor, parent_comp, action_p);
         activity.run();
     endtask
 

@@ -53,9 +53,6 @@ void TaskGenerateCompCtor::generate_head(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateCompCtor::generate_tail(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("executor_m = new[ctxt.executor_m.size()](ctxt.executor_m);");
-    m_out->println("// Note: 'enter' handled by the component_c constructor");
-    m_out->println("ctxt.leave(this);");
     m_out->dec_ind();
     m_out->println("endfunction");
 }

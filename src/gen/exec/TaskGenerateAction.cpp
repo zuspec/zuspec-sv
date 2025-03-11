@@ -149,18 +149,18 @@ void TaskGenerateAction::generate_methods(vsc::dm::IDataTypeStruct *t) {
     DEBUG_ENTER("generate_methods");
     arl::dm::IDataTypeAction *action_t = dynamic_cast<arl::dm::IDataTypeAction *>(t);
 
-    m_out->println("virtual function void set_component(component_c comp);");
-    m_out->inc_ind();
-    m_out->println("$cast(this.comp, comp);");
-    m_out->dec_ind();
-    m_out->println("endfunction");
-    m_out->println("");
-    m_out->println("virtual function component_c get_component();");
-    m_out->inc_ind();
-    m_out->println("return this.comp;");
-    m_out->dec_ind();
-    m_out->println("endfunction");
-    m_out->println("");
+    // m_out->println("virtual function void set_component(component_c comp);");
+    // m_out->inc_ind();
+    // m_out->println("$cast(this.comp, comp);");
+    // m_out->dec_ind();
+    // m_out->println("endfunction");
+    // m_out->println("");
+    // m_out->println("virtual function component_c get_component();");
+    // m_out->inc_ind();
+    // m_out->println("return this.comp;");
+    // m_out->dec_ind();
+    // m_out->println("endfunction");
+    // m_out->println("");
 
     // m_out->println("virtual task run();");
     // m_out->inc_ind();

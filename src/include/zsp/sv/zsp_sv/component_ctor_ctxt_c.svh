@@ -22,11 +22,11 @@
  typedef class action_type_c;
 
 class component_ctor_ctxt_c;
-    actor_c         actor;
+    actor_base_c    actor;
     executor_base_c executor_m[];
     component_c     comp_inst_s[$];
 
-    function new(actor_c actor, int n_executor_types);
+    function new(actor_base_c actor, int n_executor_types);
         this.actor = actor;
         executor_m = new[n_executor_types+1];
     endfunction

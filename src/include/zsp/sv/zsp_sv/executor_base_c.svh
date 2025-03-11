@@ -18,8 +18,10 @@
  * Created on:
  *     Author:
  */
+ 
+
 class executor_base_c extends component_c;
-    actor_c            actor;
+    actor_base_c       actor;
     backend_api        api;
 
     function new(string name, component_ctor_ctxt_c ctxt, component_c parent);
@@ -38,12 +40,12 @@ class executor_base_c extends component_c;
     function backend_api get_api();
         if (api == null) begin
             component_c c = this;
-            actor_c actor;
+            actor_base_c actor;
             while (c.parent != null) begin
                 c = c.parent;
             end
             if (!$cast(actor, c)) begin
-                `ZSP_FATAL(("failed to cast root component_c to actor_c"));
+                `ZSP_FATAL(("failed to cast root component_c to actor_base_c"));
             end
             if (!$cast(api, actor.get_backend())) begin
                 `ZSP_FATAL(("failed to cast base API to model-specific API"));
@@ -55,14 +57,14 @@ class executor_base_c extends component_c;
         return api;
     endfunction
 
-    function actor_c get_actor();
+    function actor_base_c get_actor();
         if (actor == null) begin
             component_c c = this;
             while (c.parent != null) begin
                 c = c.parent;
             end
             if (!$cast(actor, c)) begin
-                $display("Error: failed to cast root component_c to actor_c");
+                $display("Error: failed to cast root component_c to actor_base_c");
             end
         end
         return actor;

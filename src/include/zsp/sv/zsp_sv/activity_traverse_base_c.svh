@@ -38,17 +38,19 @@ class activity_traverse_base_c extends activity_c;
         component_c comp;
         `ZSP_DEBUG_ENTER("activity_traverse_c", ("run"));
 
-        action.init(actor, parent_comp);
 
-        if (this.action.get_component() == null) begin
+        if (action == null) begin
             // The context didn't assign component. Need to 
             // perform the context solving here...
             solve_action_context_c ctxt_solver = new(parent_comp);
-`ifdef UNDEFINED
-            void'(ctxt_solver.add_action(action));
+            `ZSP_DEBUG("activity_traverse_c", ("building/solving action, since the context did not"));
+            void'(ctxt_solver.add_traversal(this));
+
+            // Resolve calls us back to set the action handle
             void'(ctxt_solver.resolve());
-`endif // UNDEFINED
         end
+
+//        action.init(actor, parent_comp);
 
         comp = this.action.get_component();
         exec_group = comp.get_executor_group();

@@ -34,13 +34,13 @@ module top;
 
     class print_activity_listener extends zsp_sv::activity_listener_c;
         virtual function void enter_actor(
-            zsp_sv::actor_c         actor
+            zsp_sv::actor_base_c         actor
         );
             $display("RES: enter_actor");
         endfunction
 
         virtual function void leave_actor(
-            zsp_sv::actor_c         actor
+            zsp_sv::actor_base_c         actor
         );
             $display("RES: leave_actor");
         endfunction
