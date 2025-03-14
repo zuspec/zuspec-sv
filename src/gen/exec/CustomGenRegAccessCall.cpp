@@ -52,7 +52,7 @@ void CustomGenRegAccessCall::genExprMethodCallContext(
     int64_t offset = 0; // TODO: caclucate from context
 
     if (name.find("::write_val") != -1) {
-        out->write("executor.write%d(make_handle_from_handle(exec_b, null, %s), ",
+        out->write("executor.write%d(exec_b, make_handle_from_handle(exec_b, null, %s), ",
             width,
             refgen->genRegAddr(call->getContext()).c_str());
         TaskGenerateExpr(gen, refgen, out).generate(call->getParameters().at(0).get());

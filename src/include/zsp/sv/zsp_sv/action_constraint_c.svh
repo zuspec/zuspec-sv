@@ -19,14 +19,16 @@
  *     Author:
  */
 class action_constraint_base_c;
-    rand bit        valid;
+    action_c        action;
 endclass
 
 class action_constraint_c #(type Ta=action_c) extends action_constraint_base_c;
-    rand Ta         action;
+    rand Ta         __self;
 
-    function new(Ta action);
-        this.action = action;
+    function void pre_randomize();
+        if (!$cast(__self, action)) begin
+            `ZSP_FATAL(("Failed to cast action to %0s", Ta::get_type().name));
+        end
     endfunction
 
 endclass

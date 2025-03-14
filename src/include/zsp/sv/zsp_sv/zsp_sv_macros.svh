@@ -194,5 +194,11 @@
         end \
     end
 
+`ifdef VERILATOR
+`define zsp_rand_arr
+`else
+`define zsp_rand_arr rand
+`endif
+
 
 `endif /* INCLUDED_ZSP_SV_MACROS_SVH */

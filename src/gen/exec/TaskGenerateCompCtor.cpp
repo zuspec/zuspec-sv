@@ -75,10 +75,7 @@ void TaskGenerateCompCtor::visitDataTypeComponent(arl::dm::IDataTypeComponent *t
 }
 
 void TaskGenerateCompCtor::visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) {
-    m_out->println("%s = new(\"%s\", %s::inst(ctxt.get_default_executor()));",
-        f->name().c_str(),
-        f->name().c_str(),
-        m_gen->getNameMap()->getName(f->getDataType()).c_str());
+    m_out->println("%s = new(\"%s\", this);", f->name().c_str(), f->name().c_str());
 }
 
 }

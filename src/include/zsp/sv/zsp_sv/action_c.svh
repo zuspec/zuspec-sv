@@ -18,10 +18,12 @@
  * Created on:
  *     Author:
  */
+typedef class action_constraint_base_c;
 typedef class resource_claim_base_c;
 
 class action_c extends activity_c;
     resource_claim_base_c   rsrc_claims[$];
+    `zsp_rand_arr action_constraint_base_c layered_constraints[$];
 
     function new();
         super.new(null, null);

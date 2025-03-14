@@ -44,6 +44,12 @@ package:
       src: pypi
     - name: cython
       src: pypi
+    - name: dv-flow-mgr
+      url: https://github.com/dv-flow/dv-flow-mgr.git
+    - name: dv-flow-libhdlsim
+      url: https://github.com/dv-flow/dv-flow-libhdlsim.git
+    - name: pytest-dv
+      url: https://github.com/dv-flow/pytest-dv.git
 
   - name: default-dev
     deps:
@@ -95,6 +101,12 @@ package:
       src: pypi
     - name: sphinx-jsonschema
       src: pypi
+    - name: dv-flow-mgr
+      url: https://github.com/dv-flow/dv-flow-mgr.git
+    - name: dv-flow-libhdlsim
+      url: https://github.com/dv-flow/dv-flow-libhdlsim.git
+    - name: pytest-dv
+      url: https://github.com/dv-flow/pytest-dv.git
 
   - name: default-dev-src
     deps:
@@ -155,6 +167,12 @@ package:
       src: pypi
     - name: sphinx-jsonschema
       src: pypi
+    - name: dv-flow-mgr
+      url: https://github.com/dv-flow/dv-flow-mgr.git
+    - name: dv-flow-libhdlsim
+      url: https://github.com/dv-flow/dv-flow-libhdlsim.git
+    - name: pytest-dv
+      url: https://github.com/dv-flow/pytest-dv.git
   
   env:
   - name: PYTHONPATH

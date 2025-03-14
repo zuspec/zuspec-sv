@@ -2,10 +2,11 @@ import os
 import pytest
 import pytest_fv as pfv
 from pytest_fv.fixtures import *
+from pytest_dv import *
 import sys
 from .simple_test_flow import run_unit_test
 
-def test_leaf_action(dirconfig):
+def test_leaf_action(dvflow):
     content = """
 import std_pkg::*;
 
@@ -21,7 +22,7 @@ component pss_top {
     expect = """
     RES: Hello World!
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
 def test_subactivity(dirconfig):
     content = """
@@ -95,7 +96,7 @@ def test_subactivity_with(dirconfig):
     if dirconfig.config.getHdlSim() == "vlt":
         pytest.skip("Nested randomization not supported as of 5.028")
     else:
-        run_unit_test(dirconfig, content, expect)
+        run_unit_test(dirconfig, content, expect, debug=True)
 
 def test_subactivity_subcomp(dirconfig):
     content = """

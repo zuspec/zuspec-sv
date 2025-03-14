@@ -18,14 +18,22 @@
  * Created on:
  *     Author:
  */
+typedef class component_c;
+
 class reg_group_field_base_c extends reg_field_c;
 
-    function new(string name);
+    function new(string name, component_c parent);
         super.new(name);
+        if (parent != null) begin
+            parent.reg_group_fields.push_back(this);
+        end
     endfunction
 
     function void set_handle(addr_handle_t hndl);
         offset = hndl.addr_value();
+    endfunction
+
+    virtual function void do_init(executor_base_c exec_b);
     endfunction
 
     virtual function reg_group_c get_type();

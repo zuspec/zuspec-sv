@@ -5,11 +5,11 @@ from pytest_fv.fixtures import *
 import sys
 from .simple_test_flow import run_unit_test
 
-@pytest.mark.skip(reason="Not implemented")
 def test_simple_reg(dirconfig):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
+        import executor_pkg::*;
         pure component simple_regs : reg_group_c {
             reg_c<bit[32]>        R1;
             reg_c<bit[32]>        R2;
@@ -27,13 +27,30 @@ def test_simple_reg(dirconfig):
                 return 0;
             }
         }
+
+                import target function void my_write32(bit[64] addr, bit[32] data);
+        import target function bit[32] my_read32(bit[64] addr);
+
+        component my_executor : executor_c<> {
+            target function void write32(addr_handle_t hndl, bit[32] data) {
+                my_write32(addr_value(hndl), data);
+            }
+            target function bit[32] read32(addr_handle_t hndl) {
+                return my_read32(addr_value(hndl));
+            }
+        }
+
         component pss_top {
             simple_regs                     regs;
             transparent_addr_space_c<>      aspace;
+            executor_group_default_c        exec_group;   
+            my_executor                     executor;
 
             exec init_down {
                 addr_handle_t reg_addr;
                 transparent_addr_region_s<> region;
+
+                exec_group.add_executor(executor);
                 print("RES: init_down\\n");
 
                 region.addr = 0x80000000;
@@ -49,18 +66,36 @@ def test_simple_reg(dirconfig):
             }
         }
     """
+
+    custom_api = """
+    class custom_api extends pss_import_api;
+        virtual task my_write32(longint unsigned addr, int unsigned data);
+            $display("RES: write32 0x%08h 0x%08h", addr, data);
+        endtask
+    endclass
+    """
+
     expect = """
     RES: init_down
     RES: write32 0x80000000 0x00000001
     RES: write32 0x80000004 0x00000002
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(
+        dirconfig, 
+        content, 
+        expect,
+        test_top="top_custom_api_inc.sv",
+        extra_content={
+            "custom_api.sv": custom_api
+        },
+        debug=False)
 
 @pytest.mark.skip(reason="Not implemented")
-def disabled_test_reg_get_handle(dirconfig):
+def test_reg_get_handle(dirconfig):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
+        import executor_pkg::*;
         pure component simple_regs : reg_group_c {
             reg_c<bit[32]>        R1;
             reg_c<bit[32]>        R2;
@@ -78,9 +113,24 @@ def disabled_test_reg_get_handle(dirconfig):
                 return 0;
             }
         }
+
+        import target function void my_write32(bit[64] addr, bit[32] data);
+        import target function bit[32] my_read32(bit[64] addr);
+
+        component my_executor : executor_c<> {
+            target function void write32(addr_handle_t hndl, bit[32] data) {
+                my_write32(addr_value(hndl), data);
+            }
+            target function bit[32] read32(addr_handle_t hndl) {
+                return my_read32(addr_value(hndl));
+            }
+        }
+
         component pss_top {
             simple_regs                     regs;
             transparent_addr_space_c<>      aspace;
+            executor_group_default_c        exec_group;   
+            my_executor                     executor;
 
             exec init_down {
                 addr_handle_t reg_addr;
@@ -91,6 +141,8 @@ def disabled_test_reg_get_handle(dirconfig):
                 region.size = 0x00010000;
                 reg_addr = aspace.add_nonallocatable_region(region);
                 regs.set_handle(reg_addr);
+
+                exec_group.add_executor(executor);
             }
             action Entry {
                 exec body {
@@ -106,13 +158,31 @@ def disabled_test_reg_get_handle(dirconfig):
     RES: write32 0x80000000 0x00000001
     RES: write32 0x80000104 0x00000002
     """
-    run_unit_test(dirconfig, content, expect)
 
-@pytest.mark.skip(reason="Not implemented")
+    custom_api = """
+    class custom_api extends pss_import_api;
+        virtual task my_write32(longint unsigned addr, int unsigned data);
+            $display("RES: write32 0x%08h 0x%08h", addr, data);
+        endtask
+    endclass
+    """
+
+    run_unit_test(
+        dirconfig, 
+        content, 
+        expect,
+        test_top="top_custom_api_inc.sv",
+        extra_content={
+            "custom_api.svh": custom_api
+        },
+        debug=False)
+
 def test_group_array(dirconfig):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
+        import executor_pkg::*;
+
         package pkg {
         struct MyS { 
         int a;
@@ -151,9 +221,24 @@ def test_group_array(dirconfig):
                 return 0;
             }
         }
+
+        import target function void my_write32(bit[64] addr, bit[32] data);
+        import target function bit[32] my_read32(bit[64] addr);
+
+        component my_executor : executor_c<> {
+            target function void write32(addr_handle_t hndl, bit[32] data) {
+                my_write32(addr_value(hndl), data);
+            }
+            target function bit[32] read32(addr_handle_t hndl) {
+                return my_read32(addr_value(hndl));
+            }
+        }
+
         component pss_top {
             simple_regs                     regs;
             transparent_addr_space_c<>      aspace;
+            executor_group_default_c        exec_group;   
+            my_executor                     executor;
 
             exec init_down {
                 addr_handle_t reg_addr;
@@ -164,6 +249,8 @@ def test_group_array(dirconfig):
                 region.size = 0x00010000;
                 reg_addr = aspace.add_nonallocatable_region(region);
                 regs.set_handle(reg_addr);
+
+                exec_group.add_executor(executor);
             }
             action Entry {
                 exec body {
@@ -173,18 +260,36 @@ def test_group_array(dirconfig):
             }
         }
     """
+
+    custom_api = """
+    class custom_api extends pss_import_api;
+        virtual task my_write32(longint unsigned addr, int unsigned data);
+            $display("RES: write32 0x%08h 0x%08h", addr, data);
+        endtask
+    endclass
+    """
+
     expect = """
     RES: init_down
     RES: write32 0x80000000 0x00000001
     RES: write32 0x80000104 0x00000002
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(
+        dirconfig, 
+        content, 
+        expect,
+        test_top="top_custom_api_inc.sv",
+        extra_content={
+            "custom_api.sv": custom_api
+        },
+        debug=False)
 
-@pytest.mark.skip(reason="Not implemented")
 def test_group_array_action_field_index(dirconfig):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
+        import executor_pkg::*;
+
         package pkg {
         struct MyS { 
         int a;
@@ -223,9 +328,24 @@ def test_group_array_action_field_index(dirconfig):
                 return 0;
             }
         }
+
+        import target function void my_write32(bit[64] addr, bit[32] data);
+        import target function bit[32] my_read32(bit[64] addr);
+
+        component my_executor : executor_c<> {
+            target function void write32(addr_handle_t hndl, bit[32] data) {
+                my_write32(addr_value(hndl), data);
+            }
+            target function bit[32] read32(addr_handle_t hndl) {
+                return my_read32(addr_value(hndl));
+            }
+        }
+
         component pss_top {
             simple_regs                     regs;
             transparent_addr_space_c<>      aspace;
+            executor_group_default_c        exec_group;   
+            my_executor                     executor;
 
             exec init_down {
                 addr_handle_t reg_addr;
@@ -236,6 +356,8 @@ def test_group_array_action_field_index(dirconfig):
                 region.size = 0x00010000;
                 reg_addr = aspace.add_nonallocatable_region(region);
                 regs.set_handle(reg_addr);
+
+                exec_group.add_executor(executor);
             }
             action Entry {
                 int idx = 0;
@@ -246,9 +368,26 @@ def test_group_array_action_field_index(dirconfig):
             }
         }
     """
+
+    custom_api = """
+    class custom_api extends pss_import_api;
+        virtual task my_write32(longint unsigned addr, int unsigned data);
+            $display("RES: write32 0x%08h 0x%08h", addr, data);
+        endtask
+    endclass
+    """
+
     expect = """
     RES: init_down
     RES: write32 0x80000000 0x00000001
     RES: write32 0x80000104 0x00000002
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(
+        dirconfig, 
+        content, 
+        expect,
+        test_top="top_custom_api_inc.sv",
+        extra_content={
+            "custom_api.sv": custom_api
+        },
+        debug=False)

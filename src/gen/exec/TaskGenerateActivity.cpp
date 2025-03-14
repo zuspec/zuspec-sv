@@ -23,6 +23,7 @@
 #include "TaskGenerateActivity.h"
 #include "TaskGenerateConstraint.h"
 #include "ActivityInfo.h"
+#include "TaskGenerateInlineConstraints.h"
 
 
 namespace zsp {
@@ -46,6 +47,10 @@ TaskGenerateActivity::~TaskGenerateActivity() {
 void TaskGenerateActivity::generate(ActivityVariant *variant) {
     arl::dm::IDataTypeActivity *activity = variant->info()->activity();
     DEBUG_ENTER("generate");
+
+    // Generate inline constraints before generating the
+    // core activity class
+    TaskGenerateInlineConstraints(m_gen, m_genref, m_out).generate(activity);
 
     m_depth = 1;
     m_variant_s.clear();

@@ -44,58 +44,22 @@ class solve_action_context_c;
     int                                 comp_inst_m[component_c];
     component_c                         comp_inst_l[$];
 
-
-
-`ifndef VERILATOR
-    rand bit[31:0]                      comp_id_l[$];
-    rand resource_claim_solve_data_c    resource_data[$];
-    rand int                            comp_idx[];
-
-    rand solve_traversal_data_c         traversal_l[$];
-    rand solve_resource_pool_ref_c      lock[$];
-    rand solve_resource_pool_ref_c      share[$];
-`else
-    bit[31:0]                           comp_id_l[$];
-    resource_claim_solve_data_c         resource_data[$];
-    int                                 comp_idx[];
-
-    solve_traversal_data_c              traversal_l[$];
-    solve_resource_pool_ref_c           lock[$];
-    solve_resource_pool_ref_c           share[$];
-`endif
+    `zsp_rand_arr resource_claim_solve_data_c    resource_data[$];
+    `zsp_rand_arr solve_traversal_data_c         traversal_l[$];
+    `zsp_rand_arr solve_resource_pool_ref_c      lock[$];
+    `zsp_rand_arr solve_resource_pool_ref_c      share[$];
 
     function new(component_c parent_comp);
         this.parent_comp = parent_comp;
     endfunction
 
     function void pre_randomize();
-//        comp_idx = new[actions.size()];
     endfunction
 
     function void post_randomize();
         `ZSP_DEBUG_ENTER("solve_action_context_c", ("post_randomize"));
-`ifdef VERILATOR
-        foreach (comp_idx[i]) begin
-            comp_idx[i] = $urandom_range(0, action_comp_s[i].size()-1);
-        end
-`endif
-/*
-        foreach (comp_idx[i]) begin
-            `ZSP_DEBUG("solve_action_context_c", ("Select comp %0d", comp_idx[i]));
-            actions[i].set_component(action_comp_s[i][comp_idx[i]]);
-        end
- */
         `ZSP_DEBUG_LEAVE("solve_action_context_c", ("post_randomize"));
     endfunction
-
-`ifndef VERILATOR
-    // As of 5.030, Verilator does not support iterative constraints
-    constraint comp_idx_c {
-        foreach (comp_idx[i]) {
-            comp_idx[i] inside {[0:action_comp_s[i].size()-1]};
-        }
-    }
-`endif
 
     function void add_resource_claim(resource_claim_base_c claim);
         obj_type_c rsrc_t = claim.get_type();
@@ -121,7 +85,7 @@ class solve_action_context_c;
         `ZSP_DEBUG_ENTER("solve_action_context_c", ("add_action: action_t=%0s", action.name));
         `ZSP_DEBUG("solve_action_context_c", ("parent_comp: %0s", parent_comp.name));
         `ZSP_DEBUG("solve_action_context_c", ("parent_comp.size: %0d", parent_comp.comp_t_inst_m.size()));
-//        $display("action.comp_obj_type: %0p", action.get_obj_comp_type());
+
         if (!$cast(comp_t, action.get_comp_t())) begin
             `ZSP_FATAL(("add_action: Failed to cast to component_type_c"));
         end else if (comp_t == null) begin
@@ -245,8 +209,18 @@ class solve_action_context_c;
             traversal_l[i].activity.set_action(action);
         end
 
+        debug_show_result();
+
         `ZSP_DEBUG_LEAVE("solve_action_context_c", ("resolve"));
         return 1;
+    endfunction
+
+    function void debug_show_result();
+        `ZSP_DEBUG_ENTER("solve_action_context_c", ("debug_show_result"));
+        foreach (traversal_l[i]) begin
+            `ZSP_DEBUG("solve_action_context_c", ("traversal[%0d]: %0s", i, traversal_l[i].activity.get_action_type().name));
+        end
+        `ZSP_DEBUG_LEAVE("solve_action_context_c", ("debug_show_result"));
     endfunction
 
 

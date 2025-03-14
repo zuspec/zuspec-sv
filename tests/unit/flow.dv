@@ -1,0 +1,26 @@
+
+# yaml-language-server: $schema=https://dv-flow.github.io/flow.dv.schema.json
+
+package:
+  name: zsp
+
+  tasks:
+  - name: GenSvActor
+    pytask: gen_sv_actor.GenSvActor
+    doc: |
+      Creates a SystemVerilog actor file in the run directory.
+    consumes:
+    - type: std.FileSet
+      filetype: pssSource
+    with:
+      component:
+        desc: Root component to use
+        type: str
+        value: pss_top
+      action:
+        desc: Root action to use
+        type: str
+      filename:
+        desc: Specify output filename
+        type: str
+        value: actor.sv

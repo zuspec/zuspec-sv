@@ -4,12 +4,7 @@ typedef class activity_c;
 
 class activity_traverse_base_c extends activity_c;
     rand action_c      action;
-`ifdef VERILATOR
-    // As of 5.029, Verilator does not support random queues
-    action_constraint_base_c   constraints[$];
-`else
-    rand action_constraint_base_c   constraints[$];
-`endif
+    `zsp_rand_arr action_constraint_base_c action_constraints[$];
 
     function new(actor_base_c actor, component_c parent_comp);
         super.new(actor, parent_comp);
@@ -25,7 +20,7 @@ class activity_traverse_base_c extends activity_c;
     endfunction
 
     function void add_constraint(action_constraint_base_c c);
-        constraints.push_back(c);
+        action_constraints.push_back(c);
     endfunction
 
     virtual task run_body(executor_base_c exec_b);
@@ -37,7 +32,6 @@ class activity_traverse_base_c extends activity_c;
         executor_group_base_c exec_group;
         component_c comp;
         `ZSP_DEBUG_ENTER("activity_traverse_c", ("run"));
-
 
         if (action == null) begin
             // The context didn't assign component. Need to 
@@ -62,6 +56,10 @@ class activity_traverse_base_c extends activity_c;
             exec_b.name));
 
         action.pre_solve();
+
+        foreach (action_constraints[i]) begin
+            action.layered_constraints.push_back(action_constraints[i]);
+        end
 
 
         // Randomize action. Any traversals with an inline `with` 

@@ -18,12 +18,17 @@
  * Created on:
  *     Author:
  */
+typedef class component_c;
+
 class reg_group_field_c #(type group_t=reg_group_c) extends reg_group_field_base_c;
     group_t     group;
 
-    function new(string name, group_t group);
-        super.new(name);
-        group = group;
+    function new(string name, component_c parent);
+        super.new(name, parent);
+    endfunction
+
+    virtual function void do_init(executor_base_c exec_b);
+        group = group_t :: inst(exec_b);
     endfunction
 
     virtual function reg_group_c get_type();

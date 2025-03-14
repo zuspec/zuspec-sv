@@ -26,6 +26,7 @@ typedef class executor_group_default_c;
 typedef class executor_group_dummy_c;
 typedef class pool_base_c;
 typedef class pool_map_c;
+typedef class reg_group_field_base_c;
 
 class component_list_c;
     component_c comp_l[$];
@@ -51,6 +52,7 @@ class component_c extends typed_obj_c;
 
     component_c             subcomponents[$];
     action_type_c           action_virtual_m[action_type_c];
+    reg_group_field_base_c  reg_group_fields[$];
 
 
     // Each component maintains a map of claim type to executor
@@ -147,6 +149,11 @@ class component_c extends typed_obj_c;
     virtual function void do_init(executor_base_c exec_b);
 
         `ZSP_DEBUG_ENTER("component_c", ("do_init %0s", this.name));
+
+        foreach (reg_group_fields[i]) begin
+            reg_group_fields[i].do_init(exec_b);
+        end
+
         init_down(exec_b);
 
         bind_pools();

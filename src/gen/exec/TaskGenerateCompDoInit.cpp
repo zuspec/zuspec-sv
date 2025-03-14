@@ -72,6 +72,10 @@ void TaskGenerateCompDoInit::visitTypeField(vsc::dm::ITypeField *f) {
     f->getDataType()->accept(m_this);
 }
 
+void TaskGenerateCompDoInit::visitTypeFieldRegGroup(arl::dm::ITypeFieldRegGroup *f) {
+    m_out->println("%s.do_init(exec_b);", m_field->name().c_str());
+}
+
 }
 }
 }
