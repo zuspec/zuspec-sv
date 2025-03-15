@@ -48,8 +48,8 @@ package:
       url: https://github.com/dv-flow/dv-flow-mgr.git
     - name: dv-flow-libhdlsim
       url: https://github.com/dv-flow/dv-flow-libhdlsim.git
-    - name: pytest-dv
-      url: https://github.com/dv-flow/pytest-dv.git
+    - name: pytest-dfm
+      url: https://github.com/dv-flow/pytest-dfm.git
 
   - name: default-dev
     deps:
@@ -103,8 +103,8 @@ package:
       url: https://github.com/dv-flow/dv-flow-mgr.git
     - name: dv-flow-libhdlsim
       url: https://github.com/dv-flow/dv-flow-libhdlsim.git
-    - name: pytest-dv
-      url: https://github.com/dv-flow/pytest-dv.git
+    - name: pytest-dfm
+      url: https://github.com/dv-flow/pytest-dfm.git
 
   - name: default-dev-src
     deps:
@@ -166,8 +166,8 @@ package:
       url: https://github.com/dv-flow/dv-flow-mgr.git
     - name: dv-flow-libhdlsim
       url: https://github.com/dv-flow/dv-flow-libhdlsim.git
-    - name: pytest-dv
-      url: https://github.com/dv-flow/pytest-dv.git
+    - name: pytest-dfm
+      url: https://github.com/dv-flow/pytest-dfm.git
   
   env:
   - name: PYTHONPATH

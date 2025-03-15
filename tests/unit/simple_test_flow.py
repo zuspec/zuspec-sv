@@ -1,20 +1,7 @@
 import os
 import io
 import sys
-import pytest_fv as pfv
-import pytest_dv as pdv
 from typing import List
-
-try:
-    from zsp_sv.pytest_fv import TaskGenSvActor
-except ModuleNotFoundError:
-    sys.path.insert(0,
-        os.path.join(
-            os.path.dirname(
-                os.path.dirname(
-                    os.path.dirname(os.path.abspath(__file__)))), "python"))
-    print(sys.path)
-    from zsp_sv.pytest_fv import TaskGenSvActor
 
 def read_runlog(runlog, pref) -> List[str]:
     ret = []
