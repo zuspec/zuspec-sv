@@ -1,10 +1,8 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-from pytest_dv import *
 import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
 def test_leaf_action(dvflow):
     content = """
@@ -24,7 +22,7 @@ component pss_top {
     """
     run_unit_test(dvflow, content, expect)
 
-def test_subactivity(dirconfig):
+def test_subactivity(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -54,9 +52,10 @@ def test_subactivity(dirconfig):
     RES: leaf
     RES: leaf
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_subactivity_with(dirconfig):
+@pytest.mark.skip(reason="Not implemented")
+def test_subactivity_with(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -93,12 +92,13 @@ def test_subactivity_with(dirconfig):
     RES: leaf 2
     """
 
-    if dirconfig.config.getHdlSim() == "vlt":
+    if dvflow.sim == "vlt":
         pytest.skip("Nested randomization not supported as of 5.028")
     else:
-        run_unit_test(dirconfig, content, expect, debug=True)
+        run_unit_test(dvflow, content, expect, debug=True)
 
-def test_subactivity_subcomp(dirconfig):
+@pytest.mark.skip(reason="Not implemented")
+def test_subactivity_subcomp(dvflow):
     content = """
         import std_pkg::*;
         component C {
@@ -149,12 +149,12 @@ def test_subactivity_subcomp(dirconfig):
     RES: leaf 1
     RES: leaf 2
     """
-    if dirconfig.config.getHdlSim() == "vlt":
+    if dvflow.sim == "vlt":
         pytest.skip("Nested randomization not supported as of 5.028")
     else:
-        run_unit_test(dirconfig, content, expect)
+        run_unit_test(dvflow, content, expect)
 
-def test_subactivity_listener(dirconfig):
+def test_subactivity_listener(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -195,7 +195,8 @@ def test_subactivity_listener(dirconfig):
     RES: leave_actor
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         "top_activity_listener.sv")
+

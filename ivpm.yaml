@@ -75,8 +75,6 @@ package:
       src: pypi
     - name: zuspec-cli
       url: https://github.com/zuspec/zuspec-cli.git
-    - name: pytest-fv
-      url: https://github.com/fvutils/pytest-fv.git
     - name: ninja
       src: pypi
     - name: simplesat
@@ -140,9 +138,6 @@ package:
       url: https://github.com/zuspec/zuspec-fe-parser.git
     - name: zuspec-cli
       url: https://github.com/zuspec/zuspec-cli.git
-    - name: pytest-fv
-      url: https://github.com/fvutils/pytest-fv.git
-      dep-set: default-dev
     - name: ninja
       src: pypi
     - name: simplesat

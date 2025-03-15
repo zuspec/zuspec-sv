@@ -1,11 +1,9 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_decl_int_list_comp(dirconfig):
+def test_decl_int_list_comp(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -30,10 +28,10 @@ def test_decl_int_list_comp(dirconfig):
     expect = """
     RES: arr=1,2,3,4
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
 @pytest.mark.skip("exec foreach not yet supported")
-def test_decl_int_list_comp_foreach(dirconfig):
+def test_decl_int_list_comp_foreach(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -60,10 +58,10 @@ def test_decl_int_list_comp_foreach(dirconfig):
     expect = """
     RES: arr=1,2,3,4
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
 @pytest.mark.skip("composite initializers not supported yet")
-def test_decl_int_array_action(dirconfig):
+def test_decl_int_array_action(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -81,9 +79,9 @@ def test_decl_int_array_action(dirconfig):
     expect = """
     RES: arr=1,2,3,4
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_decl_rand_int_list_action(dirconfig):
+def test_decl_rand_int_list_action(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -112,12 +110,12 @@ def test_decl_rand_int_list_action(dirconfig):
     expect = """
     RES: arr=1,2,3,4
     """
-    if dirconfig.config.getHdlSim() == "vlt":
+    if dvflow.sim == "vlt":
         pytest.skip("vlt doesn't support nested randomization as of 5.028")
     else:
-        run_unit_test(dirconfig, content, expect)
+        run_unit_test(dvflow, content, expect)
 
-def test_decl_rand_int_list_action_foreach(dirconfig : pfv.DirConfig):
+def test_decl_rand_int_list_action_foreach(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -146,8 +144,8 @@ def test_decl_rand_int_list_action_foreach(dirconfig : pfv.DirConfig):
     expect = """
     RES: arr=1,2,3,4
     """
-    if dirconfig.config.getHdlSim() == "vlt":
+    if dvflow.sim == "vlt":
         pytest.skip("vlt as of 5.028 does not support foreach")
     else:
-        run_unit_test(dirconfig, content, expect)
+        run_unit_test(dvflow, content, expect)
 

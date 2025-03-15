@@ -44,12 +44,10 @@ class executor_base_c extends component_c;
             while (c.parent != null) begin
                 c = c.parent;
             end
-            if (!$cast(actor, c)) begin
+            if ($cast(actor, c) == 0) begin
                 `ZSP_FATAL(("failed to cast root component_c to actor_base_c"));
             end
-            if (!$cast(api, actor.get_backend())) begin
-                `ZSP_FATAL(("failed to cast base API to model-specific API"));
-            end
+            api = actor.get_backend();
         end
         if (api == null) begin
             `ZSP_FATAL(("failed to get backend API"));

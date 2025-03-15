@@ -1,11 +1,10 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
 import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_call_comp_method(dirconfig):
+def test_call_comp_method(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -24,13 +23,13 @@ def test_call_comp_method(dirconfig):
     RES: Hello World
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         "top_default_api.sv",
         debug=False)
 
-def test_call_comp_global_method(dirconfig):
+def test_call_comp_global_method(dvflow):
     content = """
         import std_pkg::*;
         function void doit_e() {
@@ -53,13 +52,13 @@ def test_call_comp_global_method(dirconfig):
     RES: Hello World
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         "top_default_api.sv",
         debug=False)
 
-def test_call_comp_global_qmethod(dirconfig):
+def test_call_comp_global_qmethod(dvflow):
     content = """
         import std_pkg::*;
         function void doit_e() {
@@ -82,7 +81,7 @@ def test_call_comp_global_qmethod(dirconfig):
     RES: Hello World
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         "top_default_api.sv",

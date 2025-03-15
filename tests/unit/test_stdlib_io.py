@@ -1,12 +1,10 @@
 
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_message_basics(dirconfig):
+def test_message_basics(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -21,9 +19,9 @@ def test_message_basics(dirconfig):
     expect = """
     RES: Hello World!
     """
-    run_unit_test(dirconfig, content, expect, debug=False)
+    run_unit_test(dvflow, content, expect, debug=False)
 
-def test_message_verbosity_filter(dirconfig):
+def test_message_verbosity_filter(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -39,4 +37,4 @@ def test_message_verbosity_filter(dirconfig):
     expect = """
     RES: Hello World!
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)

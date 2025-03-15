@@ -1,11 +1,9 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_default_api_impl_no_access(dirconfig):
+def test_default_api_impl_no_access(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -21,12 +19,12 @@ def test_default_api_impl_no_access(dirconfig):
     RES: Hello World
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         "top_default_api.sv")
     
-def test_default_api_impl_mem_access(dirconfig):
+def test_default_api_impl_mem_access(dvflow):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
@@ -69,14 +67,14 @@ def test_default_api_impl_mem_access(dirconfig):
     Fatal: write32 not implemented
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         "top_default_api.sv",
         "Fatal:",
         debug=False)
 
-def test_import_func_void(dirconfig):
+def test_import_func_void(dvflow):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
@@ -92,18 +90,21 @@ def test_import_func_void(dirconfig):
         }
     """
     custom_api = """
+        package custom_api_pkg;
+        import pss_types::*;
         class custom_api extends pss_import_api;
             virtual task my_write(int unsigned addr, int unsigned data);
                 $display("RES: my_write(%0d, %0d)", addr, data);
             endtask
         endclass
+        endpackage
 """
     
     expect = """
     RES: my_write(0, 4)
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         "top_custom_api_inc.sv",
@@ -112,7 +113,7 @@ def test_import_func_void(dirconfig):
         extra_content={
             "custom_api.svh": custom_api })
     
-def test_import_func_retval(dirconfig):
+def test_import_func_retval(dvflow):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
@@ -130,12 +131,15 @@ def test_import_func_retval(dirconfig):
         }
     """
     custom_api = """
+        package custom_api_pkg;
+        import pss_types::*;
         class custom_api extends pss_import_api;
             virtual task my_read(output int unsigned __retval, input int unsigned addr);
                 $display("RES: my_read(%0d)", addr);
                 __retval = 42;
             endtask
         endclass
+        endpackage
 """
     
     expect = """
@@ -143,7 +147,7 @@ def test_import_func_retval(dirconfig):
     RES: data = 42
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         "top_custom_api_inc.sv",

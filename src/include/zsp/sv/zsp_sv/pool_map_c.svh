@@ -19,7 +19,7 @@ class pool_map_c;
 
         `ZSP_DEBUG_ENTER("pool_map_c", ("get_pool %0s::%0s (%0s)", action_t.name, ref_claim.name, ref_claim.obj_t.name));
 
-        if (wildcard_m.exists(ref_claim.obj_t)) begin
+        if (wildcard_m.exists(ref_claim.obj_t) != 0) begin
             pool = wildcard_m[ref_claim.obj_t];
         end
 

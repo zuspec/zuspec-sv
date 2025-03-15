@@ -1,11 +1,9 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_eq(dirconfig):
+def test_eq(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -27,9 +25,9 @@ def test_eq(dirconfig):
     RES: a=1
     RES: b=2
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_if_1(dirconfig):
+def test_if_1(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -53,9 +51,9 @@ def test_if_1(dirconfig):
     expect = """
     RES: a=1
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_if(dirconfig):
+def test_if(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -87,10 +85,10 @@ def test_if(dirconfig):
     RES: a=1
     RES: b=2
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
 # Appears to be a Verilator issue for now
-# def test_implies(dirconfig):
+# def test_implies(dvflow):
 #     content = """
 #         import std_pkg::*;
 #         component pss_top {
@@ -114,4 +112,4 @@ def test_if(dirconfig):
 #     RES: a=1
 #     RES: b=2
 #     """
-#     run_unit_test(dirconfig, content, expect)
+#     run_unit_test(dvflow, content, expect)

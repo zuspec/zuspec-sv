@@ -42,7 +42,7 @@ class component_type_c extends obj_type_c;
             action_type_m_init = 1;
         end
 
-        if (action_type_m.exists(action_t)) begin
+        if (action_type_m.exists(action_t) != 0) begin
             `ZSP_DEBUG("component_type_c", ("using action_t %0s", action_type_m[action_t].name));
             action = action_type_m[action_t].mk();
         end else begin

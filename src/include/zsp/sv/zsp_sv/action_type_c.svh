@@ -38,7 +38,7 @@ class action_type_c extends obj_type_c;
     endfunction
 
     function int refid(string name);
-        if (ref_claim_name_m.exists(name)) begin
+        if (ref_claim_name_m.exists(name) != 0) begin
             return ref_claim_name_m[name];
         end else begin
             `ZSP_FATAL(("refid: ref_claim_name_m for %0s does not contain %0s", this.name, name));
@@ -76,11 +76,11 @@ class action_type_c extends obj_type_c;
 endclass
 
 class action_type_t_c #(type Ta=action_c) extends action_type_c;
-    bit override;
+    bit ovr;
 
-    function new(string name, component_type_c comp_t, bit override=0);
+    function new(string name, component_type_c comp_t, bit ovr=0);
         super.new(name, comp_t);
-        this.override = override;
+        this.ovr = ovr;
     endfunction
 
     virtual function action_c mk();

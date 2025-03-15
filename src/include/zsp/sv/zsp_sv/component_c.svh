@@ -96,7 +96,7 @@ class component_c extends typed_obj_c;
             return;
         end
         `ZSP_DEBUG("component_c", ("comp_t: %0s", comp_t.name));
-        if (comp_t_inst_m.exists(comp_t)) begin
+        if (comp_t_inst_m.exists(comp_t) != 0) begin
             comp_t_inst_m[comp_t].comp_l.push_back(comp);
         end else begin
             component_list_c l = new();
@@ -223,10 +223,10 @@ class component_c extends typed_obj_c;
             subcomp.do_init(exec_b);
 
             // Merge the subcomponent type maps with ours
-            if (subcomp.comp_t_inst_m.first(key)) begin
+            if (subcomp.comp_t_inst_m.first(key) != 0) begin
                 `ZSP_DEBUG("component_c", ("Merging comp_type_t %0s into %0s", key.name, name));
                 do begin
-                    if (!comp_t_inst_m.exists(key)) begin
+                    if (comp_t_inst_m.exists(key) == 0) begin
                         component_list_c list_l = new();
                         comp_t_inst_m[key] = list_l;
                     end
@@ -236,7 +236,7 @@ class component_c extends typed_obj_c;
                             name));
                         comp_t_inst_m[key].comp_l.push_back(subcomp.comp_t_inst_m[key].comp_l[j]);
                     end
-                end while (subcomp.comp_t_inst_m.next(key));
+                end while (subcomp.comp_t_inst_m.next(key) != 0);
             end
         end
 
@@ -290,7 +290,7 @@ class component_c extends typed_obj_c;
             end
             ret = exec_group_default;
         end else begin
-            if (exec_group_m.exists(trait_t)) begin
+            if (exec_group_m.exists(trait_t) != 0) begin
                 ret = exec_group_m[trait_t];
             end else begin
                 `ZSP_FATAL(("Failed to find executor group for trait %0s", trait_t.name));

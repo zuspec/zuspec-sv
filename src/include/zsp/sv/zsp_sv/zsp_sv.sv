@@ -48,9 +48,9 @@ class object_pool_base;
     endfunction
 
     virtual function void dec();
-        if (count) begin
+        if (count != 0) begin
             count -= 1;
-            if (!count) begin
+            if (count == 0) begin
                 // Object is no longer referenced
                 drop();
             end
@@ -72,10 +72,10 @@ class object extends object_pool_base;
     virtual function void dtor();
     endfunction
 
-    virtual function void do_pre_solve();
+    virtual function void do_pre_solve(executor_base_c exec_b);
     endfunction
 
-    virtual function void pre_solve();
+    virtual function void pre_solve(executor_base_c exec_b);
     endfunction
 
     virtual function void do_post_solve(executor_base_c exec_b);

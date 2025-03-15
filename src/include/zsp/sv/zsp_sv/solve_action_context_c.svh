@@ -65,7 +65,7 @@ class solve_action_context_c;
         obj_type_c rsrc_t = claim.get_type();
         resource_claim_solve_data_c data;
 
-        if (resource_data_m.exists(rsrc_t)) begin
+        if (resource_data_m.exists(rsrc_t) != 0) begin
             data = resource_data_m[rsrc_t];
         end else begin
             data = new();
@@ -86,12 +86,7 @@ class solve_action_context_c;
         `ZSP_DEBUG("solve_action_context_c", ("parent_comp: %0s", parent_comp.name));
         `ZSP_DEBUG("solve_action_context_c", ("parent_comp.size: %0d", parent_comp.comp_t_inst_m.size()));
 
-        if (!$cast(comp_t, action.get_comp_t())) begin
-            `ZSP_FATAL(("add_action: Failed to cast to component_type_c"));
-        end else if (comp_t == null) begin
-            `ZSP_FATAL(("add_action: comp_t is null"));
-        end
-
+        comp_t = action.get_comp_t();
 
         compset = get_compset(action);
         data = new(traversal, compset);
@@ -122,7 +117,7 @@ class solve_action_context_c;
             end
         end
 
-        if (parent_comp.comp_t_inst_m.exists(comp_t)) begin
+        if (parent_comp.comp_t_inst_m.exists(comp_t) != 0) begin
             // We have available component contexts
             actions.push_back(action);
 //            action_comp_s.push_back(parent_comp.comp_t_inst_m[comp_t]);
@@ -139,16 +134,16 @@ class solve_action_context_c;
     endfunction
 
     function solve_compset_c get_compset(action_type_c action);
-        if (!action_compset_m.exists(action)) begin
+        if (action_compset_m.exists(action) == 0) begin
             // Need to build a new compset
-            if (parent_comp.comp_t_inst_m.exists(action.get_comp_t())) begin
+            if (parent_comp.comp_t_inst_m.exists(action.get_comp_t()) != 0) begin
                 // Add each unique component instance to the map
                 component_list_c comp_l = parent_comp.comp_t_inst_m[action.get_comp_t()];
                 solve_compset_c compset = new();
                 foreach (comp_l.comp_l[i]) begin
                     component_c comp = comp_l.comp_l[i];
                     int comp_id;
-                    if (!comp_inst_m.exists(comp)) begin
+                    if (comp_inst_m.exists(comp) == 0) begin
                         comp_id = comp_inst_l.size();
                         comp_inst_m[comp] = comp_id;
                         comp_inst_l.push_back(comp);
@@ -161,10 +156,10 @@ class solve_action_context_c;
                 action_compset_m[action] = compset;
             end else begin
                 component_type_c key;
-                if (parent_comp.comp_t_inst_m.first(key)) begin
+                if (parent_comp.comp_t_inst_m.first(key) != 0) begin
                     do begin
                         `ZSP_DEBUG("solve_action_context_c", ("Component type: %0s", key.name));
-                    end while (parent_comp.comp_t_inst_m.next(key));
+                    end while (parent_comp.comp_t_inst_m.next(key) != 0);
                 end else begin
                     `ZSP_DEBUG("solve_action_context_c", ("No component instances"));
                 end
@@ -187,7 +182,7 @@ class solve_action_context_c;
 
     function bit resolve();
         `ZSP_DEBUG_ENTER("solve_action_context_c", ("resolve"));
-        if (!this.randomize()) begin
+        if (this.randomize() == 0) begin
             return 0;
         end
 

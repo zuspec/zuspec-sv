@@ -48,53 +48,49 @@ def run_unit_test(
 
     unit_test_dir = os.path.dirname(os.path.abspath(__file__))
     dvflow.loadPkg(os.path.join(unit_test_dir, "flow.dv"))
-    dvflow.addOverride("hdlsim", "hdlsim.vlt")
+#    dvflow.addOverride("hdlsim", "hdlsim.vlt")
 
     # TODO: Register new 
 
-    top_pss = dvflow.mkTask("std.CreateFile", name="top_pss", 
-                        type="pssSource", filename="top.pss", content=content)
 
 #    actor_sv = os.path.join(dirconfig.builddir(), "actor.sv")
     zsp_sv_dir = os.path.abspath(os.path.join(
         dvflow.srcdir, "../../src/include/zsp/sv/zsp_sv"))
-
+    
     if not isinstance(prefixes,tuple):
         prefixes = (prefixes,)
 
     sv_sources = []
 
-    sv_sources.append(dvflow.mkTask(
+    zsp_sv = dvflow.mkTask(
         "std.FileSet", name="zsp_sv", type="systemVerilogSource", 
-        base=zsp_sv_dir, include=["zsp_sv.sv"]))
+        base=zsp_sv_dir, include=["zsp_sv.sv"])
 
-    sv_sources.append(dvflow.mkTask("std.FileSet", 
-        name="top_sv", type="systemVerilogSource", base=dvflow.srcdir, include=test_top))
+    top_pss = dvflow.mkTask("std.CreateFile", name="top_pss", type="pssSource", 
+                            filename="top.pss", content=content, needs=[zsp_sv])
 
+    actor_sv = dvflow.mkTask(
+        "zsp.GenSvActor", "gen_actor", needs=[zsp_sv, top_pss],
+        action="pss_top::Entry")
+
+    extra_content_tasks = []
     if extra_content is not None:
         for path,content in extra_content.items():
-            sv_sources.append(dvflow.mkTask("std.CreateFile", 
-                        name="path", filename=path, content=content))
+            extra_content_tasks.append(dvflow.mkTask("std.CreateFile", 
+                        name="path", filename=path, content=content,
+                        needs=[zsp_sv, actor_sv]))
 
-    sv_sources.append(dvflow.mkTask(
-        "zsp.GenSvActor", "gen_actor", needs=[top_pss],
-        action="pss_top::Entry"))
+    top_sv_needs = extra_content_tasks.copy()
+    top_sv_needs.append(zsp_sv)
+    top_sv_needs.append(actor_sv)
+    top_sv = dvflow.mkTask("std.FileSet", 
+        name="top_sv", type="systemVerilogSource", 
+        base=os.path.join(dvflow.srcdir, "data"), 
+        include=test_top, needs=top_sv_needs)
 
-    # flow.addTaskToPhase("generate.main", TaskGenSvActor(
-    #     "pss_top", 
-    #     "pss_top::Entry", 
-    #     actor_sv,
-    #     [pfv.FSPaths(
-    #         os.path.dirname(top_pss),
-    #         [top_pss], 
-    #         "pssSource")],
-    #     debug=debug))
-    # )
-
-    sim_img = dvflow.mkTask('hdlsim.SimImage', name='sim', 
-                        needs=sv_sources,
+    sim_img = dvflow.mkTask('hdlsim.SimImage', name='sim_img',
+                        needs=[top_sv],
                         top=['top'])
-    
     sim_run = dvflow.mkTask('hdlsim.SimRun', name='sim_run',
                         needs=[sim_img])
     

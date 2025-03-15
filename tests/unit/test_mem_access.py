@@ -1,11 +1,9 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_simple_memwrite(dirconfig):
+def test_simple_memwrite(dvflow):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
@@ -55,14 +53,17 @@ def test_simple_memwrite(dirconfig):
     """
     
     custom_api = """
+    package custom_api_pkg;
+    import pss_types::*;
     class custom_api extends pss_import_api;
         virtual task my_write32(longint unsigned addr, int unsigned data);
             $display("RES: write32 0x%08h 0x%08h", addr, data);
         endtask
     endclass
+    endpackage
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         test_top="top_custom_api_inc.sv",
@@ -71,7 +72,7 @@ def test_simple_memwrite(dirconfig):
         },
         debug=True)
 
-def test_simple_memread(dirconfig):
+def test_simple_memread(dvflow):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
@@ -125,6 +126,8 @@ def test_simple_memread(dirconfig):
     """
 
     custom_api = """
+    package custom_api_pkg;
+    import pss_types::*;
     class custom_api extends pss_import_api;
         virtual task my_write32(longint unsigned addr, int unsigned data);
             $display("RES: write32 0x%08h 0x%08h", addr, data);
@@ -134,9 +137,10 @@ def test_simple_memread(dirconfig):
             $display("RES: read32 0x%08h 0x%08h", addr, __retval);
         endtask
     endclass
+    endpackage
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         test_top="top_custom_api_inc.sv",

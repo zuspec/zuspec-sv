@@ -1,11 +1,5 @@
 
 
-package custom_api_pkg;
-    import pss_types::*;
-    `include "custom_api.svh"
-endpackage
-
-
 module top;
     import pss_top__Entry_pkg::*;
     import custom_api_pkg::*;

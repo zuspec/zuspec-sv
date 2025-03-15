@@ -138,7 +138,7 @@ void TaskGenerateStruct::generate_execs(vsc::dm::IDataTypeStruct *t) {
             false);
 
         std::vector<std::tuple<arl::dm::ExecKindT,bool,bool,std::string>> exec_t = {
-            {arl::dm::ExecKindT::PreSolve, false, false, "pre_solve"},
+            {arl::dm::ExecKindT::PreSolve, false, true, "pre_solve"},
             {arl::dm::ExecKindT::PostSolve, false, true, "post_solve"},
         };
 

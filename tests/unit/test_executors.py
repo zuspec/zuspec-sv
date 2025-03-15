@@ -1,11 +1,9 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_executor_setup(dirconfig):
+def test_executor_setup(dvflow):
     content = """
         import std_pkg::*;
         import executor_pkg::*;
@@ -22,4 +20,4 @@ def test_executor_setup(dirconfig):
     expect = """
     RES: Hello
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)

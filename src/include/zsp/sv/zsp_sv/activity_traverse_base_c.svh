@@ -55,7 +55,7 @@ class activity_traverse_base_c extends activity_c;
             exec_group.name,
             exec_b.name));
 
-        action.pre_solve();
+        action.pre_solve(exec_b);
 
         foreach (action_constraints[i]) begin
             action.layered_constraints.push_back(action_constraints[i]);
@@ -65,7 +65,7 @@ class activity_traverse_base_c extends activity_c;
         // Randomize action. Any traversals with an inline `with` 
         // get their own activity specialization
         // TODO: Handle errors
-        if (!this.randomize()) begin
+        if (this.randomize() == 0) begin
             `ZSP_FATAL(("activity_traverse_base_c::run failed to randomize"));
         end
 

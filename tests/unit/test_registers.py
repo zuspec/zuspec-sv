@@ -1,11 +1,9 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_simple_reg(dirconfig):
+def test_simple_reg(dvflow):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
@@ -68,11 +66,14 @@ def test_simple_reg(dirconfig):
     """
 
     custom_api = """
+    package custom_api_pkg;
+    import pss_types::*;
     class custom_api extends pss_import_api;
         virtual task my_write32(longint unsigned addr, int unsigned data);
             $display("RES: write32 0x%08h 0x%08h", addr, data);
         endtask
     endclass
+    endpackage
     """
 
     expect = """
@@ -81,7 +82,7 @@ def test_simple_reg(dirconfig):
     RES: write32 0x80000004 0x00000002
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         test_top="top_custom_api_inc.sv",
@@ -91,7 +92,7 @@ def test_simple_reg(dirconfig):
         debug=False)
 
 @pytest.mark.skip(reason="Not implemented")
-def test_reg_get_handle(dirconfig):
+def test_reg_get_handle(dvflow):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
@@ -160,15 +161,18 @@ def test_reg_get_handle(dirconfig):
     """
 
     custom_api = """
+    package custom_api_pkg;
+    import pss_types::*;
     class custom_api extends pss_import_api;
         virtual task my_write32(longint unsigned addr, int unsigned data);
             $display("RES: write32 0x%08h 0x%08h", addr, data);
         endtask
     endclass
+    endpackage
     """
 
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         test_top="top_custom_api_inc.sv",
@@ -177,7 +181,7 @@ def test_reg_get_handle(dirconfig):
         },
         debug=False)
 
-def test_group_array(dirconfig):
+def test_group_array(dvflow):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
@@ -262,11 +266,14 @@ def test_group_array(dirconfig):
     """
 
     custom_api = """
+    package custom_api_pkg;
+    import pss_types::*;
     class custom_api extends pss_import_api;
         virtual task my_write32(longint unsigned addr, int unsigned data);
             $display("RES: write32 0x%08h 0x%08h", addr, data);
         endtask
     endclass
+    endpackage
     """
 
     expect = """
@@ -275,7 +282,7 @@ def test_group_array(dirconfig):
     RES: write32 0x80000104 0x00000002
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         test_top="top_custom_api_inc.sv",
@@ -284,7 +291,7 @@ def test_group_array(dirconfig):
         },
         debug=False)
 
-def test_group_array_action_field_index(dirconfig):
+def test_group_array_action_field_index(dvflow):
     content = """
         import std_pkg::*;
         import addr_reg_pkg::*;
@@ -370,11 +377,14 @@ def test_group_array_action_field_index(dirconfig):
     """
 
     custom_api = """
+    package custom_api_pkg;
+    import pss_types::*;
     class custom_api extends pss_import_api;
         virtual task my_write32(longint unsigned addr, int unsigned data);
             $display("RES: write32 0x%08h 0x%08h", addr, data);
         endtask
     endclass
+    endpackage
     """
 
     expect = """
@@ -383,7 +393,7 @@ def test_group_array_action_field_index(dirconfig):
     RES: write32 0x80000104 0x00000002
     """
     run_unit_test(
-        dirconfig, 
+        dvflow, 
         content, 
         expect,
         test_top="top_custom_api_inc.sv",

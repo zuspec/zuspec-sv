@@ -162,17 +162,17 @@
 
 
 `define ZSP_DEBUG_ENTER(region, msg) \
-    if (zsp_sv::log_level) begin \
+    if (zsp_sv::log_level != 0) begin \
         $display("--> %0s::%0s", region, $sformatf msg); \
     end
 
 `define ZSP_DEBUG(region, msg) \
-    if (zsp_sv::log_level) begin \
+    if (zsp_sv::log_level != 0) begin \
         $display("%0s::%0s", region, $sformatf msg); \
     end
 
 `define ZSP_DEBUG_LEAVE(region, msg) \
-    if (zsp_sv::log_level) begin \
+    if (zsp_sv::log_level != 0) begin \
         $display("<-- %0s::%0s", region, $sformatf msg); \
     end
 

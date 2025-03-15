@@ -56,7 +56,7 @@ class component_init_ctxt_c;
         // Check the pending binds to see if we should activate any
         pool_bind_context_c bind_ctxt = new();
 
-        if (pool_bind_ctxt_s.size()) begin
+        if (pool_bind_ctxt_s.size() > 0) begin
             // Clone the previous context before pushing
             pool_bind_context_c ex_bind_ctxt = this.scope();
 
@@ -85,7 +85,7 @@ class component_init_ctxt_c;
             obj_type_c item_t = pool.get_item_type();
 
             // Add a new entry if one doesn't exist 
-            if (!ex_bind_ctxt.active_bind_m.exists(item_t)) begin
+            if (ex_bind_ctxt.active_bind_m.exists(item_t) == 0) begin
                 obj_bind_info_c bind_info = new();
                 bind_info.pool = pool;
                 ex_bind_ctxt.active_bind_m[item_t] = bind_info;
@@ -110,12 +110,12 @@ class component_init_ctxt_c;
         `ZSP_DEBUG_ENTER("component_init_ctxt_c", ("get_pool: action_t=%0s refclaim_id=%0d", 
             action_t.name, refclaim_id));
 
-        if (!ex_bind_ctxt.active_bind_m.exists(item_t)) begin
+        if (ex_bind_ctxt.active_bind_m.exists(item_t) == 0) begin
             `ZSP_DEBUG("component_init_ctxt_c", ("get_pool: No active bind for object type %0s", item_t.name));
         end else begin
             obj_bind_info_c bind_info = ex_bind_ctxt.active_bind_m[item_t];
-            if (bind_info.action_ref_m.exists(action_t)) begin
-                if (bind_info.action_ref_m[action_t].exists(refclaim_id)) begin
+            if (bind_info.action_ref_m.exists(action_t) != 0) begin
+                if (bind_info.action_ref_m[action_t].exists(refclaim_id) != 0) begin
                 end else begin
                     pool = bind_info.pool;
                 end

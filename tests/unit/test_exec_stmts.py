@@ -1,11 +1,9 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_repeat_count(dirconfig):
+def test_repeat_count(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -22,9 +20,9 @@ def test_repeat_count(dirconfig):
     RES: Hello
     RES: Hello
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-# def test_repeat_count(dirconfig):
+# def test_repeat_count(dvflow):
 #     content = """
 #         import std_pkg::*;
 #         component pss_top {
@@ -41,9 +39,9 @@ def test_repeat_count(dirconfig):
 #     RES: Hello
 #     RES: Hello
 #     """
-#     run_unit_test(dirconfig, content, expect, debug=False)
+#     run_unit_test(dvflow, content, expect, debug=False)
 
-def test_repeat_count_var(dirconfig):
+def test_repeat_count_var(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -60,9 +58,9 @@ def test_repeat_count_var(dirconfig):
     RES: Hello 0
     RES: Hello 1
     """
-    run_unit_test(dirconfig, content, expect, debug=False)
+    run_unit_test(dvflow, content, expect, debug=False)
 
-def test_repeat_local_var(dirconfig):
+def test_repeat_local_var(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -80,9 +78,9 @@ def test_repeat_local_var(dirconfig):
     RES: Hello 1
     RES: Hello 1
     """
-    run_unit_test(dirconfig, content, expect, debug=False)
+    run_unit_test(dvflow, content, expect, debug=False)
 
-def test_repeat_count_local_var(dirconfig):
+def test_repeat_count_local_var(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -100,9 +98,9 @@ def test_repeat_count_local_var(dirconfig):
     RES: Hello 0 1
     RES: Hello 1 2
     """
-    run_unit_test(dirconfig, content, expect, debug=False)
+    run_unit_test(dvflow, content, expect, debug=False)
 
-def test_while(dirconfig):
+def test_while(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -121,9 +119,9 @@ def test_while(dirconfig):
     RES: Hello 0
     RES: Hello 1
     """
-    run_unit_test(dirconfig, content, expect, debug=False)
+    run_unit_test(dvflow, content, expect, debug=False)
 
-def test_repeat_while(dirconfig):
+def test_repeat_while(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -142,9 +140,9 @@ def test_repeat_while(dirconfig):
     RES: Hello 0
     RES: Hello 1
     """
-    run_unit_test(dirconfig, content, expect, debug=False)
+    run_unit_test(dvflow, content, expect, debug=False)
 
-def test_if_else(dirconfig):
+def test_if_else(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -169,9 +167,9 @@ def test_if_else(dirconfig):
     RES: i==1
     RES: !(i!=1)
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_if_elsif(dirconfig):
+def test_if_elsif(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -200,9 +198,9 @@ def test_if_elsif(dirconfig):
     RES: i==1
     RES: i!=1
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_exec_hier_ref(dirconfig):
+def test_exec_hier_ref(dvflow):
     content = """
     import addr_reg_pkg::*;
     import std_pkg::*;
@@ -223,9 +221,9 @@ def test_exec_hier_ref(dirconfig):
     expect = """
     RES: region.addr=5
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_assign(dirconfig):
+def test_assign(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -264,4 +262,4 @@ def test_assign(dirconfig):
     RES: i==8 ; i=8
     RES: i==2 ; i=2
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)

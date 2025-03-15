@@ -24,8 +24,8 @@ async def GenSvActor(runner, input):
 
     if changed:
         factory = zsp_fe.Factory.inst()
-        if logging.root.level >= logging.DEBUG:
-            factory.getDebugMgr().enable(True)
+#        if logging.root.level >= logging.DEBUG:
+#            factory.getDebugMgr().enable(True)
 
         arl_f = zsp_arl.Factory.inst()
         arl_ctxt = arl_f.mkContext()
@@ -97,25 +97,35 @@ async def GenSvActor(runner, input):
 
             zsp_sv_f.prepContextExec(arl_ctxt)
 
-            with open(input.params.outpath, "w") as fp:
-                generator = zsp_sv_f.mkGenerateTypesPkg(
-                    arl_ctxt,
-                    fp)
-                generator.generate()
+            try:
+                outfile = os.path.join(input.rundir, input.params.filename)
+                fp = open(outfile, "w")
+            except Exception as e:
+                markers.append(TaskMarker(
+                    severity="error",
+                    msg="failed to open file %s for writing" % outfile))
+                status = 1
+        
+        if status == 0:
+            generator = zsp_sv_f.mkGenerateTypesPkg(
+                arl_ctxt,
+                fp)
+            generator.generate()
 
-                generator = zsp_sv_f.mkGenerateActorPkgPrv(
-                    arl_ctxt,
-                    pss_top,
-                    pss_top_Entry,
-                    fp)
-                generator.generate()
+            generator = zsp_sv_f.mkGenerateActorPkgPrv(
+                arl_ctxt,
+                pss_top,
+                pss_top_Entry,
+                fp)
+            generator.generate()
 
-                generator = zsp_sv_f.mkGenerateActorPkg(
-                    arl_ctxt,
-                    pss_top,
-                    pss_top_Entry,
-                    fp)
-                generator.generate()
+            generator = zsp_sv_f.mkGenerateActorPkg(
+                arl_ctxt,
+                pss_top,
+                pss_top_Entry,
+                fp)
+            generator.generate()
+            fp.close()
 
     fs = FileSet(
         filetype="systemVerilogSource",

@@ -1,12 +1,10 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
 
-def test_bool_field(dirconfig):
+def test_bool_field(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -25,9 +23,9 @@ def test_bool_field(dirconfig):
     RES: f1=0
     RES: f2=1
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_bit_field(dirconfig):
+def test_bit_field(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -43,9 +41,9 @@ def test_bit_field(dirconfig):
     expect = """
     RES: f1=15
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_int_field(dirconfig):
+def test_int_field(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -61,9 +59,9 @@ def test_int_field(dirconfig):
     expect = """
     RES: f1=-1
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def disabled_test_struct_field(dirconfig):
+def disabled_test_struct_field(dvflow):
     content = """
         import std_pkg::*;
         struct S {
@@ -82,9 +80,9 @@ def disabled_test_struct_field(dirconfig):
     expect = """
     RES: f1.a=4
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def disabled_test_struct_nested_field(dirconfig):
+def disabled_test_struct_nested_field(dvflow):
     content = """
         import std_pkg::*;
         struct S1 {
@@ -128,4 +126,4 @@ def disabled_test_struct_nested_field(dirconfig):
     RES: S.post_solve
     RES: S1.post_solve
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)

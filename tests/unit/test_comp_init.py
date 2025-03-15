@@ -1,11 +1,10 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
 import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_single_level_init(dirconfig):
+def test_single_level_init(dvflow):
     content = """
         import std_pkg::*;
         component pss_top {
@@ -23,9 +22,9 @@ def test_single_level_init(dirconfig):
     RES: init_down
     RES: init_up
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_nested_dual(dirconfig):
+def test_nested_dual(dvflow):
     content = """
         import std_pkg::*;
         component C {
@@ -56,4 +55,4 @@ def test_nested_dual(dirconfig):
     RES: C.init_up
     RES: init_up
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)

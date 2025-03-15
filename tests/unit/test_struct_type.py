@@ -1,11 +1,9 @@
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
-import sys
 from .simple_test_flow import run_unit_test
+from .sim_util import sim_dvflow as dvflow
 
-def test_struct_comp_field(dirconfig):
+def test_struct_comp_field(dvflow):
     content = """
         import std_pkg::*;
         struct S {
@@ -28,9 +26,9 @@ def test_struct_comp_field(dirconfig):
     expect = """
     RES: a=1 b=2
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_struct_action_field(dirconfig):
+def test_struct_action_field(dvflow):
     content = """
         import std_pkg::*;
         struct S {
@@ -56,10 +54,10 @@ def test_struct_action_field(dirconfig):
     expect = """
     RES: a=1 b=2
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
 
-def test_struct_exec_var(dirconfig):
+def test_struct_exec_var(dvflow):
     content = """
         import std_pkg::*;
         struct S {
@@ -83,9 +81,9 @@ def test_struct_exec_var(dirconfig):
     expect = """
     RES: a=1 b=2
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
 
-def test_struct_assign(dirconfig):
+def test_struct_assign(dvflow):
     content = """
         import addr_reg_pkg::*;
         import std_pkg::*;
@@ -117,4 +115,4 @@ def test_struct_assign(dirconfig):
     RES: a=3 b=4
     RES: a=1 b=2
     """
-    run_unit_test(dirconfig, content, expect)
+    run_unit_test(dvflow, content, expect)
