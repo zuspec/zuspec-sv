@@ -1,5 +1,3 @@
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
 
 
 def test_test1(dirconfig):

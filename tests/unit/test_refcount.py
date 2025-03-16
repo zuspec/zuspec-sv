@@ -1,8 +1,6 @@
 
 import os
 import pytest
-import pytest_fv as pfv
-from pytest_fv.fixtures import *
 import sys
 from .simple_test_flow import run_unit_test
 
