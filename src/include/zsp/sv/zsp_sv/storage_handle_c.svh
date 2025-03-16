@@ -1,5 +1,5 @@
 /*
- * storage_handle_s.svh
+ * storage_handle_c.svh
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -18,7 +18,10 @@
  * Created on:
  *     Author:
  */
-class storage_handle_s extends object_pool_base;
+
+typedef class object_refcnt_c;
+
+class storage_handle_c extends object_refcnt_c;
     bit[63:0]           addr;
 
 endclass

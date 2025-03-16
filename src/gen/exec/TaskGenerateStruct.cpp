@@ -53,7 +53,7 @@ TaskGenerateStruct::~TaskGenerateStruct() {
 }
 
 void TaskGenerateStruct::generate_head(vsc::dm::IDataTypeStruct *t) {
-    m_out->println("class %s extends object;", 
+    m_out->println("class %s extends object_c;", 
         m_gen->getNameMap()->getName(t).c_str());
     m_out->inc_ind();
 }

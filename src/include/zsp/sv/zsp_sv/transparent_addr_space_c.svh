@@ -7,7 +7,7 @@ class transparent_addr_space_c extends addr_space_base_c;
     endfunction
 
     function addr_handle_t add_nonallocatable_region(addr_region_s region);
-        addr_handle_t ret = new(null, null, region.addr);
+        addr_handle_t ret = new(null, region.addr);
         return ret;
     endfunction
 

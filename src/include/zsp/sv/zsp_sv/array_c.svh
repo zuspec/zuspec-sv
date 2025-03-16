@@ -18,7 +18,7 @@
  * Created on:
  *     Author:
  */
-class array_c #(type T=int, int SZ=0);
+class array_c #(type T=int, int SZ=0) extends object_refcnt_c;
     rand T           store[SZ];
     
     function T __getitem__(int idx);

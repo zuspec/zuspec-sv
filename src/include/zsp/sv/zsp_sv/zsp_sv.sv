@@ -24,7 +24,6 @@
 package zsp_sv;
 
 
-typedef class object_pool_base;
 typedef class actor_base_c;
 typedef class component_c;
 typedef class executor_base_c;
@@ -40,51 +39,11 @@ typedef class executor_base_c;
 class empty_t;
 endclass
 
-class object_pool_base;
-    int     count;
-
-    virtual function void inc();
-        count += 1;
-    endfunction
-
-    virtual function void dec();
-        if (count != 0) begin
-            count -= 1;
-            if (count == 0) begin
-                // Object is no longer referenced
-                drop();
-            end
-        end
-    endfunction
-
-    virtual function void drop();
-    endfunction
-
-//    virtual function void release(object obj);
-//    endfunction
-endclass
-
-class object extends object_pool_base;
-
-//    virtual function void init(executor_base_c exec_b);
-//    endfunction
-
-    virtual function void dtor();
-    endfunction
-
-    virtual function void do_pre_solve(executor_base_c exec_b);
-    endfunction
-
-    virtual function void pre_solve(executor_base_c exec_b);
-    endfunction
-
-    virtual function void do_post_solve(executor_base_c exec_b);
-    endfunction
-    
-    virtual function void post_solve(executor_base_c exec_b);
-    endfunction
-
-endclass
+    `include "object_c.svh"
+`include "object_mgr_c.svh"
+`include "object_refcnt_c.svh"
+`include "object_ref_base_c.svh"
+`include "object_ref_c.svh"
 
     `include "obj_type_c.svh"
     `include "typed_obj_c.svh"
@@ -115,7 +74,7 @@ endclass
 
 
 
-    `include "storage_handle_s.svh"
+    `include "storage_handle_c.svh"
     `include "addr_handle_t.svh"
 
     `include "empty_addr_trait_s.svh"
@@ -123,34 +82,33 @@ endclass
     `include "addr_region_s.svh"
     `include "transparent_addr_region_s.svh"
 
+    `include "input_c.svh"
+    `include "output_c.svh"
 
-
-class addr_claim_t;
-    storage_handle_s    storage;
-endclass
+    typedef class addr_claim_base_s;
 
 function automatic addr_handle_t make_handle_from_claim(
         executor_base_c   exec_b,
-        addr_claim_t    claim, 
-        bit[63:0]       offset);
+        addr_claim_base_s claim,
+        bit[63:0]         offset);
     addr_handle_t ret;
-    ret = new(exec_b, claim.storage, offset);    
+    ret = new(claim.get(), offset);
     return ret;
 endfunction
 
 function automatic addr_handle_t make_handle_from_handle(
-    executor_base_c       exec_b,
+    executor_base_c     exec_b,
     addr_handle_t       hndl,
     bit[63:0]           offset);
     addr_handle_t ret;
     if (hndl != null) begin
-        if (hndl.base != null) begin
-            ret = new(exec_b, hndl.base, hndl.offset+offset); 
+        if (hndl.obj != null) begin
+            ret = new(hndl.get(), hndl.offset+offset);
         end else begin
-            ret = new(exec_b, null, hndl.offset+offset); 
+            ret = new(null, hndl.offset+offset);
         end
     end else begin
-        ret = new(exec_b, null, offset); 
+        ret = new(null, offset);
     end
     return ret;
 endfunction
@@ -186,8 +144,7 @@ class addr_space_c extends component_c;
     endfunction
 
     virtual function addr_handle_t add_nonallocatable_region(addr_region_base_s region);
-        addr_handle_t ret = new(null, null, region.addr);
-        $display("add_nonallocatable_region: 0x%08h %0d", region.addr, ret.count);
+        addr_handle_t ret = new(null, region.addr);
         return ret;
     endfunction
 endclass

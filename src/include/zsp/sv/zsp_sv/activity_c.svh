@@ -19,8 +19,9 @@
  *     Author:
  */
 typedef class actor_base_c;
+typedef class object_c;
 
-class activity_c extends object;
+class activity_c extends object_c;
     actor_base_c        actor;
     component_c         parent_comp;
 

@@ -187,7 +187,7 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverse(arl::dm::IDataTyp
 //     run->dec_ind();
 //     run->println("end");
 
-    run->println("%s.dtor();", varname.c_str());
+    run->println("%s.drop();", varname.c_str());
     run->dec_ind();
     run->println("end");
 
@@ -218,7 +218,7 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverseType(arl::dm::IDat
             m_gen->getNameMap()->getName(t->getTarget()).c_str());
     }
     run->println("activity.run();");
-    run->println("activity.dtor();");
+    run->println("activity.drop(); // TODO: defer?");
     run->dec_ind();
     run->println("end");
 
@@ -353,7 +353,7 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverseType(arl::dm::IDat
 //     run->dec_ind();
 //     run->println("end");
 //     run->println("");
-//     run->println("%s.dtor();", varname);
+//     run->println("%s.drop();", varname);
 //     run->dec_ind();
 //     run->println("end");
     DEBUG_LEAVE("visitDataTypeActionActivityTraverseType");

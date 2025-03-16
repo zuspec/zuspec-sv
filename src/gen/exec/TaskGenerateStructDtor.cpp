@@ -44,7 +44,7 @@ TaskGenerateStructDtor::~TaskGenerateStructDtor() {
 void TaskGenerateStructDtor::generate(vsc::dm::IDataTypeStruct *t) {
     DEBUG_ENTER("generate");
 
-    m_out->println("virtual function void dtor();");
+    m_out->println("virtual function void drop();");
     m_out->inc_ind();
     for (std::vector<vsc::dm::ITypeFieldUP>::const_iterator
         it=t->getFields().begin();
@@ -58,12 +58,12 @@ void TaskGenerateStructDtor::generate(vsc::dm::IDataTypeStruct *t) {
 }
 
 void TaskGenerateStructDtor::visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) {
-    m_out->println("`zsp_dec(%s);", m_field->name().c_str());
+    m_out->println("%s.drop();", m_field->name().c_str());
 }
 
 void TaskGenerateStructDtor::visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) {
     if (TaskHasRefCountFields().check(t)) {
-        m_out->println("%s.dtor();", m_field->name().c_str());
+        m_out->println("%s.drop();", m_field->name().c_str());
     }
 }
 

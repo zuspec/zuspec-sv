@@ -177,7 +177,7 @@ void TaskGenerateAction::generate_methods(vsc::dm::IDataTypeStruct *t) {
     //         m_out->println("activity_%p activity = new(actor, this);",
     //             action_t->activities().at(0).get());
     //         m_out->println("activity.run();");
-    //         m_out->println("activity.dtor();");
+    //         m_out->println("activity.drop();");
     //     }
     // } else {
     //     const std::vector<arl::dm::ITypeExecUP> &execs = 

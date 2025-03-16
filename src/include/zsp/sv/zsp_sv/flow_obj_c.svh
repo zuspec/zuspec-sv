@@ -20,7 +20,7 @@
  */
 typedef class pool_base_c;
 
-class flow_obj_c extends object;
+class flow_obj_c extends object_c;
     pool_base_c      pool;
 endclass
 

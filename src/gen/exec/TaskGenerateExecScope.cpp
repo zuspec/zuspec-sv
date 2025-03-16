@@ -115,17 +115,9 @@ void TaskGenerateExecScope::visitTypeProcStmtAssign(arl::dm::ITypeProcStmtAssign
     if (s->op() == arl::dm::TypeProcStmtAssignOp::Eq) {
         if (m_genref->isRefCountedField(s->getLhs()).first) {
             m_exec_s.back()->exec()->indent();
-            m_exec_s.back()->exec()->write("`zsp_dec(");
             TaskGenerateExpr(m_gen, m_genref, m_exec_s.back()->exec()).generate(s->getLhs());
-            m_exec_s.back()->exec()->write(");\n");
-            m_exec_s.back()->exec()->indent();
-            TaskGenerateExpr(m_gen, m_genref, m_exec_s.back()->exec()).generate(s->getLhs());
-            m_exec_s.back()->exec()->write(" = ");
+            m_exec_s.back()->exec()->write(".set(");
             TaskGenerateExpr(m_gen, m_genref, m_exec_s.back()->exec()).generate(s->getRhs());
-            m_exec_s.back()->exec()->write(";\n");
-            m_exec_s.back()->exec()->indent();
-            m_exec_s.back()->exec()->write("`zsp_inc(");
-            TaskGenerateExpr(m_gen, m_genref, m_exec_s.back()->exec()).generate(s->getLhs());
             m_exec_s.back()->exec()->write(");\n");
         } else if (m_genref->isAggregateFieldRefExpr(s->getLhs())) {
             m_exec_s.back()->exec()->indent();
@@ -335,7 +327,7 @@ void TaskGenerateExecScope::visitTypeProcStmtVarDecl(arl::dm::ITypeProcStmtVarDe
     }
 
     if (TaskHasRefCountFields().check(t)) {
-        m_exec_s.back()->dtor()->println("`zsp_dec(%s);", t->name().c_str());
+        m_exec_s.back()->dtor()->println("%s.drop();", t->name().c_str());
     }
 
     DEBUG_LEAVE("visitTypeProcStmtVarDecl");
