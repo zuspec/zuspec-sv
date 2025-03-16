@@ -127,7 +127,7 @@ private:
         Check
     };
 
-private:
+protected:
     void init(KindE kind);
 
     std::string strval();
@@ -139,7 +139,7 @@ private:
     void GenExprStandalone(IOutput *out, vsc::dm::ITypeExpr *e);
 
 
-private:
+protected:
     static dmgr::IDebug                             *m_dbg;
     KindE                                           m_kind;
     TaskGenerate                                    *m_gen;

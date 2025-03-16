@@ -23,6 +23,7 @@
 #include "TaskGenerate.h"
 #include "TaskGenerateConstraint.h"
 #include "TaskGenerateActorPkgPrv.h"
+#include "TaskGenerateInlineConstraint.h"
 #include "ActivityInfo.h"
 
 
@@ -33,10 +34,11 @@ namespace exec {
 
 
 TaskGenerateInlineConstraints::TaskGenerateInlineConstraints(
-        TaskGenerateActorPkgPrv *gen,
-        IGenRefExpr             *genref,
-        IOutput                 *out
-    ) : m_gen(gen), m_genref(genref), m_out(out) {
+        TaskGenerateActorPkgPrv     *gen,
+        IGenRefExpr                 *genref,
+        vsc::dm::IDataTypeStruct    *action_t,
+        IOutput                     *out) : 
+        m_gen(gen), m_genref(genref), m_action_t(action_t), m_out(out), m_id(1) {
     DEBUG_INIT("Zsp::sv::gen::exec::TaskGenerateInlineConstraints", gen->getDebugMgr());    
 }
 
@@ -53,7 +55,20 @@ void TaskGenerateInlineConstraints::generate(arl::dm::IDataTypeActivity *activit
 void TaskGenerateInlineConstraints::visitDataTypeActivityTraverseType(arl::dm::IDataTypeActivityTraverseType *t) {
     DEBUG_ENTER("visitDataTypeActivityTraverseType");
     if (t->getWithC()) {
+        // Assign a name to this inline constraint
+        char tmp[64];
         DEBUG("Have an inline constraint");
+        sprintf(tmp, "_%d", m_id++);
+        std::string constraint_name = m_gen->getNameMap()->getName(m_action_t) + tmp;
+        m_gen->getNameMap()->setName(t->getWithC(), constraint_name);
+        TaskGenerateInlineConstraint(
+            m_gen, 
+            m_genref,
+            m_out).generate(
+                t->getWithC(),
+                constraint_name,
+                t->getTarget(),
+                m_action_t);
     }
     DEBUG_LEAVE("visitDataTypeActivityTraverseType");
 }

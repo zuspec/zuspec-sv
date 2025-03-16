@@ -38,9 +38,10 @@ class TaskGenerateInlineConstraints :
     public arl::dm::VisitorBase {
 public:
     TaskGenerateInlineConstraints(
-        TaskGenerateActorPkgPrv *gen,
-        IGenRefExpr             *genref,
-        IOutput                 *out
+        TaskGenerateActorPkgPrv     *gen,
+        IGenRefExpr                 *genref,
+        vsc::dm::IDataTypeStruct    *action_t,
+        IOutput                     *out
     );
 
     virtual ~TaskGenerateInlineConstraints();
@@ -53,7 +54,9 @@ private:
     static dmgr::IDebug             *m_dbg;
     TaskGenerateActorPkgPrv         *m_gen;
     IGenRefExpr                     *m_genref;
+    vsc::dm::IDataTypeStruct        *m_action_t;
     IOutput                         *m_out;
+    int32_t                         m_id;
 
 };
 

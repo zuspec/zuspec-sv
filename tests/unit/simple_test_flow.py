@@ -58,7 +58,7 @@ def run_unit_test(
 
     actor_sv = dvflow.mkTask(
         "zsp.GenSvActor", "gen_actor", needs=[zsp_sv, top_pss],
-        action="pss_top::Entry")
+        action="pss_top::Entry", debug=debug)
 
     extra_content_tasks = []
     if extra_content is not None:

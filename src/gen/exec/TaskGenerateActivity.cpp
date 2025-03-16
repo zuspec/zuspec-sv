@@ -33,10 +33,12 @@ namespace exec {
 
 
 TaskGenerateActivity::TaskGenerateActivity(
-    TaskGenerateActorPkgPrv *gen,
-    IGenRefExpr             *genref,
-    IOutput                 *out) : 
-        m_dbg(0), m_gen(gen), m_genref(genref), m_out(out), m_depth(1) {
+    TaskGenerateActorPkgPrv     *gen,
+    IGenRefExpr                 *genref,
+    vsc::dm::IDataTypeStruct    *action_t,
+    IOutput                     *out) : 
+        m_dbg(0), m_gen(gen), m_genref(genref), 
+        m_action_t(action_t), m_out(out), m_depth(1) {
     DEBUG_INIT("Zsp::sv::gen::exec::TaskGenerateActivity", gen->getDebugMgr());
 }
 
@@ -50,7 +52,7 @@ void TaskGenerateActivity::generate(ActivityVariant *variant) {
 
     // Generate inline constraints before generating the
     // core activity class
-    TaskGenerateInlineConstraints(m_gen, m_genref, m_out).generate(activity);
+    TaskGenerateInlineConstraints(m_gen, m_genref, m_action_t, m_out).generate(activity);
 
     m_depth = 1;
     m_variant_s.clear();
@@ -260,6 +262,10 @@ void TaskGenerateActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeA
     } else {
         run->println("activity_traverse_c #(%s) activity = new(actor, parent_comp);", 
             m_gen->getNameMap()->getName(t->getTarget()).c_str());
+    }
+    if (t->getWithC()) {
+        run->println("activity.add_constraint(%s::mk(self));", 
+            m_gen->getNameMap()->getName(t->getWithC()).c_str());
     }
     run->println("activity.run();");
     run->println("activity.dtor();");

@@ -130,6 +130,7 @@ bool TaskGenerateActorPkgPrv::generate() {
             TaskGenerateActivity(
                 this, 
                 &genref, 
+                (*v_it)->info()->action(),
                 out.get()
             ).generate(v_it->get());
         }

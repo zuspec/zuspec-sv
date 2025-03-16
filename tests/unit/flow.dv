@@ -13,6 +13,9 @@ package:
     - type: std.FileSet
       filetype: pssSource
     with:
+      debug:
+        type: bool
+        value: false
       component:
         desc: Root component to use
         type: str

@@ -24,6 +24,8 @@ async def GenSvActor(runner, input):
 
     if changed:
         factory = zsp_fe.Factory.inst()
+        if input.params.debug:
+            factory.getDebugMgr().enable(True)
 #        if logging.root.level >= logging.DEBUG:
 #            factory.getDebugMgr().enable(True)
 

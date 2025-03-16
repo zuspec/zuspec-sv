@@ -1,5 +1,5 @@
 /**
- * TaskGenerateActivity.h
+ * TaskGenerateInlineConstraint.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -33,39 +33,27 @@ namespace exec {
 
 class TaskGenerateActorPkgPrv;
 
-class TaskGenerateActivity :   
-    public virtual arl::dm::VisitorBase {
+class TaskGenerateInlineConstraint :
+    public arl::dm::VisitorBase{
 public:
-    TaskGenerateActivity(
-        TaskGenerateActorPkgPrv     *gen,
-        IGenRefExpr                 *genref,
+    TaskGenerateInlineConstraint(
+        TaskGenerateActorPkgPrv *gen,
+        IGenRefExpr             *genref,
+        IOutput                 *out);
+
+    virtual ~TaskGenerateInlineConstraint();
+
+    void generate(
+        vsc::dm::ITypeConstraint    *c,
+        const std::string           &name,
         vsc::dm::IDataTypeStruct    *action_t,
-        IOutput                     *out
-    );
-
-    virtual ~TaskGenerateActivity();
-
-    virtual void generate(ActivityVariant *variant);
-
-    virtual void visitDataTypeActivityParallel(arl::dm::IDataTypeActivityParallel *t) override;
-
-    virtual void visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) override;
-
-    virtual void visitDataTypeActivityTraverse(arl::dm::IDataTypeActivityTraverse *t) override;
-
-    virtual void visitDataTypeActivityTraverseType(arl::dm::IDataTypeActivityTraverseType *t) override;
-
+        vsc::dm::IDataTypeStruct    *parent_t);
 
 private:
-    dmgr::IDebug                    *m_dbg;
+    static dmgr::IDebug             *m_dbg;
     TaskGenerateActorPkgPrv         *m_gen;
     IGenRefExpr                     *m_genref;
-    vsc::dm::IDataTypeStruct        *m_action_t;
-    OutputActivityScope             *m_out_activity;
-    IOutput                         *m_out_top;
     IOutput                         *m_out;
-    int32_t                         m_depth;
-    std::vector<ActivityVariant *>  m_variant_s;
 
 };
 

@@ -54,7 +54,7 @@ def test_subactivity(dvflow):
     """
     run_unit_test(dvflow, content, expect)
 
-@pytest.mark.skip(reason="Not implemented")
+#@pytest.mark.skip(reason="Not implemented")
 def test_subactivity_with(dvflow):
     content = """
         import std_pkg::*;
@@ -95,7 +95,51 @@ def test_subactivity_with(dvflow):
     if dvflow.sim == "vlt":
         pytest.skip("Nested randomization not supported as of 5.028")
     else:
-        run_unit_test(dvflow, content, expect, debug=True)
+        run_unit_test(dvflow, content, expect, debug=False)
+
+#@pytest.mark.skip(reason="Not implemented")
+def test_subactivity_with_ctxt_ref(dvflow):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+
+            action Leaf {
+                rand bit[16] val0, val;
+                exec post_solve {
+                    print("RES: leaf %d\\n", val);
+                }
+            }
+
+            action Mid {
+                int i;
+                int this_val = 1;
+                activity {
+                    do Leaf with {
+                      val == this_val;
+                    };
+                    do Leaf with {
+                      val == (this_val+1);
+                    }
+                }
+            }
+
+            action Entry {
+                activity {
+                    do Mid;
+                }
+            }
+        }
+    """
+
+    expect = """
+    RES: leaf 1
+    RES: leaf 2
+    """
+
+    if dvflow.sim == "vlt":
+        pytest.skip("Nested randomization not supported as of 5.028")
+    else:
+        run_unit_test(dvflow, content, expect, debug=False)
 
 @pytest.mark.skip(reason="Not implemented")
 def test_subactivity_subcomp(dvflow):

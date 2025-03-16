@@ -58,6 +58,7 @@ class activity_traverse_base_c extends activity_c;
         action.pre_solve(exec_b);
 
         foreach (action_constraints[i]) begin
+            action_constraints[i].action = action;
             action.layered_constraints.push_back(action_constraints[i]);
         end
 
