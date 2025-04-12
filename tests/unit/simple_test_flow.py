@@ -75,12 +75,16 @@ def run_unit_test(
         base=os.path.join(dvflow.srcdir, "data"), 
         include=test_top, needs=top_sv_needs)
 
-    sim_img = dvflow.mkTask('hdlsim.SimImage', name='sim_img',
-                        needs=[top_sv],
-                        top=['top'])
-    sim_run = dvflow.mkTask('hdlsim.SimRun', name='sim_run',
-                        needs=[sim_img])
-    
+    sim_img = dvflow.mkTask(
+        'hdlsim.%s.SimImage' % dvflow.sim, 
+        name='sim_img',
+        needs=[top_sv],
+        top=['top'])
+    sim_run = dvflow.mkTask(
+        'hdlsim.%s.SimRun' % dvflow.sim, 
+        name='sim_run',
+        needs=[sim_img])
+   
     status, out = dvflow.runTask(sim_run)
 
     assert status == 0
