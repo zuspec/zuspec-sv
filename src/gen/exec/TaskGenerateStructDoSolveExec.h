@@ -48,6 +48,9 @@ public:
         bool                        executor,
         std::string                 &kind);
 
+    // Action handles do not participate in bulk randomization
+    virtual void visitDataTypeAction(arl::dm::IDataTypeAction *t) override { }
+
     virtual void visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) override;
 
     virtual void visitDataTypeStruct(vsc::dm::IDataTypeStruct *t) override;

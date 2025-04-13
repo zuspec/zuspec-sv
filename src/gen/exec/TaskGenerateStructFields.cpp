@@ -60,6 +60,14 @@ void TaskGenerateStructFields::generate(vsc::dm::IDataTypeStruct *t) {
     DEBUG_LEAVE("generate");
 }
 
+void TaskGenerateStructFields::visitDataTypeAction(arl::dm::IDataTypeAction *t){
+    DEBUG_ENTER("visitDataTypeAction");
+    m_out->println("action_handle_c #(%s) %s;", 
+        m_gen->getNameMap()->getName(t).c_str(),
+        m_field->name().c_str());
+    DEBUG_LEAVE("visitDataTypeAction");
+}
+
 void TaskGenerateStructFields::visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) {
     DEBUG_ENTER("visitDataTypeAddrHandle");
     m_out->println("addr_handle_t %s;", m_field->name().c_str());
@@ -163,6 +171,22 @@ void TaskGenerateStructFields::visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) {
     m_init = 0;
     f->getDataType()->accept(m_this);
     DEBUG_LEAVE("visitTypeFieldRef");
+}
+
+void TaskGenerateStructFields::visitTypeFieldInOut(arl::dm::ITypeFieldInOut *f) {
+    DEBUG_ENTER("visitTypeFieldInOut");
+    m_field = f;
+    m_init = 0;
+    m_out->indent();
+    if (f->isInput()) {
+        m_out->write("input_c #(");
+    } else {
+        m_out->write("output_c #(");
+    }
+    // TODO: get the type of the field
+    m_out->write(") %s;\n", f->name().c_str());
+
+    DEBUG_LEAVE("visitTypeFieldInOut");
 }
 
 std::string TaskGenerateStructFields::qualifiers(vsc::dm::TypeFieldAttr attr) {

@@ -24,7 +24,7 @@ typedef class action_constraint_base_c;
 
 class activity_traverse_compound_c #(type Ta, type Tact=activity_c) extends activity_traverse_c #(Ta);
 
-    function new(actor_base_c actor, component_c parent_comp, Ta action=null);
+    function new(actor_base_c actor, component_c parent_comp, action_handle_c #(Ta) action=null);
         super.new(actor, parent_comp, action);
     endfunction
 
@@ -32,8 +32,10 @@ class activity_traverse_compound_c #(type Ta, type Tact=activity_c) extends acti
         Ta action_p;
         Tact activity;
         $cast(action_p, action);
+        /*
         activity = new(actor, parent_comp, action_p);
         activity.run();
+         */
     endtask
 
 endclass

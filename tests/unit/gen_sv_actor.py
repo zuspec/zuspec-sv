@@ -55,7 +55,9 @@ async def GenSvActor(runner, input):
 
         for m in marker_c.markers():
             # TODO: handle severity
-            markers.append(TaskMarker(msg=m.msg()))
+            markers.append(TaskMarker(
+                msg=m.msg(), 
+                severity='error'))
             print("Parse Marker: %s" % m.msg())
         if marker_c.hasSeverity(zspp.MarkerSeverityE.Error):
             status |= 1

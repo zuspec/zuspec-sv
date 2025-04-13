@@ -18,9 +18,11 @@
  * Created on:
  *     Author:
  */
+typedef class object_refcnt_c;
+
 class array_c #(type T=int, int SZ=0) extends object_refcnt_c;
     rand T           store[SZ];
-    
+
     function T __getitem__(int idx);
         return store[idx];
     endfunction
@@ -31,6 +33,9 @@ class array_c #(type T=int, int SZ=0) extends object_refcnt_c;
 
     function int size();
         return SZ;
+    endfunction
+
+    virtual function void drop();
     endfunction
 
 endclass

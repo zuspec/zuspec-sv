@@ -97,6 +97,13 @@ void TaskGenerateActivity::generate(ActivityVariant *variant) {
     DEBUG_LEAVE("generate");
 }
 
+void TaskGenerateActivity::visitDataTypeActivityBind(arl::dm::IDataTypeActivityBind *t) {
+    DEBUG_ENTER("visitDataTypeActivityBind");
+    m_out_activity->run()->println("// Binds");
+
+    DEBUG_LEAVE("visitDataTypeActivityBind");
+}
+
 void TaskGenerateActivity::visitDataTypeActivityParallel(arl::dm::IDataTypeActivityParallel *t) {
     DEBUG_ENTER("visitDataTypeActivityParallel");
     // TODO: must detect and handle replicate inside
@@ -141,12 +148,12 @@ void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActiv
     if (t->getWithC()) {
         run->println("activity_%p activity;", t);
     } else {
+        vsc::dm::IDataType *action_t = m_genref->getType(t->getTarget());
         run->println("activity_traverse_c #(%s) activity;",
-            m_gen->getNameMap()->getName(variant->info()->action()).c_str());
+            m_gen->getNameMap()->getName(action_t).c_str());
     }
-    run->println("%s = new();", varname.c_str());
     // Actually want to specify 'comp' as the launching scope
-    run->println("activity = new(ctor, parent_comp, %s);", varname.c_str());
+    run->println("activity = new(actor, parent_comp, %s);", varname.c_str());
     run->println("activity.run();");
 //     run->println("%s.do_pre_solve();", varname.c_str());
 //     run->indent();
@@ -225,7 +232,6 @@ void TaskGenerateActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActiv
 //     run->dec_ind();
 //     run->println("end");
 
-    run->println("%s.drop();", varname.c_str());
     run->dec_ind();
     run->println("end");
 

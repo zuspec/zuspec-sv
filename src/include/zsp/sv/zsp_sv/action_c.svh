@@ -26,8 +26,20 @@ class action_c extends activity_c;
     `zsp_rand_arr action_constraint_base_c layered_constraints[$];
 
     function new();
-        super.new(null, null);
+        super.new();
     endfunction
+
+    virtual task run(activity_ctxt_c ctxt, int id=0);
+        executor_base_c exec_b;
+
+        pre_solve(exec_b);
+        if (this.randomize() == 0) begin
+            `ZSP_FATAL(("Failed to randomize"));
+        end
+        post_solve(exec_b);
+
+        body(exec_b);
+    endtask
 
     virtual task body(executor_base_c exec_b);
     endtask
@@ -54,6 +66,11 @@ class action_c extends activity_c;
     endfunction
 
     virtual function obj_type_c get_obj_comp_type();
+        return null;
+    endfunction
+
+    static function action_type_c get_type();
+        `ZSP_FATAL(("get_type not implemented"));
         return null;
     endfunction
 

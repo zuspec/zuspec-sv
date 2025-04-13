@@ -114,6 +114,7 @@ bool TaskGenerateActorPkgPrv::generate() {
 
         DEBUG("variants: %d", (*it)->variants().size());
 
+#ifdef UNDEFINED
         for (std::vector<ActivityVariantUP>::const_iterator
             v_it=(*it)->variants().begin(); 
             v_it!=(*it)->variants().end(); v_it++) {
@@ -134,6 +135,7 @@ bool TaskGenerateActorPkgPrv::generate() {
                 out.get()
             ).generate(v_it->get());
         }
+#endif // UNDEFINED
     }
 
     // Define the import API
@@ -146,9 +148,10 @@ bool TaskGenerateActorPkgPrv::generate() {
 
     // Define the actor
 //     #(.comp_t(%s), .activity_t(activity_%p));", 
-    out->println("class %s_actor extends actor_c #(pss_import_api, %s);", 
+    out->println("class %s_actor extends actor_c #(pss_import_api, %s, %s);", 
         actor.c_str(),
-        "pss_top");
+        "pss_top",
+        "pss_top__Entry");
     out->inc_ind();
     out->println("`zsp_component_util(%s_actor)", actor.c_str());
     out->println("");
@@ -158,6 +161,7 @@ bool TaskGenerateActorPkgPrv::generate() {
     out->dec_ind();
     out->println("endfunction");
     out->println("");
+#ifdef UNDEFINED
     out->println("virtual task run();");
     out->inc_ind();
     out->println("activity_%p root_activity = new(this, top);", root_activity.get());
@@ -192,6 +196,7 @@ bool TaskGenerateActorPkgPrv::generate() {
     out->println("");
     out->dec_ind();
     out->println("endtask");
+#endif // UNDEFINED
     out->println("");
 
     out->dec_ind();

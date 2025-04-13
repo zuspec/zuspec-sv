@@ -34,7 +34,7 @@ namespace exec {
 TaskGenerateActionActivity::TaskGenerateActionActivity(
     TaskGenerate            *gen,
     IGenRefExpr             *genref,
-    IOutput                 *out) : m_dbg(0), m_gen(gen), m_genref(genref), m_out(out) {
+    IOutput                 *out) : m_dbg(0), m_gen(gen), m_genref(genref), m_id(0), m_out(out) {
     DEBUG_INIT("Zsp::sv::gen::exec::TaskGenerateActionActivity", gen->getDebugMgr());
 }
 
@@ -45,16 +45,37 @@ TaskGenerateActionActivity::~TaskGenerateActionActivity() {
 void TaskGenerateActionActivity::generate(const std::vector<arl::dm::ITypeFieldActivityUP> &activities) {
 //    arl::dm::IDataTypeActionActivity *activity = variant->info()->activity();
     DEBUG_ENTER("generate");
-    OutputActivityScope out_activity(m_out);
-    m_out_activity = &out_activity;
+    OutputStr main_out(m_out->ind());
 
-    if (activities.size() > 1) {
-        DEBUG("TODO: handle schedule");
-    } else {
-        activities.at(0)->accept(m_this);
+    m_out->println("virtual task run(activity_ctxt_c ctxt, int id=0);");
+    m_out->inc_ind();
+    m_out->println("case (id)");
+
+    enter_activity(activities.size()?ScopeT::Schedule:ScopeT::Sequence);
+
+    for (std::vector<arl::dm::ITypeFieldActivityUP>::const_iterator
+        it=activities.begin();
+        it!=activities.end(); it++) {
+        (*it)->accept(m_this);
     }
 
-    out_activity.apply(m_out);
+    leave_activity();
+
+    m_out->println("default: begin");
+    m_out->inc_ind();
+    m_out->println("`ZSP_FATAL((\"Invalid activity id %%0d\", id));");
+    m_out->dec_ind();
+    m_out->println("end");
+    m_out->println("endcase");
+    m_out->dec_ind();
+    m_out->println("endtask");
+    m_out->println("");
+
+    for (std::vector<OutputStrUP>::const_iterator
+        it=m_out_l.begin();
+        it!=m_out_l.end(); it++) {
+        m_out->writes((*it)->getValue().c_str());
+    }
 
     DEBUG_LEAVE("generate");
 }
@@ -100,16 +121,15 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverse(arl::dm::IDataTyp
 
     if (t->getWithC()) {
         run->println("activity_%p activity;", t);
-    } else if (variant->info()->action()->activities().size()) {
-        run->println("activity_traverse_compound_c #(%s,%s) activity;", variant->info()->action());
     } else {
-        run->println("activity_traverse_c #(%s) activity;",
-            m_gen->getNameMap()->getName(variant->info()->action()).c_str());
+        run->println("activity_traverse_c #(%s)::do_run(%s, ctxt);",
+            m_gen->getNameMap()->getName(t->getTarget()).c_str(),
+            varname.c_str());
     }
-    run->println("%s = new();", varname.c_str());
-    // Actually want to specify 'comp' as the launching scope
-    run->println("activity = new(ctor, parent_comp, %s);", varname.c_str());
-    run->println("activity.run();");
+    // run->println("%s = new();", varname.c_str());
+    // // Actually want to specify 'comp' as the launching scope
+    // run->println("activity = new(actor, parent_comp, %s);", varname.c_str());
+    // run->println("activity.run();");
 //     run->println("%s.do_pre_solve();", varname.c_str());
 //     run->indent();
 //     run->write("if (%s.randomize()", varname.c_str());
@@ -207,20 +227,29 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverseType(arl::dm::IDat
     //
 
     IOutput *run = m_out_activity->run();
+    // TODO: handle 'with' constraint
+    // TODO: handle 'init' 
+    std::string with_c = "null";
+    std::string init = "null";
 
-    run->println("// Traverse action %s", t->getTarget()->name().c_str());
-    run->println("begin");
-    run->inc_ind();
-    if (t->getWithC()) {
-        run->println("activity_%p activity = new(actor, parent_comp);", t);
-    } else {
-        run->println("activity_traverse_c #(%s) activity = new(actor, parent_comp);", 
-            m_gen->getNameMap()->getName(t->getTarget()).c_str());
-    }
-    run->println("activity.run();");
-    run->println("activity.drop(); // TODO: defer?");
-    run->dec_ind();
-    run->println("end");
+    run->println("sctxt.add(activity_traverse_c #(%s)::mk(null, %s, %s));",
+        m_gen->getNameMap()->getName(t->getTarget()).c_str(),
+        with_c.c_str(),
+        init.c_str());
+
+//    run->println("// Traverse action %s", t->getTarget()->name().c_str());
+//    run->println("begin");
+//    run->inc_ind();
+//    if (t->getWithC()) {
+//        run->println("activity_%p activity = new(actor, parent_comp);", t);
+//    } else {
+//        run->println("activity_traverse_c #(%s) activity = new(actor, parent_comp);", 
+//            m_gen->getNameMap()->getName(t->getTarget()).c_str());
+//    }
+//    run->println("activity.run();");
+//    run->println("activity.drop(); // TODO: defer?");
+//    run->dec_ind();
+//    run->println("end");
 
     // ActionActivityVariant *variant = m_variant_s.back();
     // char varname[64];
@@ -357,6 +386,39 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverseType(arl::dm::IDat
 //     run->dec_ind();
 //     run->println("end");
     DEBUG_LEAVE("visitDataTypeActionActivityTraverseType");
+}
+
+void TaskGenerateActionActivity::enter_activity(ScopeT kind) {
+    OutputStr *out = new OutputStr("    ");
+    m_scope_s.push_back(kind);
+
+    m_out->println("%d: run_%d(ctxt);", m_out_l.size(), m_out_l.size());
+
+    out->println("task run_%d(activity_ctxt_c ctxt);", m_out_l.size());
+    out->inc_ind();
+
+    if (kind == ScopeT::Schedule) {
+        out->println("activity_ctxt_sched_c sctxt = new(ctxt);");
+    } else if (kind == ScopeT::Parallel) {
+        out->println("activity_ctxt_par_c sctxt = new(ctxt);");
+    } else if (kind == ScopeT::Sequence) {
+        out->println("activity_ctxt_par_c sctxt = ctxt;");
+    }
+
+    m_out_l.push_back(OutputStrUP(out));
+    m_out_s.push_back(out);
+}
+
+void TaskGenerateActionActivity::leave_activity() {
+    ScopeT kind = m_scope_s.back();
+    m_out_s.pop_back();
+
+    m_out->println("// Perform end-of-scope processing");
+    m_out->println("sctxt.end_scope(ctxt);");
+
+    out()->dec_ind();
+    out()->println("endtask");
+    m_scope_s.pop_back();
 }
 
 }

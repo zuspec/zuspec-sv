@@ -18,24 +18,13 @@
  * Created on:
  *     Author:
  */
+typedef class activity_ctxt_c;
 typedef class actor_base_c;
 typedef class object_c;
 
 class activity_c extends object_c;
-    actor_base_c        actor;
-    component_c         parent_comp;
 
-    function new(actor_base_c actor, component_c parent_comp);
-        this.actor = actor;
-        this.parent_comp = parent_comp;
-    endfunction
-
-    function void init(actor_base_c actor, component_c parent_comp);
-        this.actor = actor;
-        this.parent_comp = parent_comp;
-    endfunction
-
-    virtual task run();
+    virtual task run(activity_ctxt_c ctxt, int id=0);
         $display("FATAL: activity::run not implemented");
         $finish;
     endtask

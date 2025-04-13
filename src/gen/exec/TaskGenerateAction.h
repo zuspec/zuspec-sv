@@ -37,6 +37,8 @@ public:
 
     virtual ~TaskGenerateAction();
 
+    virtual void generate(vsc::dm::IDataTypeStruct *t) override;
+
     virtual void generate_head(vsc::dm::IDataTypeStruct *t) override;
 
     virtual void generate_fields(vsc::dm::IDataTypeStruct *t) override;
@@ -56,6 +58,8 @@ public:
     virtual void generate_create_init(vsc::dm::IDataTypeStruct *t) override { }
 
     virtual void generate_execs(vsc::dm::IDataTypeStruct *t) override;
+
+    virtual void generate_activity(vsc::dm::IDataTypeStruct *t);
 
     virtual void generate_methods(vsc::dm::IDataTypeStruct *t) override;
 

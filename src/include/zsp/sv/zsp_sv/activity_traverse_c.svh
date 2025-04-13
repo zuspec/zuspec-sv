@@ -20,14 +20,30 @@
  */
 // Traversal constraints are added via aspects (?)
 
+typedef class action_handle_c;
+typedef class action_constraint_c;
+typedef class action_init_c;
+typedef class actor_base_c;
 typedef class activity_traverse_base_c;
 typedef class action_constraint_base_c;
 typedef class executor_group_base_c;
 
 class activity_traverse_c #(type Ta=action_c) extends activity_traverse_base_c;
+    action_handle_c #(Ta)           action_h;
+    action_init_c #(Ta)             action_init;
+    action_constraint_c #(Ta)       action_constraint;
 
-    function new(actor_base_c actor, component_c parent_comp, Ta action=null);
-        super.new(actor, parent_comp);
+    function new(
+        action_handle_c #(Ta)       action_h=null,
+        action_init_c #(Ta)         action_init=null,
+        action_constraint_c #(Ta)   action_constraint=null);
+        super.new();
+        if (action_h == null) begin
+            action_h = new("<anonymous>");
+        end
+        this.action_h = action_h;
+        this.action_init = action_init;
+        this.action_constraint = action_constraint;
     endfunction
 
     virtual function action_type_c get_action_type();
@@ -36,8 +52,44 @@ class activity_traverse_c #(type Ta=action_c) extends activity_traverse_base_c;
         return action_t;
     endfunction
 
-    virtual task run_body(executor_base_c exec_b);
-        action.body(exec_b);
+    virtual function actor_base_c actor();
+        return null; // TODO:
+    endfunction
+
+    virtual task run(activity_ctxt_c ctxt, int id=0);
+        int pre_constraint_len;
+        ctxt.enter_traverse(this);
+        if (action_h.action == null) begin
+            // This traversal wasn't initialized by a containing activity
+            action_h.action = new();
+
+            // TODO: Setup and run context solver
+            // action_h.initialize(null); // TODO: selected component
+//            `ZSP_FATAL(("activity_traverse_c::run: action is null"));
+        end
+
+        if (action_init != null) begin
+            action_init.initialize(action_h.action);
+        end
+
+        // TODO: identify and add layered constraints from above (?)
+        pre_constraint_len = action_h.action.layered_constraints.size();
+        if (action_constraint != null) begin
+            action_h.action.layered_constraints.push_back(action_constraint);
+        end
+
+        action_h.action.run(ctxt);
+
+        while (action_h.action.layered_constraints.size() > pre_constraint_len) begin
+            action_h.action.layered_constraints.pop_back();
+        end
+
+        ctxt.leave_traverse(this);
+    endtask
+
+    static task do_run(action_handle_c #(Ta) action_h, activity_ctxt_c ctxt);
+        activity_traverse_c #(Ta) action_t = new(action_h);
+        action_t.run(ctxt);
     endtask
 
 endclass

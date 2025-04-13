@@ -6,7 +6,7 @@ typedef class component_c;
 class actor_c #(
     type Tapi=backend_api,
     type Tc=component_c,
-    type Ta=activity_c) extends actor_base_c;
+    type Ta=action_c) extends actor_base_c;
     `zsp_component_util(actor_c)
     Tapi        api;
     Tc          top;
@@ -22,6 +22,12 @@ class actor_c #(
         top = new("pss_top", null, this);
 
     endfunction
+
+    virtual task run();
+        activity_traverse_c #(Ta) traverse = new(null, null, null);
+        activity_ctxt_c ctxt = new();
+        traverse.run(ctxt);
+    endtask
 
     virtual function backend_api get_backend();
         return api;

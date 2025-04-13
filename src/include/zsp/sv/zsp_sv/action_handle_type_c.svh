@@ -6,7 +6,6 @@ class ref_claim_type_c;
     int         id;
     bit         is_claim;
     bit         is_lock;
-    bit         is_out;
     int         count;
     obj_type_c  obj_t;
 
@@ -25,13 +24,9 @@ class ref_claim_type_c;
         this.obj_t = obj_t;
     endfunction
 
-    function bit out_ref();
-        return (is_out == 1 && !is_claim);
-    endfunction
-
 endclass
 
-class action_type_c extends obj_type_c;
+class action_handle_type_c extends obj_type_c;
     ref_claim_type_c      ref_claim_type_l[$];
     int                   ref_claim_name_m[string];
     component_type_c      comp_t;
@@ -57,20 +52,6 @@ class action_type_c extends obj_type_c;
         ref_claim_name_m[name] = info.id;
     endfunction
 
-    function int add_out(string name, obj_type_c obj_t);
-        ref_claim_type_c info = new(name, ref_claim_type_l.size(), 0, 0, 0, obj_t);
-        ref_claim_type_l.push_back(info);
-        ref_claim_name_m[name] = info.id;
-        return info.id;
-    endfunction
-
-    function int add_in(string name, obj_type_c obj_t);
-        ref_claim_type_c info = new(name, ref_claim_type_l.size(), 0, 0, 0, obj_t);
-        ref_claim_type_l.push_back(info);
-        ref_claim_name_m[name] = info.id;
-        return info.id;
-    endfunction
-
     function void add_lock(string name, obj_type_c obj_t, int count=1);
         ref_claim_type_c info = new(name, ref_claim_type_l.size(), 1, 1, count, obj_t);
         ref_claim_type_l.push_back(info);
@@ -88,13 +69,13 @@ class action_type_c extends obj_type_c;
     endfunction
 
     virtual function action_c mk();
-        `ZSP_FATAL(("mk: action_type_c::mk is not implemented"));
+        `ZSP_FATAL(("mk: action_handle_type_c::mk is not implemented"));
         return null;
     endfunction
 
 endclass
 
-class action_type_t_c #(type Ta=action_c) extends action_type_c;
+class action_handle_type_t_c #(type Ta=action_c) extends action_type_c;
     bit ovr;
 
     function new(string name, component_type_c comp_t, bit ovr=0);

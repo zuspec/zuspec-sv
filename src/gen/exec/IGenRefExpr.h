@@ -40,6 +40,8 @@ public:
 
     virtual std::string genRval(vsc::dm::ITypeExpr *ref) = 0;
 
+    virtual vsc::dm::IDataType *getType(vsc::dm::ITypeExpr *ref) = 0;
+
     virtual std::string genRegAddr(vsc::dm::ITypeExpr *ref) = 0;
 
     virtual bool isFieldRefExpr(vsc::dm::ITypeExpr *ref) = 0;

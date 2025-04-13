@@ -115,11 +115,18 @@ endfunction
 
 
     `include "activity_c.svh"
+    `include "activity_ctxt_c.svh"
+    `include "activity_ctxt_par_c.svh"
+    `include "activity_ctxt_par_branch_c.svh"
+    `include "activity_proxy_c.svh"
     `include "activity_traverse_c.svh"
     `include "activity_traverse_base_c.svh"
     `include "activity_traverse_compound_c.svh"
     `include "action_c.svh"
     `include "action_constraint_c.svh"
+    `include "action_handle_base_c.svh"
+    `include "action_handle_c.svh"
+    `include "action_init_c.svh"
     `include "action_type_c.svh"
     `include "component_type_c.svh"
 
@@ -172,6 +179,19 @@ endclass
 
     `include "actor_base_c.svh"
     `include "actor_c.svh"
+
+    function void activity_bind(
+        action_handle_base_c    h1,
+        int                     h1_offset,
+        action_handle_base_c    h2,
+        int                     h2_offset);
+        h1.add_activity_bind(
+            h1_offset,
+            h2.bind_proxies[h2_offset]);
+        h2.add_activity_bind(
+            h2_offset,
+            h1.bind_proxies[h1_offset]);
+    endfunction
 
 endpackage
 

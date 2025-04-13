@@ -51,6 +51,8 @@ public:
 
     virtual std::string genRval(vsc::dm::ITypeExpr *ref) override;
 
+    virtual vsc::dm::IDataType *getType(vsc::dm::ITypeExpr *ref) override;
+
     virtual std::string genRegAddr(vsc::dm::ITypeExpr *ref) override;
 
     virtual bool isFieldRefExpr(vsc::dm::ITypeExpr *ref) override;
@@ -124,7 +126,8 @@ private:
         Lval,
         Rval,
         RegAddr,
-        Check
+        Check,
+        Type
     };
 
 protected:
@@ -159,6 +162,7 @@ protected:
     bool                                            m_isRefFieldRef;
     bool                                            m_isRefCountedField;
     bool                                            m_isAggregateFieldRef;
+    vsc::dm::IDataType                              *m_type;
     std::vector<vsc::dm::IDataTypeStruct *>         m_inline_s;
     std::vector<vsc::dm::ITypeVarScope *>           m_scope_s;
 

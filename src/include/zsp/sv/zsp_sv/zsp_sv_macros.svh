@@ -63,6 +63,29 @@
 `define zsp_action_ref_claim_util(obj_t) \
     __type.ref_claim_type_l.push_back(obj_t);
 
+`define zsp_action_handle_util_begin(action_t, comp_t) \
+    comp_t comp; \
+    \
+    virtual function action_c mk(); \
+        action_t act = new(); \
+        return act; \
+    endfunction \
+    \
+    virtual function void set_component(component_c comp); \
+        if (!$cast(this.comp, comp)) begin \
+            `ZSP_FATAL(("Failed to assign comp")); \
+        end \
+    endfunction \
+    \
+    virtual function component_c get_component(); \
+        return comp; \
+    endfunction \
+    \
+    static action_handle_type_t_c #( action_t ) __type = get_type(); \
+    static function action_type_t_c #( action_t ) get_type(); \
+        if (__type == null) begin \
+            __type = new(`"action_t`", comp_t ::get_type());
+
 `define zsp_action_util_begin(action_t, comp_t) \
     comp_t comp; \
     \
@@ -86,6 +109,8 @@
         if (__type == null) begin \
             __type = new(`"action_t`", comp_t ::get_type());
 
+// Note: must handle updating the factory in the
+// component type definition
 `define zsp_action_util_ovr_begin(action_t, comp_t) \
     comp_t comp; \
     \
@@ -110,6 +135,14 @@
 // Register ref/claim objects here
 `define zsp_action_util_ref(name,obj_t) \
     __type.add_ref(`"name`", obj_t);
+
+`define zsp_action_output(name,obj_t) \
+    static int __``name = __type.add_out(`"name`", obj_t ::get_type()); \
+    rand obj_t name
+
+`define zsp_action_input(name,obj_t) \
+    static int __``name = __type.add_in(`"name`", obj_t ::get_type()); \
+    obj_t name
 
 `define zsp_action_util_ref_arr(name,obj_t,count) \
     __type.add_ref(`"name`", obj_t, count);

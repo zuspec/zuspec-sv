@@ -27,7 +27,8 @@ namespace zsp {
 namespace sv {
 namespace gen {
 
-
+class OutputStr;
+using OutputStrUP=std::unique_ptr<OutputStr>;
 class OutputStr : 
     public virtual IOutputStr, 
     public virtual OutputBase {

@@ -43,6 +43,8 @@ public:
 
     virtual void generate(vsc::dm::IDataTypeStruct *t);
 
+    virtual void visitDataTypeAction(arl::dm::IDataTypeAction *t) override;
+
     virtual void visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) override;
 
     virtual void visitDataTypeArray(vsc::dm::IDataTypeArray *t) override;
@@ -64,6 +66,8 @@ public:
     virtual void visitTypeFieldPhy(vsc::dm::ITypeFieldPhy *f) override;
 
     virtual void visitTypeFieldRef(vsc::dm::ITypeFieldRef *f) override;
+
+    virtual void visitTypeFieldInOut(arl::dm::ITypeFieldInOut *f) override;
 
 protected:
     std::string qualifiers(vsc::dm::TypeFieldAttr attr);

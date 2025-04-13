@@ -47,6 +47,8 @@ public:
 
     virtual void generate(ActivityVariant *variant);
 
+    virtual void visitDataTypeActivityBind(arl::dm::IDataTypeActivityBind *t) override;
+
     virtual void visitDataTypeActivityParallel(arl::dm::IDataTypeActivityParallel *t) override;
 
     virtual void visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) override;

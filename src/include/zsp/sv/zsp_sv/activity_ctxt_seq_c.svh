@@ -1,5 +1,5 @@
 /*
- * activity_par_c.svh
+ * activity_ctxt_seq_c.svh
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -18,12 +18,22 @@
  * Created on:
  *     Author:
  */
-class activity_par_c extends activity_c;
-    activity_c      sub_activities[$];
 
-    function new(actor_base_c actor, component_c parent_comp);
-        super.new(actor, parent_comp);
+typedef class activity_ctxt_c;
+typedef class activity_ctxt_c;
+
+class activity_ctxt_seq_c extends activity_ctxt_c;
+
+
+    task run(activity_ctxt_c ctxt);
+        foreach (sub_activities[i]) begin
+            sub_activities[i].run();
+        end
+    endtask
+
+    virtual function void accept(activity_visitor_c v);
+        v.visit_
     endfunction
 
-
 endclass
+

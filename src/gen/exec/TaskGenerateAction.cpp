@@ -48,6 +48,30 @@ TaskGenerateAction::~TaskGenerateAction() {
 
 }
 
+void TaskGenerateAction::generate(vsc::dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("generate %s", t->name().c_str());
+    generate_head(t);
+    generate_fields(t);
+    m_out->println("");
+    generate_ctor(t);
+    m_out->println("");
+    generate_dtor(t);
+    m_out->println("");
+    generate_init(t);
+    generate_create_assign(t);
+    m_out->println("");
+    generate_create_default(t);
+    m_out->println("");
+    generate_create_init(t);
+
+    generate_constraints(t);
+    generate_execs(t);
+    generate_activity(t);
+    generate_methods(t);
+    generate_tail(t);
+    DEBUG_LEAVE("generate %s", t->name().c_str());
+}
+
 void TaskGenerateAction::generate_head(vsc::dm::IDataTypeStruct *t) {
     arl::dm::IDataTypeAction *action_t = dynamic_cast<arl::dm::IDataTypeAction *>(t);
     m_out->println("typedef class %s;", 
@@ -143,6 +167,22 @@ void TaskGenerateAction::generate_execs(vsc::dm::IDataTypeStruct *t) {
                 get<3>(*it)); // name
         }
     }
+}
+
+void TaskGenerateAction::generate_activity(vsc::dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("generate_activity");
+    arl::dm::IDataTypeAction *action_t = dynamic_cast<arl::dm::IDataTypeAction *>(t);
+
+    if (action_t->activities().size()) {
+        GenRefExprExecModel genref(
+            m_gen,
+            t,
+            "this",
+            false);
+        TaskGenerateActionActivity(m_gen, &genref, m_out).generate(action_t->activities());
+    }
+
+    DEBUG_LEAVE("generate_activity");
 }
 
 void TaskGenerateAction::generate_methods(vsc::dm::IDataTypeStruct *t) {

@@ -54,6 +54,19 @@ public:
 
     virtual void visitDataTypeActivityTraverseType(arl::dm::IDataTypeActivityTraverseType *t) override;
 
+private:
+    enum ScopeT {
+        Sequence,
+        Parallel,
+        Schedule
+    };
+
+private:
+    void enter_activity(ScopeT kind);
+
+    void leave_activity();
+
+    IOutput *out() const { return m_out_s.back(); }
 
 private:
     dmgr::IDebug                    *m_dbg;
@@ -61,6 +74,10 @@ private:
     IGenRefExpr                     *m_genref;
     OutputActivityScope             *m_out_activity;
     IOutput                         *m_out_top;
+    int32_t                         m_id;
+    std::vector<ScopeT>             m_scope_s;
+    std::vector<OutputStrUP>        m_out_l;
+    std::vector<IOutput *>          m_out_s;
     IOutput                         *m_out;
     int32_t                         m_depth;
     std::vector<ActivityVariant *>  m_variant_s;

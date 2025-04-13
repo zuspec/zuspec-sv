@@ -1,13 +1,24 @@
 
 typedef class action_type_c;
 typedef class activity_c;
+typedef class activity_ctxt_c;
 
 class activity_traverse_base_c extends activity_c;
     rand action_c      action;
+//    actor_base_c       actor;
+//    component_c        parent_comp;
     `zsp_rand_arr action_constraint_base_c action_constraints[$];
 
-    function new(actor_base_c actor, component_c parent_comp);
-        super.new(actor, parent_comp);
+    function new();
+//        super.new(actor, parent_comp);
+//        this.actor = actor;
+//        this.parent_comp = parent_comp;
+    endfunction
+
+    function activity_c build(activity_ctxt_c ctxt);
+        // TODO: check whether we need to infer actions to 
+        // support this traversal
+        return this;
     endfunction
 
     virtual function action_type_c get_action_type();
@@ -27,7 +38,7 @@ class activity_traverse_base_c extends activity_c;
         `ZSP_FATAL(("run_body not implemented"));
     endtask
 
-    task run();
+    virtual task run(activity_ctxt_c ctxt, int id);
         executor_base_c exec_b;
         executor_group_base_c exec_group;
         component_c comp;
@@ -36,6 +47,7 @@ class activity_traverse_base_c extends activity_c;
         if (action == null) begin
             // The context didn't assign component. Need to 
             // perform the context solving here...
+            component_c parent_comp; // TODO: obtain from context?
             solve_action_context_c ctxt_solver = new(parent_comp);
             `ZSP_DEBUG("activity_traverse_c", ("building/solving action, since the context did not"));
             void'(ctxt_solver.add_traversal(this));
@@ -73,15 +85,19 @@ class activity_traverse_base_c extends activity_c;
         // TODO: connect up the selected component
         action.post_solve(exec_b);
 
+        /*
         foreach (actor.listeners[i]) begin
             actor.listeners[i].enter_traverse(action);
         end
+         */
 
         run_body(exec_b);
 
+        /*
         foreach (actor.listeners[i]) begin
             actor.listeners[i].leave_traverse(action);
         end
+         */
 
         `ZSP_DEBUG_LEAVE("activity_traverse_c", ("run"));
     endtask

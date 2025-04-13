@@ -71,6 +71,14 @@ std::string GenRefExprExecModel::genRval(vsc::dm::ITypeExpr *ref) {
     return ret;
 }
 
+vsc::dm::IDataType *GenRefExprExecModel::getType(vsc::dm::ITypeExpr *ref) {
+    DEBUG_ENTER("getType");
+    init(KindE::Type);
+    ref->accept(m_this);
+    DEBUG_LEAVE("getType (%p)", m_type);
+    return m_type;
+}
+
 std::string GenRefExprExecModel::genRegAddr(vsc::dm::ITypeExpr *ref) {
     DEBUG_ENTER("genRegAddr");
     init(KindE::RegAddr);
@@ -395,10 +403,16 @@ void GenRefExprExecModel::visitTypeExprSubField(vsc::dm::ITypeExprSubField *e) {
             }
             m_out_l.push_back(ret);
             break;
+        case KindE::Type:
+            ret.clear();
+            if (m_field) {
+            }
+            break;
     }
 
     if (m_field) {
         m_type_l.push_back(m_field->getDataType());
+        m_type = m_field->getDataType();
 
         // Track whether the next deref will be a pointer
         m_isRef = vsc::dm::TaskIsTypeFieldRef().eval(m_field);
@@ -456,6 +470,7 @@ void GenRefExprExecModel::init(KindE kind) {
     m_isRefCountedField = false;
     m_isRefFieldRef = false;
     m_isAggregateFieldRef = false;
+    m_type = 0;
     m_regRef = false;
 }
 
