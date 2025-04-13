@@ -37,9 +37,10 @@ class TaskGenerateActionActivity :
     public virtual arl::dm::VisitorBase {
 public:
     TaskGenerateActionActivity(
-        TaskGenerate            *gen,   
-        IGenRefExpr             *genref,
-        IOutput                 *out
+        TaskGenerate                *gen,   
+        IGenRefExpr                 *genref,
+        IOutput                     *out,
+        vsc::dm::IDataTypeStruct    *t
     );
 
     virtual ~TaskGenerateActionActivity();
@@ -72,6 +73,7 @@ private:
     dmgr::IDebug                    *m_dbg;
     TaskGenerate                    *m_gen;
     IGenRefExpr                     *m_genref;
+    arl::dm::IDataTypeAction        *m_action_t;
     OutputActivityScope             *m_out_activity;
     IOutput                         *m_out_top;
     int32_t                         m_id;

@@ -1,20 +1,36 @@
 
 typedef class actor_base_c;
+typedef class executor_base_c;
 
 class activity_ctxt_c;
-    actor_base_c        actor;
     component_c         comp;
     activity_ctxt_c     parent;
 
 //    activity_scope_c    scope_s[$];
 
+    function new(activity_ctxt_c parent=null, component_c comp=null);
+        this.parent = parent;
+        this.comp = (comp != null)?comp:((parent!=null)?parent.comp:null);
+    endfunction
+
     virtual function actor_base_c get_actor();
-        return this.actor;
+        return parent.get_actor();
     endfunction
 
     virtual function component_c get_component();
         return comp;
     endfunction
+
+    virtual function executor_base_c get_executor();
+        return comp.get_default_executor();
+    endfunction
+
+    virtual task add(activity_c activity);
+        activity.run(this);
+    endtask
+
+    virtual task end_scope();
+    endtask
 
     virtual task enter_activity(activity_c activity);
     endtask

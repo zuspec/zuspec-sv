@@ -32,10 +32,13 @@ namespace exec {
 
 
 TaskGenerateActionActivity::TaskGenerateActionActivity(
-    TaskGenerate            *gen,
-    IGenRefExpr             *genref,
-    IOutput                 *out) : m_dbg(0), m_gen(gen), m_genref(genref), m_id(0), m_out(out) {
-    DEBUG_INIT("Zsp::sv::gen::exec::TaskGenerateActionActivity", gen->getDebugMgr());
+    TaskGenerate                *gen,
+    IGenRefExpr                 *genref,
+    IOutput                     *out,
+    vsc::dm::IDataTypeStruct    *t) : m_dbg(0), m_gen(gen), 
+    m_genref(genref), m_id(0), m_out(out) {
+    DEBUG_INIT("zsp::sv::gen::exec::TaskGenerateActionActivity", gen->getDebugMgr());
+    m_action_t = dynamic_cast<arl::dm::IDataTypeAction *>(t);
 }
 
 TaskGenerateActionActivity::~TaskGenerateActionActivity() {
@@ -51,7 +54,7 @@ void TaskGenerateActionActivity::generate(const std::vector<arl::dm::ITypeFieldA
     m_out->inc_ind();
     m_out->println("case (id)");
 
-    enter_activity(activities.size()?ScopeT::Schedule:ScopeT::Sequence);
+    enter_activity((activities.size()>1)?ScopeT::Schedule:ScopeT::Sequence);
 
     for (std::vector<arl::dm::ITypeFieldActivityUP>::const_iterator
         it=activities.begin();
@@ -82,6 +85,19 @@ void TaskGenerateActionActivity::generate(const std::vector<arl::dm::ITypeFieldA
 
 void TaskGenerateActionActivity::visitDataTypeActivityParallel(arl::dm::IDataTypeActivityParallel *t) {
     DEBUG_ENTER("visitDataTypeActivityParallel");
+
+    // Create a closure that represents the entire 'parallel'
+    // - new sub-activity
+    // - 
+    enter_activity(ScopeT::Parallel);
+    for (std::vector<arl::dm::ITypeFieldActivityUP>::const_iterator
+        it=t->getActivities().begin();
+        it!=t->getActivities().end(); it++) {
+        (*it)->accept(m_this);
+    }
+
+    leave_activity();
+
     // TODO: must detect and handle replicate inside
     DEBUG_LEAVE("visitDataTypeActivityParallel");
 }
@@ -226,13 +242,12 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverseType(arl::dm::IDat
     // - determined to be from a successor activity and, thus, covered by static lookahead
     //
 
-    IOutput *run = m_out_activity->run();
     // TODO: handle 'with' constraint
     // TODO: handle 'init' 
     std::string with_c = "null";
     std::string init = "null";
 
-    run->println("sctxt.add(activity_traverse_c #(%s)::mk(null, %s, %s));",
+    out()->println("ctxt.add(activity_traverse_c #(%s)::mk(null, %s, %s));",
         m_gen->getNameMap()->getName(t->getTarget()).c_str(),
         with_c.c_str(),
         init.c_str());
@@ -389,35 +404,53 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverseType(arl::dm::IDat
 }
 
 void TaskGenerateActionActivity::enter_activity(ScopeT kind) {
-    OutputStr *out = new OutputStr("    ");
-    m_scope_s.push_back(kind);
+    OutputStr *out = new OutputStr("        ");
 
-    m_out->println("%d: run_%d(ctxt);", m_out_l.size(), m_out_l.size());
+    int32_t id = m_out_l.size();
+
+    // Add an entry to the dispatch task
+    if (id == 0) {
+        m_out->println("0: run_0(activity_ctxt_%s_c::mk(ctxt));",
+            (kind == ScopeT::Schedule)?"sched":"seq");
+    } else {
+        m_out->println("%d: run_%d(activity_ctxt_%s_c::mk(ctxt));", 
+            m_out_l.size(), 
+            m_out_l.size(),
+            (kind == ScopeT::Schedule)?"sched":
+                (kind == ScopeT::Parallel)?"par":"seq");
+
+        // Add a call to the activity to the current context
+        m_out_l.back()->println("ctxt.add(activity_proxy_c #(%s)::mk(this, %d));",
+            m_gen->getNameMap()->getName(m_action_t).c_str(), id);
+    }
+
+    // Establish a new function scope
+    m_scope_s.push_back(kind);
 
     out->println("task run_%d(activity_ctxt_c ctxt);", m_out_l.size());
     out->inc_ind();
-
-    if (kind == ScopeT::Schedule) {
-        out->println("activity_ctxt_sched_c sctxt = new(ctxt);");
-    } else if (kind == ScopeT::Parallel) {
-        out->println("activity_ctxt_par_c sctxt = new(ctxt);");
-    } else if (kind == ScopeT::Sequence) {
-        out->println("activity_ctxt_par_c sctxt = ctxt;");
-    }
-
     m_out_l.push_back(OutputStrUP(out));
     m_out_s.push_back(out);
+
+    // if (kind == ScopeT::Schedule) {
+    //     out->println("activity_ctxt_sched_c sctxt = new(ctxt);");
+    // } else if (kind == ScopeT::Parallel) {
+    //     out->println("activity_ctxt_par_c sctxt = new(ctxt);");
+    // } else if (kind == ScopeT::Sequence) {
+    //     out->println("activity_ctxt_c sctxt = ctxt;");
+    // }
+
 }
 
 void TaskGenerateActionActivity::leave_activity() {
     ScopeT kind = m_scope_s.back();
-    m_out_s.pop_back();
 
-    m_out->println("// Perform end-of-scope processing");
-    m_out->println("sctxt.end_scope(ctxt);");
+    out()->println("// Perform end-of-scope processing");
+    out()->println("ctxt.end_scope();");
 
     out()->dec_ind();
     out()->println("endtask");
+    m_out_s.pop_back();
     m_scope_s.pop_back();
 }
 

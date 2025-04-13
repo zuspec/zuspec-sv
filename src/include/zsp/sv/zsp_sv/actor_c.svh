@@ -1,3 +1,5 @@
+
+typedef class activity_ctxt_root_c;
 typedef class actor_base_c;
 typedef class backend_api;
 typedef class activity_c;
@@ -25,7 +27,7 @@ class actor_c #(
 
     virtual task run();
         activity_traverse_c #(Ta) traverse = new(null, null, null);
-        activity_ctxt_c ctxt = new();
+        activity_ctxt_root_c ctxt = new(this, top);
         traverse.run(ctxt);
     endtask
 

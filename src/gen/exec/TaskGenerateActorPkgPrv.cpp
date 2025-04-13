@@ -96,6 +96,7 @@ bool TaskGenerateActorPkgPrv::generate() {
     
     DEBUG("activity_info: %d", activity_info.size());
 
+#ifdef UNDEFINED
     for (std::vector<ActivityInfoUP>::const_iterator
         it=activity_info.begin();
         it!=activity_info.end(); it++) {
@@ -107,6 +108,7 @@ bool TaskGenerateActorPkgPrv::generate() {
                 v_it->get()->info()->activity());
         }
     }
+#endif // UNDEFINED
 
     for (std::vector<ActivityInfoUP>::const_iterator
         it=activity_info.begin();

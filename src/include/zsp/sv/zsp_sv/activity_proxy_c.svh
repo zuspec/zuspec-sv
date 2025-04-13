@@ -2,8 +2,8 @@
 typedef class activity_c;
 
 class activity_proxy_c #(type T=activity_c) extends activity_c;
-    T target;
-    int id;
+    T               target;
+    int             id;
 
     function new(T target, int id=0);
         super.new();

@@ -28,7 +28,42 @@ class activity_ctxt_par_c extends activity_ctxt_c;
     semaphore                  branch_release_sem = new(0);
     semaphore                  branch_complete_sem = new(0);   
 
+    function new(activity_ctxt_c parent);
+        super.new(parent);
+    endfunction
+
     virtual task run(activity_ctxt_c ctxt);
+
+    endtask
+
+    virtual task first_traversal(activity_ctxt_par_branch_c branch);
+        // Notify that the branch has reached the first traversal
+        first_traversal_sem.put(1);
+        
+        // Wait to synchronize with the other branches
+        branch_release_sem.get(1);
+    endtask
+
+    virtual task branch_complete(activity_ctxt_par_branch_c branch);
+        branch_complete_sem.put(1);
+    endtask
+
+    virtual task add(activity_c activity);
+        activity_ctxt_par_branch_c branch_ctxt;
+
+        // Create a new context for the branch
+        branch_ctxt = new(activity, this);
+        branches.push_back(branch_ctxt);
+
+        fork
+            begin
+                activity.run(branch_ctxt);
+                branch_ctxt.end_scope();
+            end
+        join_none
+    endtask
+
+    virtual task end_scope();
         // Start all branches
         // Wait for a traversal to check in on all branches
         //   or, for all branches to complete
@@ -58,29 +93,10 @@ class activity_ctxt_par_c extends activity_ctxt_c;
         // TODO: merge sub-context back to parent context
     endtask
 
-    virtual task first_traversal(activity_ctxt_par_branch_c branch);
-        // Notify that the branch has reached the first traversal
-        first_traversal_sem.put(1);
-        
-        // Wait to synchronize with the other branches
-        branch_release_sem.get(1);
-    endtask
-
-    virtual task branch_complete(activity_ctxt_par_branch_c branch);
-        branch_complete_sem.put(1);
-    endtask
-
-    virtual task add_branch(activity_c branch);
-        activity_ctxt_par_branch_c branch_ctxt;
-
-        // Create a new context for the branch
-        branch_ctxt = new(branch);
-        branches.push_back(branch_ctxt);
-
-        fork
-            branch_ctxt.run(this);
-        join_none
-    endtask
+    static function activity_ctxt_par_c mk(activity_ctxt_c parent);
+        activity_ctxt_par_c ctxt = new(parent);
+        return ctxt;
+    endfunction
 
 
 //    virtual function void accept(activity_visitor_c v);

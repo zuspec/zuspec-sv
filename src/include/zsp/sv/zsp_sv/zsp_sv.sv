@@ -118,6 +118,8 @@ endfunction
     `include "activity_ctxt_c.svh"
     `include "activity_ctxt_par_c.svh"
     `include "activity_ctxt_par_branch_c.svh"
+    `include "activity_ctxt_root_c.svh"
+    `include "activity_ctxt_seq_c.svh"
     `include "activity_proxy_c.svh"
     `include "activity_traverse_c.svh"
     `include "activity_traverse_base_c.svh"

@@ -29,8 +29,12 @@ class action_c extends activity_c;
         super.new();
     endfunction
 
+    virtual function executor_base_c get_executor(activity_ctxt_c ctxt);
+        return ctxt.get_executor();
+    endfunction
+
     virtual task run(activity_ctxt_c ctxt, int id=0);
-        executor_base_c exec_b;
+        executor_base_c exec_b = get_executor(ctxt);
 
         pre_solve(exec_b);
         if (this.randomize() == 0) begin
@@ -48,10 +52,6 @@ class action_c extends activity_c;
         int ret = rsrc_claims.size(); // TODO: Must consider other refs as well
         rsrc_claims.push_back(rsrc_claim);
         return ret;
-    endfunction
-
-    virtual function executor_base_c get_executor();
-        return null;
     endfunction
 
     virtual function void set_component(component_c comp);

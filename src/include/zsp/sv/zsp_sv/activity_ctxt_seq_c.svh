@@ -20,19 +20,20 @@
  */
 
 typedef class activity_ctxt_c;
-typedef class activity_ctxt_c;
 
 class activity_ctxt_seq_c extends activity_ctxt_c;
 
+    function new(activity_ctxt_c parent);
+        super.new(parent);
+    endfunction
 
-    task run(activity_ctxt_c ctxt);
-        foreach (sub_activities[i]) begin
-            sub_activities[i].run();
-        end
+    virtual task add(activity_c activity);
+        activity.run(this);
     endtask
 
-    virtual function void accept(activity_visitor_c v);
-        v.visit_
+    static function activity_ctxt_seq_c mk(activity_ctxt_c parent);
+        activity_ctxt_seq_c ctxt = new(parent);
+        return ctxt;
     endfunction
 
 endclass

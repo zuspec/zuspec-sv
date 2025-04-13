@@ -92,5 +92,13 @@ class activity_traverse_c #(type Ta=action_c) extends activity_traverse_base_c;
         action_t.run(ctxt);
     endtask
 
+    static function activity_traverse_c #(Ta) mk(
+        action_handle_c #(Ta)       action_h=null,
+        action_init_c #(Ta)         action_init=null,
+        action_constraint_c #(Ta)   action_constraint=null);
+        activity_traverse_c #(Ta) ret = new(action_h, action_init, action_constraint);
+        return ret;
+    endfunction
+
 endclass
 

@@ -54,6 +54,43 @@ def test_subactivity(dvflow):
     """
     run_unit_test(dvflow, content, expect)
 
+def test_subactivity_par(dvflow):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+
+            action Leaf {
+                exec post_solve {
+                    print("RES: leaf\\n");
+                }
+            }
+
+            action Mid {
+                activity {
+                    do Leaf;
+                    do Leaf;
+                }
+            }
+
+            action Entry {
+                activity {
+                    parallel {
+                        do Mid;
+                        do Mid;
+                    }
+                }
+            }
+        }
+    """
+
+    expect = """
+    RES: leaf
+    RES: leaf
+    RES: leaf
+    RES: leaf
+    """
+    run_unit_test(dvflow, content, expect)
+
 #@pytest.mark.skip(reason="Not implemented")
 def test_subactivity_with(dvflow):
     content = """

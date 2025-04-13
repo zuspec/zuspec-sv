@@ -179,7 +179,7 @@ void TaskGenerateAction::generate_activity(vsc::dm::IDataTypeStruct *t) {
             t,
             "this",
             false);
-        TaskGenerateActionActivity(m_gen, &genref, m_out).generate(action_t->activities());
+        TaskGenerateActionActivity(m_gen, &genref, m_out, action_t).generate(action_t->activities());
     }
 
     DEBUG_LEAVE("generate_activity");
