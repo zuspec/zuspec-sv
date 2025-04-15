@@ -74,10 +74,22 @@ def test_subactivity_par(dvflow):
 
             action Entry {
                 activity {
+                        /*
+                        sequence {
+                            do Mid;
+                            do Mid;
+                        }
+                            do Mid;
+                        */
+                        
                     parallel {
-                        do Mid;
+                        sequence {
+                            do Mid;
+                            do Mid;
+                        }
                         do Mid;
                     }
+                    do Mid;
                 }
             }
         }
@@ -88,8 +100,10 @@ def test_subactivity_par(dvflow):
     RES: leaf
     RES: leaf
     RES: leaf
+    RES: leaf
+    RES: leaf
     """
-    run_unit_test(dvflow, content, expect)
+    run_unit_test(dvflow, content, expect, debug=True)
 
 #@pytest.mark.skip(reason="Not implemented")
 def test_subactivity_with(dvflow):

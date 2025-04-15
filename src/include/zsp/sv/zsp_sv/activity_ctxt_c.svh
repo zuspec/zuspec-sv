@@ -14,7 +14,16 @@ class activity_ctxt_c;
     endfunction
 
     virtual function actor_base_c get_actor();
-        return parent.get_actor();
+        activity_ctxt_c ctxt = this;
+        actor_base_c actor;
+        while (ctxt != null) begin
+            actor = ctxt.get_actor();
+            if (actor != null) begin
+                break;
+            end
+            ctxt = ctxt.parent;
+        end
+        return actor;
     endfunction
 
     virtual function component_c get_component();

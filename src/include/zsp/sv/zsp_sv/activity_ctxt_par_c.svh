@@ -32,10 +32,6 @@ class activity_ctxt_par_c extends activity_ctxt_c;
         super.new(parent);
     endfunction
 
-    virtual task run(activity_ctxt_c ctxt);
-
-    endtask
-
     virtual task first_traversal(activity_ctxt_par_branch_c branch);
         // Notify that the branch has reached the first traversal
         first_traversal_sem.put(1);

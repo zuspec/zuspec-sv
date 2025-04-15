@@ -37,10 +37,6 @@ class activity_ctxt_par_branch_c extends activity_ctxt_c;
         end
     endtask
 
-//    virtual function void accept(activity_visitor_c v);
-//        v.visit_parallel_branch(this);
-//    endfunction
-
     static function activity_ctxt_par_branch_c mk(activity_c activity, activity_ctxt_c parent);
         activity_ctxt_par_branch_c ret = new(activity, parent);
         return ret;

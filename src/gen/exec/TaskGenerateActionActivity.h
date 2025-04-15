@@ -69,11 +69,16 @@ private:
 
     IOutput *out() const { return m_out_s.back(); }
 
+    ScopeT scope_t() const {
+        return (m_scope_s.size())?m_scope_s.back():ScopeT::Sequence;
+    }
+
 private:
     dmgr::IDebug                    *m_dbg;
     TaskGenerate                    *m_gen;
     IGenRefExpr                     *m_genref;
     arl::dm::IDataTypeAction        *m_action_t;
+    OutputStrUP                     m_out_case;
     OutputActivityScope             *m_out_activity;
     IOutput                         *m_out_top;
     int32_t                         m_id;

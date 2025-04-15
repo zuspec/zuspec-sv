@@ -52,7 +52,9 @@ void TaskGenerateActionActivity::generate(const std::vector<arl::dm::ITypeFieldA
 
     m_out->println("virtual task run(activity_ctxt_c ctxt, int id=0);");
     m_out->inc_ind();
+    m_out->println("activity_ctxt_c sctxt = ctxt;");
     m_out->println("case (id)");
+    m_out_case = OutputStrUP(new OutputStr(m_out->ind()));
 
     enter_activity((activities.size()>1)?ScopeT::Schedule:ScopeT::Sequence);
 
@@ -63,6 +65,12 @@ void TaskGenerateActionActivity::generate(const std::vector<arl::dm::ITypeFieldA
     }
 
     leave_activity();
+
+    // Write remainder of the case statement
+    if (m_out_l.size()) {
+        m_out->writes(m_out_l.front()->getValue());
+    }
+    m_out->writes(m_out_case->getValue());
 
     m_out->println("default: begin");
     m_out->inc_ind();
@@ -75,7 +83,7 @@ void TaskGenerateActionActivity::generate(const std::vector<arl::dm::ITypeFieldA
     m_out->println("");
 
     for (std::vector<OutputStrUP>::const_iterator
-        it=m_out_l.begin();
+        it=m_out_l.begin()+1;
         it!=m_out_l.end(); it++) {
         m_out->writes((*it)->getValue().c_str());
     }
@@ -85,30 +93,35 @@ void TaskGenerateActionActivity::generate(const std::vector<arl::dm::ITypeFieldA
 
 void TaskGenerateActionActivity::visitDataTypeActivityParallel(arl::dm::IDataTypeActivityParallel *t) {
     DEBUG_ENTER("visitDataTypeActivityParallel");
+    bool new_scope = (scope_t() != ScopeT::Parallel);
 
     // Create a closure that represents the entire 'parallel'
     // - new sub-activity
     // - 
-    enter_activity(ScopeT::Parallel);
+    if (new_scope) {
+        enter_activity(ScopeT::Parallel);
+    }
     for (std::vector<arl::dm::ITypeFieldActivityUP>::const_iterator
         it=t->getActivities().begin();
         it!=t->getActivities().end(); it++) {
         (*it)->accept(m_this);
     }
 
-    leave_activity();
+    if (new_scope) {
+        leave_activity();
+    }
 
     // TODO: must detect and handle replicate inside
     DEBUG_LEAVE("visitDataTypeActivityParallel");
 }
 
 void TaskGenerateActionActivity::visitDataTypeActivitySequence(arl::dm::IDataTypeActivitySequence *t) {
-    DEBUG_ENTER("visitDataTypeActivitySequence %p", t);
-    bool new_scope = (m_depth > 1);
-    if (!m_depth) {
-        ActivityVariant *variant = m_variant_s.back()->getVariant(t);
-        DEBUG("variant: %p", variant);
-        m_variant_s.push_back(variant);
+    DEBUG_ENTER("visitDataTypeActivitySequence (%d)", t->getActivities().size());
+    bool new_scope = (scope_t() != ScopeT::Sequence && t->getActivities().size() > 1);
+    
+    if (new_scope) {
+        DEBUG("establish new sequence scope");
+        enter_activity(ScopeT::Sequence);
     }
 
     for (std::vector<arl::dm::ITypeFieldActivityUP>::const_iterator
@@ -117,8 +130,8 @@ void TaskGenerateActionActivity::visitDataTypeActivitySequence(arl::dm::IDataTyp
         (*it)->accept(m_this);
     }
 
-    if (!m_depth) {
-        m_variant_s.pop_back();
+    if (new_scope) {
+        leave_activity();
     }
 
     DEBUG_LEAVE("visitDataTypeActivitySequence");
@@ -231,7 +244,7 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverse(arl::dm::IDataTyp
 }
 
 void TaskGenerateActionActivity::visitDataTypeActivityTraverseType(arl::dm::IDataTypeActivityTraverseType *t) {
-    DEBUG_ENTER("visitDataTypeActivityTraverseType");
+    DEBUG_ENTER("visitDataTypeActivityTraverseType %s", t->getTarget()->name().c_str());
 
     // TODO: if this activity has an inline 'with', then we must use 
     // an existing activity specialization (that embeds the 'with').
@@ -247,7 +260,7 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverseType(arl::dm::IDat
     std::string with_c = "null";
     std::string init = "null";
 
-    out()->println("ctxt.add(activity_traverse_c #(%s)::mk(null, %s, %s));",
+    out()->println("sctxt.add(activity_traverse_c #(%s)::mk(null, %s, %s));",
         m_gen->getNameMap()->getName(t->getTarget()).c_str(),
         with_c.c_str(),
         init.c_str());
@@ -404,54 +417,63 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverseType(arl::dm::IDat
 }
 
 void TaskGenerateActionActivity::enter_activity(ScopeT kind) {
-    OutputStr *out = new OutputStr("        ");
+    DEBUG_ENTER("enter_activity %d (%d)", (int)kind, (int)scope_t());
+    OutputStr *out = 0;
 
     int32_t id = m_out_l.size();
 
     // Add an entry to the dispatch task
     if (id == 0) {
-        m_out->println("0: run_0(activity_ctxt_%s_c::mk(ctxt));",
-            (kind == ScopeT::Schedule)?"sched":"seq");
+        m_out->println("0: begin");
+        m_out->inc_ind();
+        out = new OutputStr(m_out->ind());
+        m_out->println("sctxt = activity_ctxt_%s_c::mk(ctxt);",
+            (kind == ScopeT::Schedule)?"sched":(kind == ScopeT::Parallel)?"par":"seq");
     } else {
-        m_out->println("%d: run_%d(activity_ctxt_%s_c::mk(ctxt));", 
+        out = new OutputStr("        ");
+        m_out_case->println("%d: run_%d(activity_ctxt_%s_c::mk(ctxt));", 
             m_out_l.size(), 
             m_out_l.size(),
             (kind == ScopeT::Schedule)?"sched":
                 (kind == ScopeT::Parallel)?"par":"seq");
 
         // Add a call to the activity to the current context
-        m_out_l.back()->println("ctxt.add(activity_proxy_c #(%s)::mk(this, %d));",
+        m_out_s.back()->println("sctxt.add(activity_proxy_c #(%s)::mk(this, %d));",
             m_gen->getNameMap()->getName(m_action_t).c_str(), id);
+
+        out->println("task run_%d(activity_ctxt_c sctxt);", m_out_l.size());
+        out->inc_ind();
     }
 
     // Establish a new function scope
     m_scope_s.push_back(kind);
 
-    out->println("task run_%d(activity_ctxt_c ctxt);", m_out_l.size());
-    out->inc_ind();
     m_out_l.push_back(OutputStrUP(out));
     m_out_s.push_back(out);
 
-    // if (kind == ScopeT::Schedule) {
-    //     out->println("activity_ctxt_sched_c sctxt = new(ctxt);");
-    // } else if (kind == ScopeT::Parallel) {
-    //     out->println("activity_ctxt_par_c sctxt = new(ctxt);");
-    // } else if (kind == ScopeT::Sequence) {
-    //     out->println("activity_ctxt_c sctxt = ctxt;");
-    // }
-
+    DEBUG_LEAVE("enter_activity");
 }
 
 void TaskGenerateActionActivity::leave_activity() {
+    DEBUG_ENTER("leave_activity");
     ScopeT kind = m_scope_s.back();
 
     out()->println("// Perform end-of-scope processing");
-    out()->println("ctxt.end_scope();");
+    out()->println("sctxt.end_scope();");
 
-    out()->dec_ind();
-    out()->println("endtask");
+    if (m_out_s.size() > 1) {
+        out()->dec_ind();
+        out()->println("endtask");
+    } else {
+        m_out->dec_ind();
+        out()->dec_ind();
+        out()->println("end");
+//        m_out->writes(m_out_l.back()->getValue());
+//        m_out->dec_ind();
+    }
     m_out_s.pop_back();
     m_scope_s.pop_back();
+    DEBUG_LEAVE("leave_activity");
 }
 
 }
