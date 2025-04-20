@@ -87,8 +87,16 @@ setup_args = dict(
       ]
   },
   setup_requires=[
-    'setuptools_scm',
     'cython',
+    'ivpm',
+    'ciostream',
+    'debug-mgr',
+    'vsc-dm',
+    'zuspec-arl-dm',
+    'zuspec-arl-eval',
+    'zuspec-parser',
+    'zuspec-fe-parser',
+    'setuptools_scm',
   ],
   ext_modules=[ ext ]
 )
