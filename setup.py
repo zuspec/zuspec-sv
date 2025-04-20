@@ -81,6 +81,9 @@ setup_args = dict(
       ], 
       "zuspec.ext": [
           'ext = zsp_sv.__ext__'
+      ],
+      "dv_flow.mgr": [
+          'zsp = zsp_sv.__dfm__'
       ]
   },
   setup_requires=[
