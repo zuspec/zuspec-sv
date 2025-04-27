@@ -64,8 +64,11 @@ def run_unit_test(
     if extra_content is not None:
         for path,content in extra_content.items():
             extra_content_tasks.append(dvflow.mkTask("std.CreateFile", 
-                        name="path", filename=path, content=content,
-                        needs=[zsp_sv, actor_sv]))
+                        name=os.path.basename(path), 
+                        filename=path, content=content,
+                        type="systemVerilogSource", needs=[zsp_sv, actor_sv]))
+
+    
 
     top_sv_needs = extra_content_tasks.copy()
     top_sv_needs.append(zsp_sv)
@@ -79,7 +82,8 @@ def run_unit_test(
         'hdlsim.%s.SimImage' % dvflow.sim, 
         name='sim_img',
         needs=[top_sv],
-        top=['top'])
+        top=['top'],
+        incdirs=[os.path.join(dvflow.srcdir, "data")])
     sim_run = dvflow.mkTask(
         'hdlsim.%s.SimRun' % dvflow.sim, 
         name='sim_run',

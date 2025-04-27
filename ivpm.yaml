@@ -107,6 +107,7 @@ package:
       url: https://github.com/dv-flow/pytest-dfm.git
 
   - name: default-dev-src
+    default-dep-set: default-dev
     deps:
     - name: debug-mgr
       url: https://github.com/mballance-utils/debug-mgr.git
