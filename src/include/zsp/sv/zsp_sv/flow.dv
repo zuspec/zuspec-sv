@@ -1,0 +1,10 @@
+
+package:
+  name: zsp.sv.rt
+
+  tasks: 
+  - name: zsp-sv
+    uses: std.FileSet
+    with:
+      type: "systemVerilogSource"
+      include: "*.sv"

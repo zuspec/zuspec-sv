@@ -1,0 +1,8 @@
+
+package:
+  name: zsp.sv
+
+  tasks:
+  - name: src-sv
+    passthrough: all
+    needs: [zsp.sv.rt.zsp-sv]

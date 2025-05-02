@@ -22,6 +22,7 @@
 typedef class backend_api;
 typedef class executor_c;
 typedef class executor_base_c;
+typedef class addr_handle_t;
 typedef class executor_group_default_c;
 
 class actor_base_c extends component_c;
