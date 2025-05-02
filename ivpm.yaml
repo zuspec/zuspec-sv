@@ -107,33 +107,26 @@ package:
       url: https://github.com/dv-flow/pytest-dfm.git
 
   - name: default-dev-src
+    default-dep-set: default-dev
     deps:
     - name: debug-mgr
       url: https://github.com/mballance-utils/debug-mgr.git
-      dep-set: default-dev
     - name: pytypeworks
       url: https://github.com/fvutils/pytypeworks.git
-      dep-set: default-dev
     - name: pyvsc-dataclasses
       url: https://github.com/vsc-tools/pyvsc-dataclasses.git
-      dep-set: default-dev
     - name: zuspec-dataclasses
       url: https://github.com/zuspec/zuspec-dataclasses.git
-      dep-set: default-dev
     - name: vsc-dm
       url: https://github.com/vsc-tools/vsc-dm.git
-      dep-set: default-dev
     - name: vsc-solvers
       url: https://github.com/vsc-tools/vsc-solvers.git
-      dep-set: default-dev
     - name: zuspec-arl-dm
       url: https://github.com/zuspec/zuspec-arl-dm.git
-      dep-set: default-dev
     - name: zuspec-arl-eval
       url: https://github.com/zuspec/zuspec-arl-eval.git
     - name: zuspec-parser
       url: https://github.com/zuspec/zuspec-parser.git
-      dep-set: default-dev
     - name: zuspec-fe-parser
       url: https://github.com/zuspec/zuspec-fe-parser.git
     - name: zuspec-cli
@@ -144,7 +137,8 @@ package:
       version: 0.8.2
       src: pypi
     - name: verilator
-      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.028/verilator-ubuntu-x64-5.028.tar.gz
+      #      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.028/verilator-ubuntu-x64-5.028.tar.gz
+      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.034.14691958712/verilator-manylinux2014_x86_64-5.034.14691958712.tar.gz
       #      url: https://github.com/pss-hands-on/verilator-bin/releases/download/v5.028/verilator-ubuntu-x64-5.030.tar.gz
     - name: cython
       src: pypi
