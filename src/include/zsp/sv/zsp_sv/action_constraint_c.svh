@@ -18,9 +18,7 @@
  * Created on:
  *     Author:
  */
-class action_constraint_base_c;
-    action_c        action;
-endclass
+typedef class action_constraint_base_c;
 
 class action_constraint_c #(type Ta=action_c) extends action_constraint_base_c;
     rand Ta         __self;

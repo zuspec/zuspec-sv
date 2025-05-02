@@ -28,6 +28,9 @@ class actor_c #(
     virtual task run();
         activity_traverse_c #(Ta) traverse = new(null, null, null);
         activity_ctxt_root_c ctxt = new(this, top);
+
+        top.do_init(default_exec);
+
         traverse.run(ctxt);
     endtask
 

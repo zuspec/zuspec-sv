@@ -29,10 +29,10 @@ class activity_traverse_compound_c #(type Ta, type Tact=activity_c) extends acti
     endfunction
 
     virtual task run_body(executor_base_c exec_b);
+        /*
         Ta action_p;
         Tact activity;
         $cast(action_p, action);
-        /*
         activity = new(actor, parent_comp, action_p);
         activity.run();
          */

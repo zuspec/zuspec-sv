@@ -23,12 +23,12 @@
 
 package zsp_sv;
 
-
+`ifdef UNDEFINED
 typedef class actor_base_c;
 typedef class component_c;
 typedef class executor_base_c;
 typedef class executor_base_c;
-
+`endif
     `include "array_c.svh"
     `include "list_c.svh"
 
@@ -40,10 +40,10 @@ class empty_t;
 endclass
 
     `include "object_c.svh"
-`include "object_mgr_c.svh"
-`include "object_refcnt_c.svh"
-`include "object_ref_base_c.svh"
-`include "object_ref_c.svh"
+    `include "object_mgr_c.svh"
+    `include "object_refcnt_c.svh"
+    `include "object_ref_base_c.svh"
+    `include "object_ref_c.svh"
 
     `include "obj_type_c.svh"
     `include "typed_obj_c.svh"
@@ -53,6 +53,7 @@ endclass
     `include "pool_map_c.svh"
     `include "pool_resource_c.svh"
     `include "resource_c.svh"
+    `include "resource_claim_base_c.svh"
     `include "resource_claim_c.svh"
 
     `include "solve_action_context_c.svh"
@@ -71,8 +72,6 @@ interface class packed_s;
     pure virtual function void pack_bytes(byte unsigned data[$]);
 
 endclass
-
-
 
     `include "storage_handle_c.svh"
     `include "addr_handle_t.svh"
@@ -123,9 +122,12 @@ endfunction
     `include "activity_proxy_c.svh"
     `include "activity_traverse_c.svh"
     `include "activity_traverse_base_c.svh"
+`ifdef UNDEFINED
     `include "activity_traverse_compound_c.svh"
+`endif // UNDEFINED 
     `include "action_c.svh"
     `include "action_constraint_c.svh"
+    `include "action_constraint_base_c.svh"
     `include "action_handle_base_c.svh"
     `include "action_handle_c.svh"
     `include "action_init_c.svh"
@@ -133,19 +135,20 @@ endfunction
     `include "component_type_c.svh"
 
     `include "activity_listener_c.svh"
-
-
+`ifdef UNDEFINED
+`endif // UNDEFINED
 
 `include "component_ctor_ctxt_c.svh"
-`include "component_init_ctxt_c.svh"
-`include "component_c.svh"
-`include "actor_t_c.svh"
+//`include "component_init_ctxt_c.svh"
+    `include "component_c.svh"
+    `include "actor_base_c.svh"
+    `include "actor_c.svh"
+    `include "actor_t_c.svh"
 
 `include "addr_claim_base_s.svh"
 `include "addr_trait_s.svh"
 `include "addr_space_base_c.svh"
 `include "transparent_addr_space_c.svh"
-
 
 class addr_space_c extends component_c;
     function new(string name, component_ctor_ctxt ctxt, component_c parent);
@@ -164,8 +167,9 @@ endclass
     `include "reg_group_field_base_c.svh"
     `include "reg_group_field_arr_c.svh"
     `include "reg_group_field_c.svh"
-
+`ifdef UNDEFINED
     `include "hndl_drop_listener.svh"
+`endif // UNDEFINED
 
     `include "backend_api.svh"
     `include "executor_trait_s.svh"
@@ -179,8 +183,6 @@ endclass
     `include "executor_group_dummy_c.svh"
     `include "executor_group_c.svh"
 
-    `include "actor_base_c.svh"
-    `include "actor_c.svh"
 
     function void activity_bind(
         action_handle_base_c    h1,

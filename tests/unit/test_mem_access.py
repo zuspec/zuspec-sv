@@ -70,7 +70,7 @@ def test_simple_memwrite(dvflow):
         extra_content={
             "custom_api.svh": custom_api
         },
-        debug=True)
+        debug=False)
 
 def test_simple_memread(dvflow):
     content = """

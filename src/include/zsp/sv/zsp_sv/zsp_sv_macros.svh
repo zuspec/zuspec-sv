@@ -25,7 +25,9 @@
 `ifndef ZSP_HAS_STACKTRACE
 
 `ifndef VERILATOR
+`ifndef XILINX_SIMULATOR
 `define ZSP_HAS_STACKTRACE
+`endif
 `endif
 
 `endif

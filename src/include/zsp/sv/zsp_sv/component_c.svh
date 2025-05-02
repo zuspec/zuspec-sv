@@ -76,6 +76,7 @@ class component_c extends typed_obj_c;
         end else begin
             this.comp_id = -1;
         end
+
         `ZSP_DEBUG_LEAVE("component_c", ("new %0s", name));
     endfunction
 

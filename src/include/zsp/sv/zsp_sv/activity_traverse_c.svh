@@ -52,6 +52,14 @@ class activity_traverse_c #(type Ta=action_c) extends activity_traverse_base_c;
         return action_t;
     endfunction
 
+    virtual function void set_action(action_c action);
+        $cast(action_h.action, action);
+    endfunction
+    
+    virtual function action_c get_action();
+        return action_h.action;
+    endfunction
+
     virtual function actor_base_c actor();
         return null; // TODO:
     endfunction
@@ -59,9 +67,16 @@ class activity_traverse_c #(type Ta=action_c) extends activity_traverse_base_c;
     virtual task run(activity_ctxt_c ctxt, int id=0);
         int pre_constraint_len;
         ctxt.enter_traverse(this);
-        if (action_h.action == null) begin
+        if (get_action() == null) begin
+            solve_action_context_c ctxt_solver = new(ctxt.comp);
+
             // This traversal wasn't initialized by a containing activity
             action_h.action = new();
+
+            void'(ctxt_solver.add_traversal(this));
+
+            void'(ctxt_solver.resolve());
+
 
             // TODO: Setup and run context solver
             // action_h.initialize(null); // TODO: selected component
@@ -69,19 +84,19 @@ class activity_traverse_c #(type Ta=action_c) extends activity_traverse_base_c;
         end
 
         if (action_init != null) begin
-            action_init.initialize(action_h.action);
+            action_init.initialize(action_h.action_i());
         end
 
         // TODO: identify and add layered constraints from above (?)
-        pre_constraint_len = action_h.action.layered_constraints.size();
+        pre_constraint_len = action_h.traversal_constraints.size();
         if (action_constraint != null) begin
-            action_h.action.layered_constraints.push_back(action_constraint);
+            action_h.traversal_constraints.push_back(action_constraint);
         end
 
-        action_h.action.run(ctxt);
+        action_h.run(ctxt);
 
-        while (action_h.action.layered_constraints.size() > pre_constraint_len) begin
-            action_h.action.layered_constraints.pop_back();
+        while (action_h.traversal_constraints.size() > pre_constraint_len) begin
+            action_h.traversal_constraints.pop_back();
         end
 
         ctxt.leave_traverse(this);

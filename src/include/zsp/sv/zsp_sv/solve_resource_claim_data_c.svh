@@ -56,7 +56,9 @@ class resource_claim_solve_data_c;
         end
     endfunction
 
+
     constraint legal_c {
+`ifdef UNDEFINED
         // Pool id is an index into the collected legal pools
         foreach (lock[i]) {
             lock[i].pool_id inside {[0:pools.size-1]};
@@ -68,6 +70,8 @@ class resource_claim_solve_data_c;
             }
         }
 
+`endif // UNDEFINED
+`ifdef UNDEFINED
         foreach (share[i]) {
             share[i].pool_id inside {[0:pools.size-1]};
 
@@ -77,6 +81,7 @@ class resource_claim_solve_data_c;
                 }
             }
         }
+`endif // UNDEFINED
 
         foreach (lock[i]) {
             lock[i].id inside {[0:pool_max_sz-1]};
@@ -86,6 +91,8 @@ class resource_claim_solve_data_c;
             share[i].id inside {[0:pool_max_sz-1]};
         }
     }
+
+`ifdef UNDEFINED
 
     constraint lock_c {
         // Locks must be distinct
@@ -106,4 +113,6 @@ class resource_claim_solve_data_c;
 
         // Now, how
     }
+`endif // UNDEFINED
+
 endclass

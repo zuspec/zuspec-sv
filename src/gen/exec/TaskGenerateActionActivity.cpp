@@ -140,8 +140,9 @@ void TaskGenerateActionActivity::visitDataTypeActivitySequence(arl::dm::IDataTyp
 void TaskGenerateActionActivity::visitDataTypeActivityTraverse(arl::dm::IDataTypeActivityTraverse *t) {
     DEBUG_ENTER("visitDataTypeActivityTraverse");
     IOutput *run = m_out_activity->run();
-    ActivityVariant *variant = m_variant_s.back();
+//    ActivityVariant *variant = m_variant_s.back();
 
+#ifdef UNDEFINED
     std::string varname = m_genref->genRval(t->getTarget());
 
     run->println("// Traverse %s", varname.c_str());
@@ -239,6 +240,7 @@ void TaskGenerateActionActivity::visitDataTypeActivityTraverse(arl::dm::IDataTyp
     run->println("%s.drop();", varname.c_str());
     run->dec_ind();
     run->println("end");
+#endif // UNDEFINED
 
     DEBUG_LEAVE("visitDataTypeActivityTraverse");
 }

@@ -36,4 +36,4 @@ def test_smoke(dvflow):
     expect = """
     RES: Hello World!
     """
-    run_unit_test(dvflow, content, expect, debug=True)
+    run_unit_test(dvflow, content, expect, debug=False)

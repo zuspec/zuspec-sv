@@ -19,12 +19,17 @@
  *     Author:
  */
 
+typedef class backend_api;
+typedef class executor_c;
+typedef class executor_base_c;
 typedef class executor_group_default_c;
 
 class actor_base_c extends component_c;
     component_c                             comp_l[$];
     activity_listener_c                     listeners[$];
+`ifdef UNDEFINED
     hndl_drop_listener #(addr_handle_t)     addr_handle_drop_listeners[$];
+`endif
     executor_c                              default_exec;
     message_verbosity_e                     verbosity = MEDIUM;
     // TODO: address-space
@@ -62,6 +67,7 @@ class actor_base_c extends component_c;
         // The root actor's behavior is solely controlled from 'run'
     endfunction
 
+`ifdef UNDEFINED
     virtual function void add_listener(activity_listener_c listener);
         listeners.push_back(listener);
     endfunction
@@ -76,6 +82,7 @@ class actor_base_c extends component_c;
             addr_handle_drop_listeners[i].drop(hndl);
         end
     endfunction
+`endif
 
     virtual function backend_api get_backend();
         return null;

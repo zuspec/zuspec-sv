@@ -18,29 +18,7 @@
  * Created on:
  *     Author:
  */
-typedef class action_c;
-typedef class resource_c;
-
-// Need a base class for all refs (?)
-
-class resource_claim_base_c;
-    int       ref_id; // Index within action type. Used to discover pool
-    bit       lock;
-
-    function new(string name, action_c parent, bit lock);
-        this.lock = lock;
-        ref_id = parent.add_resource_claim(this);
-    endfunction
-
-    virtual function void set(resource_c rsrc);
-    endfunction
-
-    virtual function obj_type_c get_type();
-        $display("Fatal: get_type not implemented");
-        return null;
-    endfunction
-
-endclass
+typedef class resource_claim_base_c;
 
 class resource_claim_c #(type Tr=resource_c) extends resource_claim_base_c;
     rand Tr    rsrc;

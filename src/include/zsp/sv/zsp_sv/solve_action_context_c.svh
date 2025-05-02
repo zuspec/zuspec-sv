@@ -51,6 +51,9 @@ class solve_action_context_c;
 
     function new(component_c parent_comp);
         this.parent_comp = parent_comp;
+        if (parent_comp == null) begin
+            `ZSP_FATAL(("solve_action_context_c: parent_comp is null"));
+        end
     endfunction
 
     function void pre_randomize();
@@ -136,6 +139,7 @@ class solve_action_context_c;
     function solve_compset_c get_compset(action_type_c action);
         if (action_compset_m.exists(action) == 0) begin
             // Need to build a new compset
+            `ZSP_DEBUG("solve_action_context_c", ("action.get_comp_t: %0s", action.get_comp_t().name));
             if (parent_comp.comp_t_inst_m.exists(action.get_comp_t()) != 0) begin
                 // Add each unique component instance to the map
                 component_list_c comp_l = parent_comp.comp_t_inst_m[action.get_comp_t()];
@@ -218,6 +222,7 @@ class solve_action_context_c;
         `ZSP_DEBUG_LEAVE("solve_action_context_c", ("debug_show_result"));
     endfunction
 
+`ifdef UNDEFINED
 
 `ifndef VERILATOR
     constraint legal_c {
@@ -277,5 +282,6 @@ class solve_action_context_c;
         // Now, how
     }
 `endif // VERILATOR
+`endif // UNDEFINED
 
 endclass

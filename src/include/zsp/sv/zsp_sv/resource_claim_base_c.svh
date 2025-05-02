@@ -1,5 +1,5 @@
 /*
- * activity_c.svh
+ * resource_claim_base_c.svh
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -18,14 +18,26 @@
  * Created on:
  *     Author:
  */
-typedef class activity_ctxt_c;
-typedef class object_c;
+typedef class action_c;
+typedef class resource_c;
 
-class activity_c extends object_c;
+// Need a base class for all refs (?)
 
-    virtual task run(activity_ctxt_c ctxt, int id=0);
-        $display("FATAL: activity::run not implemented");
-        $finish;
-    endtask
+class resource_claim_base_c;
+    int       ref_id; // Index within action type. Used to discover pool
+    bit       lock;
+
+    function new(string name, action_c parent, bit lock);
+        this.lock = lock;
+        ref_id = parent.add_resource_claim(this);
+    endfunction
+
+    virtual function void set(resource_c rsrc);
+    endfunction
+
+    virtual function obj_type_c get_type();
+        $display("Fatal: get_type not implemented");
+        return null;
+    endfunction
 
 endclass

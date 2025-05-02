@@ -50,8 +50,11 @@ def run_unit_test(
     sv_sources = []
 
     zsp_sv = dvflow.mkTask(
-        "std.FileSet", name="zsp_sv", type="systemVerilogSource", 
-        base=zsp_sv_dir, include=["zsp_sv.sv"])
+        "std.FileSet", 
+        name="zsp_sv", 
+        type="systemVerilogSource", 
+        base=zsp_sv_dir, 
+        include=["zsp_sv.sv"])
 
     top_pss = dvflow.mkTask("std.CreateFile", name="top_pss", type="pssSource", 
                             filename="top.pss", content=content, needs=[zsp_sv])

@@ -23,7 +23,7 @@ typedef class resource_claim_base_c;
 
 class action_c extends activity_c;
     resource_claim_base_c   rsrc_claims[$];
-    `zsp_rand_arr action_constraint_base_c layered_constraints[$];
+//    `zsp_rand_arr action_constraint_base_c layered_constraints[$];
 
     function new();
         super.new();
@@ -35,13 +35,6 @@ class action_c extends activity_c;
 
     virtual task run(activity_ctxt_c ctxt, int id=0);
         executor_base_c exec_b = get_executor(ctxt);
-
-        pre_solve(exec_b);
-        if (this.randomize() == 0) begin
-            `ZSP_FATAL(("Failed to randomize"));
-        end
-        post_solve(exec_b);
-
         body(exec_b);
     endtask
 

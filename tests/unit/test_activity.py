@@ -74,14 +74,6 @@ def test_subactivity_par(dvflow):
 
             action Entry {
                 activity {
-                        /*
-                        sequence {
-                            do Mid;
-                            do Mid;
-                        }
-                            do Mid;
-                        */
-                        
                     parallel {
                         sequence {
                             do Mid;
@@ -102,8 +94,10 @@ def test_subactivity_par(dvflow):
     RES: leaf
     RES: leaf
     RES: leaf
+    RES: leaf
+    RES: leaf
     """
-    run_unit_test(dvflow, content, expect, debug=True)
+    run_unit_test(dvflow, content, expect, debug=False)
 
 #@pytest.mark.skip(reason="Not implemented")
 def test_subactivity_with(dvflow):
@@ -295,3 +289,39 @@ def test_subactivity_listener(dvflow):
         expect,
         "top_activity_listener.sv")
 
+def test_if_true(dvflow):
+    content = """
+        import std_pkg::*;
+        component pss_top {
+
+            action Leaf {
+                exec post_solve {
+                    print("RES: leaf\\n");
+                }
+            }
+
+            action Mid {
+                activity {
+                    do Leaf;
+                    do Leaf;
+                }
+            }
+
+            action Entry {
+                bit val = 0;
+
+                activity {
+                    if (val == 1) {
+                        do Leaf;
+                    }
+                    do Mid;
+                }
+            }
+        }
+    """
+
+    expect = """
+    RES: leaf
+    RES: leaf
+    """
+    run_unit_test(dvflow, content, expect)

@@ -10,7 +10,8 @@ def _available_sims():
         ('mti', 'vsim'), 
         ('vcs', 'vcs'),
         ('vlt', 'verilator'),
-        ('xcm', 'xmvlog')]:
+        ('xcm', 'xmvlog'),
+        ('xsm', 'xvlog')]:
         if shutil.which(exe) is not None:
             sims.append(sim)
 

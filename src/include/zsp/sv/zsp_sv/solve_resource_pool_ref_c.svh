@@ -11,10 +11,12 @@ class solve_resource_pool_ref_c extends solve_pool_ref_c;
         end
     endfunction
 
+`ifdef UNDEFINED
     constraint instance_id_c {
         foreach (rpools[i]) {
             (pool_id == i) -> (id < rpools[i].size);
         }
     }
+`endif // UNDEFINED
 
 endclass

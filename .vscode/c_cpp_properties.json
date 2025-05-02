@@ -16,7 +16,9 @@
                 "packages/zuspec-parser/src",
                 "packages/zuspec-parser/build/src/antlr4cpp_generated_src/PSSParser",
                 "packages/zuspec-parser/build/src/antlr4cpp_generated_src/PSSLexer",
-                "packages/antlr4-cpp-runtime/runtime/src"
+                "packages/antlr4-cpp-runtime/runtime/src",
+                "packages/pyapi-compat-if/src/include",
+                "packages/pyapi-compat-if/build/include"
             ],
             "defines": [
                 "${default}"

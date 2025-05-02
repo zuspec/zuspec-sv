@@ -4,7 +4,7 @@ typedef class activity_c;
 typedef class activity_ctxt_c;
 
 class activity_traverse_base_c extends activity_c;
-    rand action_c      action;
+//    rand action_c      action;
 //    actor_base_c       actor;
 //    component_c        parent_comp;
     `zsp_rand_arr action_constraint_base_c action_constraints[$];
@@ -27,7 +27,11 @@ class activity_traverse_base_c extends activity_c;
     endfunction
 
     virtual function void set_action(action_c action);
-        this.action = action;
+        `ZSP_FATAL(("set_action not implemented"));
+    endfunction
+    
+    virtual function action_c get_action();
+        `ZSP_FATAL(("get_action not implemented"));
     endfunction
 
     function void add_constraint(action_constraint_base_c c);
@@ -44,21 +48,23 @@ class activity_traverse_base_c extends activity_c;
         component_c comp;
         `ZSP_DEBUG_ENTER("activity_traverse_c", ("run"));
 
-        if (action == null) begin
+        if (get_action() == null) begin
             // The context didn't assign component. Need to 
             // perform the context solving here...
             component_c parent_comp; // TODO: obtain from context?
             solve_action_context_c ctxt_solver = new(parent_comp);
+`ifdef UNDEFINED
             `ZSP_DEBUG("activity_traverse_c", ("building/solving action, since the context did not"));
             void'(ctxt_solver.add_traversal(this));
 
             // Resolve calls us back to set the action handle
             void'(ctxt_solver.resolve());
+`endif
         end
 
 //        action.init(actor, parent_comp);
 
-        comp = this.action.get_component();
+//        comp = this.action.get_component();
         exec_group = comp.get_executor_group();
         exec_b = exec_group.executors[0];
 
@@ -67,23 +73,23 @@ class activity_traverse_base_c extends activity_c;
             exec_group.name,
             exec_b.name));
 
-        action.pre_solve(exec_b);
+//        action.pre_solve(exec_b);
 
         foreach (action_constraints[i]) begin
-            action_constraints[i].action = action;
-            action.layered_constraints.push_back(action_constraints[i]);
+//            action_constraints[i].action = action;
+//            action.layered_constraints.push_back(action_constraints[i]);
         end
 
 
         // Randomize action. Any traversals with an inline `with` 
         // get their own activity specialization
         // TODO: Handle errors
-        if (this.randomize() == 0) begin
-            `ZSP_FATAL(("activity_traverse_base_c::run failed to randomize"));
-        end
+        // if (this.randomize() == 0) begin
+        //     `ZSP_FATAL(("activity_traverse_base_c::run failed to randomize"));
+        // end
 
-        // TODO: connect up the selected component
-        action.post_solve(exec_b);
+        // // TODO: connect up the selected component
+        // action.post_solve(exec_b);
 
         /*
         foreach (actor.listeners[i]) begin

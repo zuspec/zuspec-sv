@@ -1,5 +1,5 @@
 /*
- * activity_c.svh
+ * action_constraint_base_c.svh
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -18,14 +18,6 @@
  * Created on:
  *     Author:
  */
-typedef class activity_ctxt_c;
-typedef class object_c;
-
-class activity_c extends object_c;
-
-    virtual task run(activity_ctxt_c ctxt, int id=0);
-        $display("FATAL: activity::run not implemented");
-        $finish;
-    endtask
-
+class action_constraint_base_c;
+    action_c        action;
 endclass
