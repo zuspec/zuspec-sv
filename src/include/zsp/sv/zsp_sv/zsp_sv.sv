@@ -179,7 +179,7 @@ endclass
     `include "executor_c.svh"
 
     `include "executor_group_base_c.svh"
-    `include "executor_group_default_c.svh"
+//    `include "executor_group_default_c.svh"
     `include "executor_group_dummy_c.svh"
     `include "executor_group_c.svh"
 

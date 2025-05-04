@@ -1,7 +1,7 @@
 
 import os
 import logging
-from dv_flow.mgr import TaskDataResult, FileSet, TaskMarker, TaskMarkerLoc
+from dv_flow.mgr import TaskDataResult, FileSet, TaskMarker, TaskMarkerLoc, SeverityE
 from pydantic import BaseModel
 
 _log = logging.getLogger("GenSvActor")
@@ -66,7 +66,8 @@ async def GenSvActor(runner, input):
             linked_root = ast_linker.link(marker_c, ast_l)
             for m in marker_c.markers():
                 # TODO: handle severity
-                markers.append(TaskMarker(msg=m.msg()))
+                markers.append(TaskMarker(msg=m.msg(), severity=SeverityE.Error))
+                print("Link Marker: %s" % m.msg())
             if marker_c.hasSeverity(zspp.MarkerSeverityE.Error):
                 status |= 1
 

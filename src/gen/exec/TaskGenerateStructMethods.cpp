@@ -19,6 +19,7 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
+#include "ICustomGen.h"
 #include "TaskGenerate.h"
 #include "GenRefExprExecModel.h"
 #include "TaskGenerateFunction.h"
@@ -54,20 +55,30 @@ void TaskGenerateStructMethods::visitDataTypeArlStruct(arl::dm::IDataTypeArlStru
     for (std::vector<arl::dm::IDataTypeFunctionUP>::const_iterator
         it=t->getFunctions().begin();
         it!=t->getFunctions().end(); it++) {
-        TaskGenerateFunction(m_gen, &genref, m_out).generate(it->get(), true);
+        ICustomGen *custom_gen = 
+            dynamic_cast<ICustomGen *>((*it)->getAssociatedData());
+
+        if (custom_gen) {
+            custom_gen->genFunctionDefinition(m_gen, m_out, &genref, it->get());
+        } else {
+            // Generate the function
+            TaskGenerateFunction(m_gen, &genref, m_out).generate(it->get(), true);
+        }
     }
 
     DEBUG_LEAVE("visitDataTypeArlStruct %s", t->name().c_str());
 }
 
 void TaskGenerateStructMethods::visitDataTypeComponent(arl::dm::IDataTypeComponent *t) {
-    DEBUG_ENTER("visitDataTypeComponent");
+    DEBUG_ENTER("visitDataTypeComponent %s", t->name().c_str());
 
     GenRefExprExecModel genref(m_gen, t, "this", false, "", false);
     for (std::vector<arl::dm::IDataTypeFunctionUP>::const_iterator
         it=t->getFunctions().begin();
         it!=t->getFunctions().end(); it++) {
-        TaskGenerateFunction(m_gen, &genref, m_out).generate(it->get(), true);
+        if (!(*it)->hasFlags(arl::dm::DataTypeFunctionFlags::Core)) {
+            TaskGenerateFunction(m_gen, &genref, m_out).generate(it->get(), true);
+        }
     }
 
     DEBUG_LEAVE("visitDataTypeComponent");

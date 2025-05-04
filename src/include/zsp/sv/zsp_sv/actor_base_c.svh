@@ -31,18 +31,16 @@ class actor_base_c extends component_c;
 `ifdef UNDEFINED
     hndl_drop_listener #(addr_handle_t)     addr_handle_drop_listeners[$];
 `endif
-    executor_c                              default_exec;
     message_verbosity_e                     verbosity = MEDIUM;
     // TODO: address-space
 
     function new(string name, component_ctor_ctxt ctxt, component_c parent=null);
+        executor_c default_exec;
         super.new(name, ctxt, null);
         `ZSP_DEBUG_ENTER("actor_base_c", ("--> new %0s", name));
 
-        exec_group_default = new("exec_group_default", ctxt, this);
         default_exec = new("default_exec", ctxt, this);
-        // Add a default executor to the group
-        exec_group_default.add_executor(default_exec);
+        default_executor = default_exec;
 
         `ZSP_DEBUG_ENTER("actor_base_c", ("<-- new %0s", name));
     endfunction
@@ -51,7 +49,7 @@ class actor_base_c extends component_c;
         `ZSP_DEBUG_ENTER("actor_base_c", ("do_init"));
         if (exec_b == null) begin
             // Use default executor
-            exec_b = default_exec;
+            exec_b = default_executor;
         end
         super.do_init(exec_b);
         `ZSP_DEBUG_LEAVE("actor_base_c", ("do_init"));
@@ -90,7 +88,7 @@ class actor_base_c extends component_c;
     endfunction
 
     virtual function executor_base_c get_default_executor();
-        return default_exec;
+        return default_executor;
     endfunction
 
 endclass

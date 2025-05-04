@@ -40,7 +40,7 @@ class component_c extends typed_obj_c;
     
     executor_group_base_c       exec_groups[$];
     executor_base_c             executors[$];
-    executor_group_default_c    exec_group_default;
+    executor_base_c             default_executor;
     pool_map_c                  pool_m;
     executor_group_base_c       exec_group_m[obj_type_c];
 
@@ -162,18 +162,18 @@ class component_c extends typed_obj_c;
         // Add ourself as a legal action context
         add_comp_inst(this);
 
-        if (exec_group_default == null) begin
-            if (parent != null) begin
-                exec_group_default = parent.exec_group_default;
-                if (exec_group_default == null) begin
-                    `ZSP_FATAL(("component %0s: parent (%0s) has a null executor", name, parent.name));
-                end
-            end else begin
-                `ZSP_DEBUG("component_c", ("component %0s: no parent and no explicit executor group", name));
-            end
-        end else begin
-            `ZSP_DEBUG("component_c", ("component %0s has non-null default executor group", name));
-        end
+        // if (exec_group_default == null) begin
+        //     if (parent != null) begin
+        //         exec_group_default = parent.exec_group_default;
+        //         if (exec_group_default == null) begin
+        //             `ZSP_FATAL(("component %0s: parent (%0s) has a null executor", name, parent.name));
+        //         end
+        //     end else begin
+        //         `ZSP_DEBUG("component_c", ("component %0s: no parent and no explicit executor group", name));
+        //     end
+        // end else begin
+        //     `ZSP_DEBUG("component_c", ("component %0s has non-null default executor group", name));
+        // end
 
         // If we're not changnig anything at this
         // level, just take our parent's map
@@ -272,25 +272,40 @@ class component_c extends typed_obj_c;
         return actor;
     endfunction
 
+    virtual function void set_executor(executor_base_c executor);
+        set_default_executor(executor);
+    endfunction
+
+    virtual function void set_default_executor(executor_base_c executor);
+        default_executor = executor;
+    endfunction
+
     virtual function executor_base_c get_default_executor();
-        component_c c = parent;
+        executor_base_c ret = default_executor;
+        component_c c = this;
         actor_base_c actor;
 
-        while (c.parent != null) begin
+        do begin
+            ret = c.default_executor;
             c = c.parent;
+        end while (ret == null && c != null);
+
+        if (ret == null) begin
+            actor_base_c actor = get_actor();
+            ret = actor.get_default_executor();
         end
-        $cast(actor, c);
-        return actor.get_default_executor();
+
+        return ret;
     endfunction
 
     virtual function executor_group_base_c get_executor_group(obj_type_c trait_t=null);
         executor_group_base_c ret;
-        if (trait_t == null) begin
+        /*if (trait_t == null) begin
             if (exec_group_default == null) begin
                 `ZSP_FATAL(("exec_group_default is null in %0s", name));
             end
             ret = exec_group_default;
-        end else begin
+        end else */ begin
             if (exec_group_m.exists(trait_t) != 0) begin
                 ret = exec_group_m[trait_t];
             end else begin

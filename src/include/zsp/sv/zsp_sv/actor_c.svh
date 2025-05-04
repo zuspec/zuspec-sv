@@ -29,7 +29,7 @@ class actor_c #(
         activity_traverse_c #(Ta) traverse = new(null, null, null);
         activity_ctxt_root_c ctxt = new(this, top);
 
-        top.do_init(default_exec);
+        top.do_init(default_executor);
 
         traverse.run(ctxt);
     endtask

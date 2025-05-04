@@ -27,6 +27,7 @@
 #include "CustomGenAddrHandle.h"
 #include "CustomGenAddrRegion.h"
 #include "CustomGenAddrRegionTransparent.h"
+#include "CustomGenBuiltinMethod.h"
 #include "CustomGenCoreMethodCall.h"
 #include "CustomGenCoreType.h"
 #include "CustomGenExecFunc.h"
@@ -142,7 +143,6 @@ void TaskGenerate::attach_custom_gen() {
             addr_region_base_bases.push_back(it->get());
         }
     }
-
 
     for (std::vector<vsc::dm::IDataTypeStructUP>::const_iterator
         it=m_ctxt->getDataTypeStructs().begin();
@@ -275,9 +275,12 @@ void TaskGenerate::attach_custom_gen() {
                 );
             }
         } else {
-            // This is an import function
-            if ((*it)->getImportSpecs().size()) {
-                DEBUG("TODO: Attach custom generator to %s", name.c_str());
+            if (name.find("::set_executor") != std::string::npos) {
+                DEBUG("set_executor custom generator to import %s", name.c_str());
+                (*it)->setAssociatedData(new CustomGenBuiltinMethod(m_dmgr));
+            } else if ((*it)->getImportSpecs().size()) {
+                // This is an import function
+                DEBUG("TODO: Attach custom generator to import %s", name.c_str());
                 (*it)->setAssociatedData(
                     new CustomGenImportCall(m_dmgr));
             }

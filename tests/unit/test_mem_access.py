@@ -24,10 +24,11 @@ def test_simple_memwrite(dvflow):
             }
         }
 
+        component foo { }
+
         component pss_top {
             transparent_addr_space_c<>      aspace;
             addr_handle_t                   hndl;
-            executor_group_default_c        exec_group;   
             my_executor                     executor;
 
             exec init_down {
@@ -37,7 +38,7 @@ def test_simple_memwrite(dvflow):
                 region.size = 0x10000000;
                 hndl = aspace.add_nonallocatable_region(region);
 
-                exec_group.add_executor(executor);
+                set_executor(executor);
             }
             action Entry {
                 exec body {
@@ -70,7 +71,7 @@ def test_simple_memwrite(dvflow):
         extra_content={
             "custom_api.svh": custom_api
         },
-        debug=False)
+        debug=True)
 
 def test_simple_memread(dvflow):
     content = """

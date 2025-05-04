@@ -69,7 +69,9 @@ def run_unit_test(
             extra_content_tasks.append(dvflow.mkTask("std.CreateFile", 
                         name=os.path.basename(path), 
                         filename=path, content=content,
-                        type="systemVerilogSource", needs=[zsp_sv, actor_sv]))
+                        type="systemVerilogSource", 
+                        incdir=True,
+                        needs=[zsp_sv, actor_sv]))
 
     
 
