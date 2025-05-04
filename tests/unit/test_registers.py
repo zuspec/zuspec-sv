@@ -41,14 +41,13 @@ def test_simple_reg(dvflow):
         component pss_top {
             simple_regs                     regs;
             transparent_addr_space_c<>      aspace;
-            executor_group_default_c        exec_group;   
             my_executor                     executor;
 
             exec init_down {
                 addr_handle_t reg_addr;
                 transparent_addr_region_s<> region;
 
-                exec_group.add_executor(executor);
+                set_executor(executor);
                 print("RES: init_down\\n");
 
                 region.addr = 0x80000000;
@@ -130,7 +129,6 @@ def test_reg_get_handle(dvflow):
         component pss_top {
             simple_regs                     regs;
             transparent_addr_space_c<>      aspace;
-            executor_group_default_c        exec_group;   
             my_executor                     executor;
 
             exec init_down {
@@ -143,7 +141,7 @@ def test_reg_get_handle(dvflow):
                 reg_addr = aspace.add_nonallocatable_region(region);
                 regs.set_handle(reg_addr);
 
-                exec_group.add_executor(executor);
+                set_executor(executor);
             }
             action Entry {
                 exec body {
@@ -241,7 +239,6 @@ def test_group_array(dvflow):
         component pss_top {
             simple_regs                     regs;
             transparent_addr_space_c<>      aspace;
-            executor_group_default_c        exec_group;   
             my_executor                     executor;
 
             exec init_down {
@@ -254,7 +251,7 @@ def test_group_array(dvflow):
                 reg_addr = aspace.add_nonallocatable_region(region);
                 regs.set_handle(reg_addr);
 
-                exec_group.add_executor(executor);
+                set_executor(executor);
             }
             action Entry {
                 exec body {
@@ -351,7 +348,6 @@ def test_group_array_action_field_index(dvflow):
         component pss_top {
             simple_regs                     regs;
             transparent_addr_space_c<>      aspace;
-            executor_group_default_c        exec_group;   
             my_executor                     executor;
 
             exec init_down {
@@ -364,7 +360,7 @@ def test_group_array_action_field_index(dvflow):
                 reg_addr = aspace.add_nonallocatable_region(region);
                 regs.set_handle(reg_addr);
 
-                exec_group.add_executor(executor);
+                set_executor(executor);
             }
             action Entry {
                 int idx = 0;

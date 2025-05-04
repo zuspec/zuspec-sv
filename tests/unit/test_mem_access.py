@@ -99,7 +99,6 @@ def test_simple_memread(dvflow):
         component pss_top {
             transparent_addr_space_c<>      aspace;
             addr_handle_t                   hndl;
-            executor_group_default_c        exec_group;   
             my_executor                     executor;
 
             exec init_down {
@@ -109,7 +108,7 @@ def test_simple_memread(dvflow):
                 region.size = 0x10000000;
                 hndl = aspace.add_nonallocatable_region(region);
 
-                exec_group.add_executor(executor);
+                set_executor(executor);
             }
 
             action Entry {

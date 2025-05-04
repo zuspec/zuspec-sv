@@ -100,15 +100,17 @@ function automatic addr_handle_t make_handle_from_handle(
     addr_handle_t       hndl,
     bit[63:0]           offset);
     addr_handle_t ret;
+    storage_handle_c base;
+
     if (hndl != null) begin
         if (hndl.obj != null) begin
-            ret = new(hndl.get(), hndl.offset+offset);
-        end else begin
-            ret = new(null, hndl.offset+offset);
+            base = hndl.get();
         end
-    end else begin
-        ret = new(null, offset);
+        offset += hndl.offset;
     end
+
+    ret = new(base, offset);
+
     return ret;
 endfunction
 
