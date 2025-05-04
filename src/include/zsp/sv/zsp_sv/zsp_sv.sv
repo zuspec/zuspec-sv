@@ -103,8 +103,8 @@ function automatic addr_handle_t make_handle_from_handle(
     storage_handle_c base;
 
     if (hndl != null) begin
-        if (hndl.obj != null) begin
-            base = hndl.get();
+        if (hndl.obj.obj != null) begin
+            base = hndl.obj.get();
         end
         offset += hndl.offset;
     end

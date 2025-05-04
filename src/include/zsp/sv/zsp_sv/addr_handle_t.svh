@@ -21,22 +21,36 @@
 typedef class object_ref_base_c;
 typedef class storage_handle_c;
 
-class addr_handle_t extends object_ref_c #(storage_handle_c);
+class addr_handle_t /*extends object_ref_c #(storage_handle_c) */;
+    object_ref_c #(storage_handle_c) obj;
     bit[63:0]           offset;
 
     function new(
         storage_handle_c    base=null,
         bit[63:0]           offset=0);
-        super.new(base);
+        obj = new(base);
         this.offset = offset;
+    endfunction
+
+    function void set(addr_handle_t hndl);
+        obj.set(hndl.obj);
+        offset = hndl.offset;
+    endfunction
+
+    function addr_handle_t get();
+        return this;
+    endfunction
+
+    function void drop();
+        obj.drop();
     endfunction
 
     function addr_handle_t make_handle(bit[63:0] offset);
         addr_handle_t ret;
         storage_handle_c obj;
 
-        if (this.obj != null) begin
-            obj = get();
+        if (this.obj.get() != null) begin
+            obj = this.obj.get();
         end
 
         ret = new(obj, this.offset+offset);
@@ -45,8 +59,8 @@ class addr_handle_t extends object_ref_c #(storage_handle_c);
 
     virtual function bit[63:0] addr_value();
         bit[63:0] ret = offset;
-        if (this.obj != null) begin
-            ret += get().addr;
+        if (this.obj.get() != null) begin
+            ret += this.obj.get().addr;
         end
         return ret;
     endfunction
