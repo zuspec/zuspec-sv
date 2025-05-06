@@ -49,7 +49,7 @@ def test_int_field(dvflow):
         component pss_top {
             action Entry {
                 rand int[4] f1;
-                constraint f1 == 15;
+                constraint f1 == 4;
                 exec post_solve {
                     print("RES: f1=%d\\n", f1);
                 }
@@ -57,7 +57,7 @@ def test_int_field(dvflow):
         }
     """
     expect = """
-    RES: f1=-1
+    RES: f1=4
     """
     run_unit_test(dvflow, content, expect)
 

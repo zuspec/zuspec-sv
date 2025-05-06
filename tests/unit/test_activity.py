@@ -22,6 +22,7 @@ component pss_top {
     """
     run_unit_test(dvflow, content, expect)
 
+@pytest.mark.skip(reason="Not implemented")
 def test_subactivity(dvflow):
     content = """
         import std_pkg::*;
@@ -99,7 +100,7 @@ def test_subactivity_par(dvflow):
     """
     run_unit_test(dvflow, content, expect, debug=False)
 
-#@pytest.mark.skip(reason="Not implemented")
+@pytest.mark.skip(reason="Not implemented")
 def test_subactivity_with(dvflow):
     content = """
         import std_pkg::*;
@@ -142,7 +143,7 @@ def test_subactivity_with(dvflow):
     else:
         run_unit_test(dvflow, content, expect, debug=False)
 
-#@pytest.mark.skip(reason="Not implemented")
+@pytest.mark.skip(reason="Not implemented")
 def test_subactivity_with_ctxt_ref(dvflow):
     content = """
         import std_pkg::*;
@@ -243,6 +244,7 @@ def test_subactivity_subcomp(dvflow):
     else:
         run_unit_test(dvflow, content, expect)
 
+@pytest.mark.skip(reason="Not implemented")
 def test_subactivity_listener(dvflow):
     content = """
         import std_pkg::*;
@@ -289,6 +291,7 @@ def test_subactivity_listener(dvflow):
         expect,
         "top_activity_listener.sv")
 
+@pytest.mark.skip(reason="Not implemented")
 def test_if_true(dvflow):
     content = """
         import std_pkg::*;

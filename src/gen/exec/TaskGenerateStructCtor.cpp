@@ -59,6 +59,16 @@ void TaskGenerateStructCtor::generate_tail(vsc::dm::IDataTypeStruct *t) {
     m_out->println("endfunction");
 } 
 
+void TaskGenerateStructCtor::visitDataTypeAction(arl::dm::IDataTypeAction *t) {
+    m_out->println("%s = new(\"%s\");", 
+        m_field->name().c_str(),
+        m_field->name().c_str());
+}
+
+void TaskGenerateStructCtor::visitDataTypeAddrHandle(arl::dm::IDataTypeAddrHandle *t) {
+    m_out->println("%s = new();", m_field->name().c_str());
+}
+
 void TaskGenerateStructCtor::visitDataTypeArray(vsc::dm::IDataTypeArray *t) {
     m_out->println("%s = new();", m_field->name().c_str());
 }

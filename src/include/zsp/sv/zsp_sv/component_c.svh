@@ -22,7 +22,6 @@ typedef component_c component_queue_h[$];
 typedef class empty_executor_trait_s;
 typedef class executor_group_c;
 typedef class executor_group_base_c;
-typedef class executor_group_default_c;
 typedef class executor_group_dummy_c;
 typedef class pool_base_c;
 typedef class pool_map_c;

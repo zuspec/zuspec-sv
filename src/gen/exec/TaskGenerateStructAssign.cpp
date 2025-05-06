@@ -49,7 +49,9 @@ void TaskGenerateStructAssign::generate(vsc::dm::IDataTypeStruct *t) {
         it=t->getFields().begin();
         it!=t->getFields().end(); it++) {
         if (TaskIsRefCountField().check(it->get())) {
-            m_out->println("%s.set(rhs);", (*it)->name().c_str());
+            m_out->println("%s.set(rhs.%s);", 
+                (*it)->name().c_str(),
+                (*it)->name().c_str());
         } else if (TaskIsValueAggregate().check((*it)->getDataType())) {
             m_out->println("%s.__assign__(rhs.%s);",
                 (*it)->name().c_str(),
